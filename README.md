@@ -60,7 +60,7 @@ landing-page-prova/
 5. **How it works**: los tres pasos para empezar.
 6. **Pricing**: tres planes (Básico 19€, Pro 49€ destacado, Empresa a medida).
 7. **Testimonials**: tres opiniones de clientes.
-8. **FAQ**: preguntas frecuentes con `<details>`, que se abren y cierran sin JavaScript.
+8. **FAQ**: preguntas frecuentes, que se abren y cierran sin JavaScript.
 9. **CTA**: formulario para dejar el email y empezar la prueba gratuita.
 10. **Footer**: logo, copyright con el año actual y enlaces.
 
