@@ -8,10 +8,11 @@ Proyecto hecho con **Vite**, **JavaScript vanilla** y **Tailwind CSS v4**, organ
 
 ## Tecnologías
 
-| Herramienta                               |   Versión     |   Uso  |
-| [Vite](https://vite.dev/)                 | 8             | Servidor de desarrollo y build |
-| [Tailwind CSS](https://tailwindcss.com/)  | 4             | Estilos con clases de utilidad (vía `@tailwindcss/vite`) |
-| JavaScript                                | ES Modules    | Componentes e interactividad, sin frameworks |
+| Herramienta | Versión | Uso |
+|---|---|---|
+| [Vite](https://vite.dev/) | 8 | Servidor de desarrollo y build |
+| [Tailwind CSS](https://tailwindcss.com/) | 4 | Estilos con clases de utilidad (vía `@tailwindcss/vite`) |
+| JavaScript | ES Modules | Componentes e interactividad, sin frameworks |
 
 ## Instalación y uso
 
@@ -62,4 +63,5 @@ landing-page-prova/
 8. **FAQ**: preguntas frecuentes con `<details>`, que se abren y cierran sin JavaScript.
 9. **CTA**: formulario para dejar el email y empezar la prueba gratuita.
 10. **Footer**: logo, copyright con el año actual y enlaces.
+
 
