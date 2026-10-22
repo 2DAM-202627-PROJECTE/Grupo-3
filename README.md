@@ -1,6 +1,6 @@
 # Grupo-3
 
-# Reservo · Landing page
+## Reservo · Landing page
 
 Landing page de un SaaS ficticio de **reservas online** para negocios con citas: gimnasios, restaurantes, peluquerías y clínicas.
 
