@@ -198,14 +198,17 @@ export function renderPricing(container) {
                - group + group-aria-checked:translate-x-6 → la bolita se mueve a la derecha
              Así, el JavaScript (setupBillingToggle) solo tiene que cambiar aria-checked.
              before:absolute before:-inset-2 crea una capa invisible 8 px más grande por cada lado:
-             el interruptor se ve igual, pero la zona que se puede pulsar mide 64×44 px -->
+             el interruptor se ve igual, pero la zona que se puede pulsar mide 64×44 px.
+             Hover (al pasar el ratón) el fondo se aclara un poco para indicar que se puede pulsar:
+               - apagado: hover:bg-slate-600 (gris algo más claro)
+               - encendido: aria-checked:hover:bg-indigo-500 (índigo algo más claro) -->
         <button
           type="button"
           id="billing-toggle"
           role="switch"
           aria-checked="false"
           aria-label="Pago anual"
-          class="group relative inline-flex h-7 w-12 shrink-0 items-center rounded-full bg-slate-700 transition before:absolute before:-inset-2 aria-checked:bg-indigo-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
+          class="group relative inline-flex h-7 w-12 shrink-0 items-center rounded-full bg-slate-700 transition before:absolute before:-inset-2 hover:bg-slate-600 aria-checked:bg-indigo-600 aria-checked:hover:bg-indigo-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
         >
           <!-- Bolita del interruptor: empieza a la izquierda (translate-x-1) -->
           <span class="inline-block h-5 w-5 translate-x-1 rounded-full bg-white transition group-aria-checked:translate-x-6"></span>
