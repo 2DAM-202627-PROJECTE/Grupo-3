@@ -43,7 +43,7 @@ const features = [
 // Devuelve el HTML de UNA tarjeta a partir de un objeto del array.
 // Usamos desestructuración ({ icon, title, text }) para sacar las propiedades directamente.
 function featureCard({ icon, title, text }) {
-  return `
+  return /*html*/ `
     <!-- Tarjeta: borde, esquinas redondeadas y fondo algo más claro que la página.
          Al pasar el ratón el borde se vuelve índigo -->
     <article class="rounded-xl border border-slate-800 bg-slate-800/30 p-6 transition hover:border-indigo-500/50">
@@ -61,7 +61,7 @@ export function renderFeatures(container) {
   // Espaciado vertical de la sección: más grande en escritorio (lg:)
   container.className = 'py-20 lg:py-28';
 
-  container.innerHTML = `
+  container.innerHTML = /*html*/ `
     <!-- Contenedor centrado con ancho máximo y márgenes laterales -->
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
