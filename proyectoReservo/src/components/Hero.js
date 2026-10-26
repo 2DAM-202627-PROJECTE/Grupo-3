@@ -53,8 +53,9 @@ export function renderHero(container) {
           </a>
         </div>
 
-        <!-- Texto pequeño bajo los botones -->
-        <p class="mt-4 text-sm text-slate-500">Sin tarjeta de crédito · Cancela cuando quieras</p>
+        <!-- Texto pequeño bajo los botones. slate-400 y no slate-500 para mantener
+             un contraste mínimo de 4.5:1 con el fondo (apartado 3.2) -->
+        <p class="mt-4 text-sm text-slate-400">Sin tarjeta de crédito · Cancela cuando quieras</p>
       </div>
 
       <!-- Columna derecha: tarjeta de reserva (la hace Arnau en el #9) -->

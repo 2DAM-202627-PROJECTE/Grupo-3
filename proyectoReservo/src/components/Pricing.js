@@ -77,7 +77,7 @@ function priceBlock(price, annual = false) {
     // así las listas de las 3 tarjetas empiezan a la misma altura
     return /*html*/ `
       <p class="text-4xl font-extrabold text-white">A medida</p>
-      <p class="mt-1 h-5 text-xs text-slate-500"></p>
+      <p class="mt-1 h-5 text-xs text-slate-400"></p>
     `;
   }
 
@@ -88,7 +88,7 @@ function priceBlock(price, annual = false) {
     <p class="text-4xl font-extrabold text-white">
       ${value}€<span class="text-base font-normal text-slate-400">/mes</span>
     </p>
-    <p class="mt-1 h-5 text-xs text-slate-500">${note}</p>
+    <p class="mt-1 h-5 text-xs text-slate-400">${note}</p>
   `;
 }
 
