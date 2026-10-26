@@ -45,11 +45,13 @@ const features = [
 function featureCard({ icon, title, text }) {
   return /*html*/ `
     <!-- Tarjeta: borde, esquinas redondeadas y fondo algo más claro que la página.
-         Al pasar el ratón el borde se vuelve índigo -->
-    <article class="rounded-xl border border-slate-800 bg-slate-800/30 p-6 transition hover:border-indigo-500/50">
+         Al pasar el ratón el borde se vuelve índigo.
+         En móvil hay 2 tarjetas por fila, así que el relleno, el icono y el título
+         son más pequeños y crecen a partir de sm: -->
+    <article class="rounded-xl border border-slate-800 bg-slate-800/30 p-4 transition hover:border-indigo-500/50 sm:p-6">
       <!-- Icono: es decorativo (el título ya dice lo que es), así que aria-hidden -->
-      <div class="text-3xl" aria-hidden="true">${icon}</div>
-      <h3 class="mt-4 text-lg font-semibold text-white">${title}</h3>
+      <div class="text-2xl sm:text-3xl" aria-hidden="true">${icon}</div>
+      <h3 class="mt-3 text-base font-semibold text-white sm:mt-4 sm:text-lg">${title}</h3>
       <p class="mt-2 text-sm leading-relaxed text-slate-400">${text}</p>
     </article>
   `;
@@ -76,10 +78,11 @@ export function renderFeatures(container) {
         </p>
       </div>
 
-      <!-- Grid de tarjetas: 1 columna en móvil, 2 en tablet (md:) y 3 en escritorio (lg:).
+      <!-- Grid de tarjetas: 2 columnas en móvil y tablet, y 3 en escritorio (lg:).
+           En móvil van de dos en dos para reducir el scroll (apartado 7.2 del documento).
            features.map() convierte cada objeto del array en el HTML de su tarjeta,
            y .join('') une todas esas tarjetas en un solo string -->
-      <div id="features-grid" class="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div id="features-grid" class="mt-14 grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-3">
         ${features.map(featureCard).join('')}
       </div>
     </div>
