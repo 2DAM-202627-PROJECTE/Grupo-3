@@ -6,7 +6,7 @@
 // Datos de las tarjetas.
 // Cada objeto es una funcionalidad: un icono (emoji), un título y un texto.
 // Si queremos añadir, quitar o cambiar una tarjeta, solo hay que tocar este array:
-// el HTML se genera automáticamente a partir de él (parte 3).
+// el HTML se genera automáticamente a partir de él (ver featureCard).
 const features = [
   {
     icon: '📅',
@@ -40,6 +40,21 @@ const features = [
   },
 ];
 
+// Devuelve el HTML de UNA tarjeta a partir de un objeto del array.
+// Usamos desestructuración ({ icon, title, text }) para sacar las propiedades directamente.
+function featureCard({ icon, title, text }) {
+  return `
+    <!-- Tarjeta: borde, esquinas redondeadas y fondo algo más claro que la página.
+         Al pasar el ratón el borde se vuelve índigo -->
+    <article class="rounded-xl border border-slate-800 bg-slate-800/30 p-6 transition hover:border-indigo-500/50">
+      <!-- Icono: es decorativo (el título ya dice lo que es), así que aria-hidden -->
+      <div class="text-3xl" aria-hidden="true">${icon}</div>
+      <h3 class="mt-4 text-lg font-semibold text-white">${title}</h3>
+      <p class="mt-2 text-sm leading-relaxed text-slate-400">${text}</p>
+    </article>
+  `;
+}
+
 // Pinta la sección dentro del contenedor que le pasa main.js
 // (el <section id="funciones">).
 export function renderFeatures(container) {
@@ -61,8 +76,12 @@ export function renderFeatures(container) {
         </p>
       </div>
 
-      <!-- Aquí se meterán las tarjetas generadas desde el array (parte 3) -->
-      <div id="features-grid" class="mt-14 grid gap-6"></div>
+      <!-- Grid de tarjetas: 1 columna en móvil, 2 en tablet (md:) y 3 en escritorio (lg:).
+           features.map() convierte cada objeto del array en el HTML de su tarjeta,
+           y .join('') une todas esas tarjetas en un solo string -->
+      <div id="features-grid" class="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        ${features.map(featureCard).join('')}
+      </div>
     </div>
   `;
 }
