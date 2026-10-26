@@ -11,6 +11,7 @@
 //   - price:       precio mensual en euros (número). null = "A medida"
 //   - features:    lista de características (cada una saldrá con un ✓)
 //   - cta:         texto del botón (CTA = "call to action", llamada a la acción)
+//   - featured:    true si es el plan recomendado (se destaca visualmente)
 // El precio se guarda como número y no como texto ("19€") para poder
 // calcular el precio anual más adelante (issue #16).
 // Los datos siguen la tabla del apartado 2.4 del documento de planificación.
@@ -40,6 +41,7 @@ const plans = [
       'Soporte por email y chat',
     ],
     cta: 'Empezar prueba',
+    featured: true,
   },
   {
     name: 'Empresa',
@@ -65,12 +67,35 @@ function formatPrice(price) {
   return /*html*/ `${price}€<span class="text-base font-normal text-slate-400">/mes</span>`;
 }
 
+// Clases de los dos estilos de botón: el principal (relleno índigo) para el plan
+// destacado y el secundario (con borde) para el resto.
+const buttonBase =
+  'mt-8 rounded-lg px-6 py-3 text-center font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400';
+const buttonPrimary = 'bg-indigo-600 text-white hover:bg-indigo-500';
+const buttonSecondary = 'border border-slate-700 bg-slate-800/60 text-slate-200 hover:bg-slate-800';
+
 // Devuelve el HTML de UNA tarjeta de plan a partir de un objeto del array.
-function planCard({ name, description, price, features, cta }) {
+// featured = false por defecto, así los planes que no lo tienen no se destacan.
+function planCard({ name, description, price, features, cta, featured = false }) {
+  // Estilos de la tarjeta según si es el plan destacado o no:
+  // el destacado lleva borde índigo, fondo índigo oscuro y una sombra suave.
+  // "relative" hace falta para colocar el badge "Más popular" encima de la tarjeta.
+  const cardClasses = featured
+    ? 'relative border-indigo-500 bg-indigo-950/40 shadow-lg shadow-indigo-500/10'
+    : 'border-slate-800 bg-slate-800/30';
+
+  // El badge solo existe en el plan destacado. Si no lo es, se deja un string vacío.
+  // absolute + -top-3 + left-1/2 + -translate-x-1/2: centrado sobre el borde superior.
+  const badge = featured
+    ? /*html*/ `<span class="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-indigo-600 px-3 py-1 text-xs font-semibold text-white">Más popular</span>`
+    : '';
+
   return /*html*/ `
     <!-- Tarjeta: flex en columna para poder empujar el botón al fondo
          y que los botones de las 3 tarjetas queden alineados -->
-    <article class="flex flex-col rounded-xl border border-slate-800 bg-slate-800/30 p-8">
+    <article class="flex flex-col rounded-xl border p-8 ${cardClasses}">
+      ${badge}
+
       <!-- Nombre y descripción del plan -->
       <h3 class="text-lg font-semibold text-white">${name}</h3>
       <p class="mt-1 text-sm text-slate-400">${description}</p>
@@ -95,8 +120,9 @@ function planCard({ name, description, price, features, cta }) {
           .join('')}
       </ul>
 
-      <!-- Botón del plan: lleva al formulario de prueba gratuita (#cta) -->
-      <a href="#cta" class="mt-8 rounded-lg border border-slate-700 bg-slate-800/60 px-6 py-3 text-center font-semibold text-slate-200 transition hover:bg-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400">
+      <!-- Botón del plan: lleva al formulario de prueba gratuita (#cta).
+           Principal en el plan destacado y secundario en los demás -->
+      <a href="#cta" class="${buttonBase} ${featured ? buttonPrimary : buttonSecondary}">
         ${cta}
       </a>
     </article>
