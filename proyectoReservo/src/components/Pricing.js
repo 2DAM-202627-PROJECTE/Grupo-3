@@ -58,13 +58,38 @@ const plans = [
   },
 ];
 
-// Devuelve el HTML del precio de un plan.
-// Si el precio es un número → "19€ /mes". Si es null → "A medida".
-function formatPrice(price) {
+// Descuento del pago anual: 20 % (apartado 2.4 del documento).
+const ANNUAL_DISCOUNT = 0.2;
+
+// Precio mensual con el descuento anual aplicado, redondeado a euros enteros.
+// 19 € → 15 €  y  49 € → 39 €, como en la tabla del documento.
+function annualPrice(price) {
+  return Math.round(price * (1 - ANNUAL_DISCOUNT));
+}
+
+// Devuelve el HTML del bloque de precio de un plan: el precio y una nota debajo.
+//   - annual = false → precio mensual ("19€/mes")
+//   - annual = true  → precio con descuento ("15€/mes") y el total al año
+// Si el precio es null → "A medida" y sin nota.
+function priceBlock(price, annual = false) {
   if (price === null) {
-    return 'A medida';
+    // La nota vacía (h-5) ocupa el mismo alto que en los otros planes,
+    // así las listas de las 3 tarjetas empiezan a la misma altura
+    return /*html*/ `
+      <p class="text-4xl font-extrabold text-white">A medida</p>
+      <p class="mt-1 h-5 text-xs text-slate-500"></p>
+    `;
   }
-  return /*html*/ `${price}€<span class="text-base font-normal text-slate-400">/mes</span>`;
+
+  const value = annual ? annualPrice(price) : price;
+  const note = annual ? `Facturado anualmente (${value * 12} €/año)` : 'Facturado mensualmente';
+
+  return /*html*/ `
+    <p class="text-4xl font-extrabold text-white">
+      ${value}€<span class="text-base font-normal text-slate-400">/mes</span>
+    </p>
+    <p class="mt-1 h-5 text-xs text-slate-500">${note}</p>
+  `;
 }
 
 // Clases de los dos estilos de botón: el principal (relleno índigo) para el plan
@@ -100,8 +125,12 @@ function planCard({ name, description, price, features, cta, featured = false })
       <h3 class="text-lg font-semibold text-white">${name}</h3>
       <p class="mt-1 text-sm text-slate-400">${description}</p>
 
-      <!-- Precio -->
-      <p class="mt-6 text-4xl font-extrabold text-white">${formatPrice(price)}</p>
+      <!-- Precio. Al empezar se muestra el mensual.
+           data-price guarda el precio mensual para que el interruptor pueda recalcularlo.
+           El plan "A medida" no lo lleva porque su precio no cambia -->
+      <div class="mt-6" ${price !== null ? `data-price="${price}"` : ''}>
+        ${priceBlock(price)}
+      </div>
 
       <!-- Lista de características. Cada texto del array se convierte en un <li> con un ✓ delante.
            El ✓ es decorativo (aria-hidden): el lector de pantalla ya sabe que es una lista.
@@ -159,7 +188,7 @@ export function renderPricing(container) {
              Todo el aspecto depende de aria-checked, con las variantes de Tailwind:
                - aria-checked:bg-indigo-600 → el fondo se vuelve índigo al activarlo
                - group + group-aria-checked:translate-x-6 → la bolita se mueve a la derecha
-             Así, en la parte 3 el JavaScript solo tendrá que cambiar aria-checked -->
+             Así, el JavaScript (setupBillingToggle) solo tiene que cambiar aria-checked -->
         <button
           type="button"
           id="billing-toggle"
@@ -185,4 +214,30 @@ export function renderPricing(container) {
       </div>
     </div>
   `;
+
+  // Una vez pintado el HTML, se activa el interruptor
+  setupBillingToggle(container);
+}
+
+// Lógica del interruptor mensual/anual.
+// Al pulsarlo cambia su estado y actualiza solo los precios, sin volver a pintar toda la sección.
+function setupBillingToggle(container) {
+  const toggle = container.querySelector('#billing-toggle');
+
+  toggle.addEventListener('click', () => {
+    // Estado nuevo: si estaba en "false" (mensual) pasa a anual, y al revés
+    const annual = toggle.getAttribute('aria-checked') !== 'true';
+
+    // Al cambiar aria-checked, Tailwind mueve la bolita y cambia el color solo
+    // (y el lector de pantalla anuncia "activado" / "desactivado")
+    toggle.setAttribute('aria-checked', String(annual));
+
+    // Recorre los bloques de precio que tienen data-price (Básico y Pro)
+    // y los vuelve a generar con el precio mensual o el anual.
+    // Se usa innerHTML porque el contenido sale de nuestros datos, no de lo que escribe el usuario
+    container.querySelectorAll('[data-price]').forEach((block) => {
+      const price = Number(block.dataset.price); // data-price="19" → 19 (número)
+      block.innerHTML = priceBlock(price, annual);
+    });
+  });
 }
