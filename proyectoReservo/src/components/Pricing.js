@@ -180,9 +180,12 @@ export function renderPricing(container) {
 
       <!-- Interruptor mensual/anual: "Mensual" [interruptor] "Anual" "-20 %".
            La opción activa sale en blanco y la otra en gris (lo cambia setBilling).
-           data-billing-label sirve para encontrar cada palabra desde el JavaScript -->
+           data-billing-label sirve para encontrar cada palabra desde el JavaScript.
+           Las palabras también se pueden pulsar: cursor-pointer muestra la manita,
+           select-none evita que se seleccione el texto al hacer clic rápido, y py-3
+           agranda la zona de pulsación hasta 44 px de alto (mínimo para móvil, apartado 8.2.2) -->
       <div class="mt-10 flex items-center justify-center gap-3 text-sm font-medium">
-        <span data-billing-label="monthly" class="text-white transition-colors">Mensual</span>
+        <span data-billing-label="monthly" class="cursor-pointer select-none py-3 text-white transition-colors">Mensual</span>
 
         <!-- El interruptor es un <button> con role="switch": así los lectores de pantalla
              lo anuncian como un interruptor y se puede usar con el teclado (Tab + Espacio).
@@ -190,20 +193,22 @@ export function renderPricing(container) {
              Todo el aspecto depende de aria-checked, con las variantes de Tailwind:
                - aria-checked:bg-indigo-600 → el fondo se vuelve índigo al activarlo
                - group + group-aria-checked:translate-x-6 → la bolita se mueve a la derecha
-             Así, el JavaScript (setupBillingToggle) solo tiene que cambiar aria-checked -->
+             Así, el JavaScript (setupBillingToggle) solo tiene que cambiar aria-checked.
+             before:absolute before:-inset-2 crea una capa invisible 8 px más grande por cada lado:
+             el interruptor se ve igual, pero la zona que se puede pulsar mide 64×44 px -->
         <button
           type="button"
           id="billing-toggle"
           role="switch"
           aria-checked="false"
           aria-label="Pago anual"
-          class="group relative inline-flex h-7 w-12 shrink-0 items-center rounded-full bg-slate-700 transition aria-checked:bg-indigo-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
+          class="group relative inline-flex h-7 w-12 shrink-0 items-center rounded-full bg-slate-700 transition before:absolute before:-inset-2 aria-checked:bg-indigo-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
         >
           <!-- Bolita del interruptor: empieza a la izquierda (translate-x-1) -->
           <span class="inline-block h-5 w-5 translate-x-1 rounded-full bg-white transition group-aria-checked:translate-x-6"></span>
         </button>
 
-        <span data-billing-label="annual" class="text-slate-400 transition-colors">Anual</span>
+        <span data-billing-label="annual" class="cursor-pointer select-none py-3 text-slate-400 transition-colors">Anual</span>
         <!-- Etiqueta con el descuento del pago anual (apartado 2.4 del documento) -->
         <span class="rounded-full bg-cyan-500/10 px-2 py-0.5 text-xs font-semibold text-cyan-300">-20 %</span>
       </div>
@@ -261,4 +266,10 @@ function setupBillingToggle(container) {
     const isAnnual = toggle.getAttribute('aria-checked') === 'true';
     setBilling(!isAnnual);
   });
+
+  // Al pulsar una palabra se va directamente a ese modo (no al contrario):
+  // pulsar "Anual" estando ya en anual no cambia nada.
+  // Con el teclado no hace falta: el interruptor ya se puede usar con Tab + Espacio
+  monthlyLabel.addEventListener('click', () => setBilling(false));
+  annualLabel.addEventListener('click', () => setBilling(true));
 }
