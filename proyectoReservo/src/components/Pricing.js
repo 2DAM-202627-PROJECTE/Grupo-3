@@ -13,26 +13,45 @@
 //   - cta:         texto del botón (CTA = "call to action", llamada a la acción)
 // El precio se guarda como número y no como texto ("19€") para poder
 // calcular el precio anual más adelante (issue #16).
+// Los datos siguen la tabla del apartado 2.4 del documento de planificación.
 const plans = [
   {
     name: 'Básico',
-    description: 'Para empezar',
+    description: 'Autónomos y negocios con un profesional',
     price: 19,
-    features: ['1 profesional', 'Reservas ilimitadas', 'Recordatorios por email'],
+    features: [
+      '1 profesional',
+      'Reservas online 24/7',
+      'Recordatorios por email',
+      'Estadísticas básicas',
+      'Soporte por email',
+    ],
     cta: 'Elegir plan',
   },
   {
     name: 'Pro',
-    description: 'Para negocios en crecimiento',
+    description: 'Negocios con equipo',
     price: 49,
-    features: ['Hasta 10 profesionales', 'SMS y WhatsApp', 'Pagos online y bonos', 'Estadísticas'],
+    features: [
+      'Hasta 5 profesionales',
+      'Recordatorios por email y WhatsApp',
+      'Pagos y señales',
+      'Estadísticas completas',
+      'Soporte por email y chat',
+    ],
     cta: 'Empezar prueba',
   },
   {
     name: 'Empresa',
-    description: 'Cadenas y franquicias',
+    description: 'Cadenas y negocios con varios locales',
     price: null,
-    features: ['Profesionales ilimitados', 'Varios locales', 'API e integraciones', 'Soporte prioritario'],
+    features: [
+      'Profesionales ilimitados',
+      'Locales ilimitados',
+      'Recordatorios por email y WhatsApp',
+      'Pagos y señales',
+      'Gestor dedicado',
+    ],
     cta: 'Contactar',
   },
 ];
@@ -49,7 +68,7 @@ function formatPrice(price) {
 // Devuelve el HTML de UNA tarjeta de plan a partir de un objeto del array.
 function planCard({ name, description, price, features, cta }) {
   return /*html*/ `
-    <!-- Tarjeta: flex en columna para poder empujar el botón al fondo (mt-auto)
+    <!-- Tarjeta: flex en columna para poder empujar el botón al fondo
          y que los botones de las 3 tarjetas queden alineados -->
     <article class="flex flex-col rounded-xl border border-slate-800 bg-slate-800/30 p-8">
       <!-- Nombre y descripción del plan -->
@@ -60,8 +79,10 @@ function planCard({ name, description, price, features, cta }) {
       <p class="mt-6 text-4xl font-extrabold text-white">${formatPrice(price)}</p>
 
       <!-- Lista de características. Cada texto del array se convierte en un <li> con un ✓ delante.
-           El ✓ es decorativo (aria-hidden): el lector de pantalla ya sabe que es una lista -->
-      <ul class="mt-6 space-y-3 text-sm text-slate-300">
+           El ✓ es decorativo (aria-hidden): el lector de pantalla ya sabe que es una lista.
+           flex-1 hace que la lista ocupe todo el espacio que sobra en la tarjeta, así el botón
+           queda siempre abajo aunque un plan tenga menos características que otro -->
+      <ul class="mt-6 flex-1 space-y-3 text-sm text-slate-300">
         ${features
           .map(
             (feature) => /*html*/ `
@@ -74,8 +95,7 @@ function planCard({ name, description, price, features, cta }) {
           .join('')}
       </ul>
 
-      <!-- Botón del plan: mt-auto lo empuja al final de la tarjeta.
-           Lleva al formulario de prueba gratuita (#cta) -->
+      <!-- Botón del plan: lleva al formulario de prueba gratuita (#cta) -->
       <a href="#cta" class="mt-8 rounded-lg border border-slate-700 bg-slate-800/60 px-6 py-3 text-center font-semibold text-slate-200 transition hover:bg-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400">
         ${cta}
       </a>
