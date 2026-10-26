@@ -1,6 +1,5 @@
+
 @import "tailwindcss";
-
-
 
 /* Colores del proyecto */
 :root {
@@ -15,89 +14,80 @@
 }
 
 /* Estilos generales */
-* {
-  box-sizing: border-box;
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    font-family: Inter, Arial, sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
 }
 
-html {
-  scroll-behavior: smooth;
-}
+/* Componentes reutilizables */
+@layer components {
+  .section-title {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 30px;
+  }
 
-body {
-  margin: 0;
-  font-family: Inter, Arial, sans-serif;
-  background-color: var(--bg);
-  color: var(--text);
-  line-height: 1.6;
-}
+  .btn-primary {
+    background: var(--primary);
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+  }
 
-/* Contenedor general */
-.container {
-  width: 90%;
-  max-width: 1200px;
-  margin: 0 auto;
-}
+  .btn-primary:hover {
+    background: #634bff;
+  }
 
-/* Títulos de sección */
-.section-title {
-  text-align: center;
-  font-size: 2rem;
-  margin-bottom: 30px;
-}
+  .btn-secondary {
+    background: var(--secondary);
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
 
-/* Botones reutilizables */
-.btn-primary {
-  background: var(--primary);
-  color: white;
-  padding: 12px 24px;
-  border: none;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-}
+  .card {
+    background-color: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+  }
 
-.btn-primary:hover {
-  background: #634bff;
-}
-
-.btn-secondary {
-  background: var(--secondary);
-  color: white;
-  padding: 12px 24px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-/* Tarjetas reutilizables */
-.card {
-  background-color: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 24px;
-}
-
-/* Texto con degradado */
-.gradient-text {
-  background: var(--gradient);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-/* Enlaces */
-a {
-  color: inherit;
-  text-decoration: none;
+  .gradient-text {
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
 }
 
 /* Adaptación a móviles */
 @media (max-width: 768px) {
-  .container {
-    width: 92%;
-  }
-
-  .section-title {
-    font-size: 1.5rem;
+  @layer components {
+    .section-title {
+      font-size: 1.5rem;
+    }
   }
 }
