@@ -127,8 +127,11 @@ function planCard({ name, description, price, features, cta, featured = false })
 
       <!-- Precio. Al empezar se muestra el mensual.
            data-price guarda el precio mensual para que el interruptor pueda recalcularlo.
-           El plan "A medida" no lo lleva porque su precio no cambia -->
-      <div class="mt-6" ${price !== null ? `data-price="${price}"` : ''}>
+           El plan "A medida" no lo lleva porque su precio no cambia.
+           transition-opacity duration-150: los cambios de opacidad duran 150 ms (el fundido).
+           motion-reduce:transition-none: si el usuario ha pedido en su sistema reducir las
+           animaciones, el cambio es instantáneo -->
+      <div class="mt-6 transition-opacity duration-150 motion-reduce:transition-none" ${price !== null ? `data-price="${price}"` : ''}>
         ${priceBlock(price)}
       </div>
 
@@ -244,6 +247,12 @@ function setupBillingToggle(container) {
   // Aplica un modo de facturación: annual = true (anual) o false (mensual).
   // Todo lo que tiene que cambiar al cambiar de modo está aquí, en un solo sitio.
   function setBilling(annual) {
+    // Si ya estamos en ese modo (por ejemplo, pulsar "Anual" estando en anual),
+    // no se hace nada: así los precios no parpadean sin motivo
+    if (toggle.getAttribute('aria-checked') === String(annual)) {
+      return;
+    }
+
     // Al cambiar aria-checked, Tailwind mueve la bolita y cambia el color solo
     // (y el lector de pantalla anuncia "activado" / "desactivado")
     toggle.setAttribute('aria-checked', String(annual));
@@ -253,11 +262,19 @@ function setupBillingToggle(container) {
     highlightLabel(annualLabel, annual);
 
     // Recorre los bloques de precio que tienen data-price (Básico y Pro)
-    // y los vuelve a generar con el precio mensual o el anual.
+    // y los vuelve a generar con el precio mensual o el anual, con un fundido:
+    //   1. opacity-0 → el precio se desvanece (150 ms, por la transición del bloque)
+    //   2. cuando ya es invisible (setTimeout de 150 ms) se cambia el contenido
+    //   3. se quita opacity-0 → el precio nuevo aparece poco a poco
     // Se usa innerHTML porque el contenido sale de nuestros datos, no de lo que escribe el usuario
     container.querySelectorAll('[data-price]').forEach((block) => {
       const price = Number(block.dataset.price); // data-price="19" → 19 (número)
-      block.innerHTML = priceBlock(price, annual);
+
+      block.classList.add('opacity-0');
+      setTimeout(() => {
+        block.innerHTML = priceBlock(price, annual);
+        block.classList.remove('opacity-0');
+      }, 150);
     });
   }
 
