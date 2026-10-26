@@ -37,6 +37,52 @@ const plans = [
   },
 ];
 
+// Devuelve el HTML del precio de un plan.
+// Si el precio es un número → "19€ /mes". Si es null → "A medida".
+function formatPrice(price) {
+  if (price === null) {
+    return 'A medida';
+  }
+  return /*html*/ `${price}€<span class="text-base font-normal text-slate-400">/mes</span>`;
+}
+
+// Devuelve el HTML de UNA tarjeta de plan a partir de un objeto del array.
+function planCard({ name, description, price, features, cta }) {
+  return /*html*/ `
+    <!-- Tarjeta: flex en columna para poder empujar el botón al fondo (mt-auto)
+         y que los botones de las 3 tarjetas queden alineados -->
+    <article class="flex flex-col rounded-xl border border-slate-800 bg-slate-800/30 p-8">
+      <!-- Nombre y descripción del plan -->
+      <h3 class="text-lg font-semibold text-white">${name}</h3>
+      <p class="mt-1 text-sm text-slate-400">${description}</p>
+
+      <!-- Precio -->
+      <p class="mt-6 text-4xl font-extrabold text-white">${formatPrice(price)}</p>
+
+      <!-- Lista de características. Cada texto del array se convierte en un <li> con un ✓ delante.
+           El ✓ es decorativo (aria-hidden): el lector de pantalla ya sabe que es una lista -->
+      <ul class="mt-6 space-y-3 text-sm text-slate-300">
+        ${features
+          .map(
+            (feature) => /*html*/ `
+              <li class="flex items-center gap-2">
+                <span class="text-indigo-400" aria-hidden="true">✓</span>
+                ${feature}
+              </li>
+            `
+          )
+          .join('')}
+      </ul>
+
+      <!-- Botón del plan: mt-auto lo empuja al final de la tarjeta.
+           Lleva al formulario de prueba gratuita (#cta) -->
+      <a href="#cta" class="mt-8 rounded-lg border border-slate-700 bg-slate-800/60 px-6 py-3 text-center font-semibold text-slate-200 transition hover:bg-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400">
+        ${cta}
+      </a>
+    </article>
+  `;
+}
+
 // Pinta la sección dentro del contenedor que le pasa main.js
 // (el <section id="precios">).
 export function renderPricing(container) {
@@ -57,8 +103,12 @@ export function renderPricing(container) {
         </p>
       </div>
 
-      <!-- Aquí se meterán las tarjetas de los planes (parte 3) -->
-      <div id="pricing-grid" class="mt-14 grid gap-6"></div>
+      <!-- Grid de tarjetas: 1 columna en móvil (con ancho máximo para que no queden
+           demasiado anchas) y 3 columnas en escritorio (lg:).
+           plans.map() convierte cada plan en su tarjeta y .join('') las une en un string -->
+      <div id="pricing-grid" class="mx-auto mt-14 grid max-w-md gap-6 lg:max-w-none lg:grid-cols-3">
+        ${plans.map(planCard).join('')}
+      </div>
     </div>
   `;
 }
