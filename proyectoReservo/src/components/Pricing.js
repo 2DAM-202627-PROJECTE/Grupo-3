@@ -149,10 +149,38 @@ export function renderPricing(container) {
         </p>
       </div>
 
+      <!-- Interruptor mensual/anual: "Mensual" [interruptor] "Anual" "-20 %" -->
+      <div class="mt-10 flex items-center justify-center gap-3 text-sm font-medium">
+        <span class="text-slate-300">Mensual</span>
+
+        <!-- El interruptor es un <button> con role="switch": así los lectores de pantalla
+             lo anuncian como un interruptor y se puede usar con el teclado (Tab + Espacio).
+             aria-checked indica si está activado ("true" = anual) y aria-label le pone nombre.
+             Todo el aspecto depende de aria-checked, con las variantes de Tailwind:
+               - aria-checked:bg-indigo-600 → el fondo se vuelve índigo al activarlo
+               - group + group-aria-checked:translate-x-6 → la bolita se mueve a la derecha
+             Así, en la parte 3 el JavaScript solo tendrá que cambiar aria-checked -->
+        <button
+          type="button"
+          id="billing-toggle"
+          role="switch"
+          aria-checked="false"
+          aria-label="Pago anual"
+          class="group relative inline-flex h-7 w-12 shrink-0 items-center rounded-full bg-slate-700 transition aria-checked:bg-indigo-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
+        >
+          <!-- Bolita del interruptor: empieza a la izquierda (translate-x-1) -->
+          <span class="inline-block h-5 w-5 translate-x-1 rounded-full bg-white transition group-aria-checked:translate-x-6"></span>
+        </button>
+
+        <span class="text-slate-300">Anual</span>
+        <!-- Etiqueta con el descuento del pago anual (apartado 2.4 del documento) -->
+        <span class="rounded-full bg-cyan-500/10 px-2 py-0.5 text-xs font-semibold text-cyan-300">-20 %</span>
+      </div>
+
       <!-- Grid de tarjetas: 1 columna en móvil (con ancho máximo para que no queden
            demasiado anchas) y 3 columnas en escritorio (lg:).
            plans.map() convierte cada plan en su tarjeta y .join('') las une en un string -->
-      <div id="pricing-grid" class="mx-auto mt-14 grid max-w-md gap-6 lg:max-w-none lg:grid-cols-3">
+      <div id="pricing-grid" class="mx-auto mt-12 grid max-w-md gap-6 lg:max-w-none lg:grid-cols-3">
         ${plans.map(planCard).join('')}
       </div>
     </div>
