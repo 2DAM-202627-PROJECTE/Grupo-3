@@ -215,8 +215,10 @@ export function renderPricing(container) {
         </button>
 
         <span data-billing-label="annual" class="cursor-pointer select-none py-3 text-slate-400 transition-colors">Anual</span>
-        <!-- Etiqueta con el descuento del pago anual (apartado 2.4 del documento) -->
-        <span class="rounded-full bg-cyan-500/10 px-2 py-0.5 text-xs font-semibold text-cyan-300">-20 %</span>
+        <!-- Etiqueta con el descuento del pago anual (apartado 2.4 del documento).
+             En mensual es suave (fondo cian transparente) y en anual se rellena de cian
+             para reforzar que el descuento se está aplicando (lo cambia setBilling) -->
+        <span data-billing-badge class="rounded-full bg-cyan-500/10 px-2 py-0.5 text-xs font-semibold text-cyan-300 transition-colors">-20 %</span>
       </div>
 
       <!-- Grid de tarjetas: 1 columna en móvil (con ancho máximo para que no queden
@@ -240,12 +242,23 @@ function highlightLabel(label, active) {
   label.classList.toggle('text-slate-400', !active);
 }
 
+// Pone la etiqueta "-20 %" rellena (descuento activo) o suave (inactivo).
+//   - activo:   fondo cian sólido y texto casi negro (slate-950), que contrasta bien sobre el cian
+//   - inactivo: fondo cian transparente y texto cian claro, como al cargar la página
+function highlightBadge(badge, active) {
+  badge.classList.toggle('bg-cyan-500', active);
+  badge.classList.toggle('text-slate-950', active);
+  badge.classList.toggle('bg-cyan-500/10', !active);
+  badge.classList.toggle('text-cyan-300', !active);
+}
+
 // Lógica del interruptor mensual/anual.
 // Al pulsarlo cambia su estado y actualiza solo los precios, sin volver a pintar toda la sección.
 function setupBillingToggle(container) {
   const toggle = container.querySelector('#billing-toggle');
   const monthlyLabel = container.querySelector('[data-billing-label="monthly"]');
   const annualLabel = container.querySelector('[data-billing-label="annual"]');
+  const discountBadge = container.querySelector('[data-billing-badge]');
 
   // Aplica un modo de facturación: annual = true (anual) o false (mensual).
   // Todo lo que tiene que cambiar al cambiar de modo está aquí, en un solo sitio.
@@ -263,6 +276,9 @@ function setupBillingToggle(container) {
     // Resalta la palabra de la opción activa y apaga la otra
     highlightLabel(monthlyLabel, !annual);
     highlightLabel(annualLabel, annual);
+
+    // Rellena la etiqueta "-20 %" solo cuando el descuento anual está activo
+    highlightBadge(discountBadge, annual);
 
     // Recorre los bloques de precio que tienen data-price (Básico y Pro)
     // y los vuelve a generar con el precio mensual o el anual, con un fundido:
