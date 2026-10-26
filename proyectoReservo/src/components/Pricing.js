@@ -221,6 +221,12 @@ export function renderPricing(container) {
         <span data-billing-badge class="rounded-full bg-cyan-500/10 px-2 py-0.5 text-xs font-semibold text-cyan-300 transition-colors">-20 %</span>
       </div>
 
+      <!-- Aviso para lectores de pantalla. No se ve (sr-only = "screen reader only"),
+           pero aria-live="polite" hace que el lector lea su texto cada vez que cambia,
+           cuando termine lo que esté diciendo. Empieza vacío para que no se lea nada al cargar.
+           Así, quien no ve la pantalla se entera de que los precios han cambiado -->
+      <p data-billing-status class="sr-only" aria-live="polite"></p>
+
       <!-- Grid de tarjetas: 1 columna en móvil (con ancho máximo para que no queden
            demasiado anchas) y 3 columnas en escritorio (lg:).
            plans.map() convierte cada plan en su tarjeta y .join('') las une en un string -->
@@ -259,6 +265,7 @@ function setupBillingToggle(container) {
   const monthlyLabel = container.querySelector('[data-billing-label="monthly"]');
   const annualLabel = container.querySelector('[data-billing-label="annual"]');
   const discountBadge = container.querySelector('[data-billing-badge]');
+  const status = container.querySelector('[data-billing-status]');
 
   // Aplica un modo de facturación: annual = true (anual) o false (mensual).
   // Todo lo que tiene que cambiar al cambiar de modo está aquí, en un solo sitio.
@@ -279,6 +286,12 @@ function setupBillingToggle(container) {
 
     // Rellena la etiqueta "-20 %" solo cuando el descuento anual está activo
     highlightBadge(discountBadge, annual);
+
+    // Texto que leerá el lector de pantalla (por el aria-live del párrafo).
+    // textContent y no innerHTML: es solo texto, sin etiquetas
+    status.textContent = annual
+      ? 'Mostrando precios con pago anual, con un 20 % de descuento'
+      : 'Mostrando precios con pago mensual';
 
     // Recorre los bloques de precio que tienen data-price (Básico y Pro)
     // y los vuelve a generar con el precio mensual o el anual, con un fundido:
