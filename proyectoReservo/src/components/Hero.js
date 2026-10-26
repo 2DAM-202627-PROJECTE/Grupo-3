@@ -15,6 +15,22 @@ export function renderHero(container) {
           Las reservas de tu negocio,
           <span class="bg-linear-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">en piloto automático</span>
         </h1>
+
+        <p class="mt-6 text-lg leading-relaxed text-slate-400">
+          Gimnasios, restaurantes, peluquerías o clínicas: tus clientes reservan online 24/7
+          y tú te olvidas del teléfono y las libretas.
+        </p>
+
+        <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+          <a href="#cta" class="rounded-lg bg-indigo-600 px-6 py-3 text-center font-semibold text-white transition hover:bg-indigo-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400">
+            Empieza gratis 14 días
+          </a>
+          <a href="#como-funciona" class="rounded-lg border border-slate-700 bg-slate-800/60 px-6 py-3 text-center font-semibold text-slate-200 transition hover:bg-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400">
+            Ver cómo funciona
+          </a>
+        </div>
+
+        <p class="mt-4 text-sm text-slate-500">Sin tarjeta de crédito · Cancela cuando quieras</p>
       </div>
 
       <!-- Columna derecha: tarjeta de reserva (la hace Arnau en el #9) -->
