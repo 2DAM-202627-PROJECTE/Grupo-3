@@ -13,26 +13,45 @@
 //   - cta:         texto del botón (CTA = "call to action", llamada a la acción)
 // El precio se guarda como número y no como texto ("19€") para poder
 // calcular el precio anual más adelante (issue #16).
+// Los datos siguen la tabla del apartado 2.4 del documento de planificación.
 const plans = [
   {
     name: 'Básico',
-    description: 'Para empezar',
+    description: 'Autónomos y negocios con un profesional',
     price: 19,
-    features: ['1 profesional', 'Reservas ilimitadas', 'Recordatorios por email'],
+    features: [
+      '1 profesional',
+      'Reservas online 24/7',
+      'Recordatorios por email',
+      'Estadísticas básicas',
+      'Soporte por email',
+    ],
     cta: 'Elegir plan',
   },
   {
     name: 'Pro',
-    description: 'Para negocios en crecimiento',
+    description: 'Negocios con equipo',
     price: 49,
-    features: ['Hasta 10 profesionales', 'SMS y WhatsApp', 'Pagos online y bonos', 'Estadísticas'],
+    features: [
+      'Hasta 5 profesionales',
+      'Recordatorios por email y WhatsApp',
+      'Pagos y señales',
+      'Estadísticas completas',
+      'Soporte por email y chat',
+    ],
     cta: 'Empezar prueba',
   },
   {
     name: 'Empresa',
-    description: 'Cadenas y franquicias',
+    description: 'Cadenas y negocios con varios locales',
     price: null,
-    features: ['Profesionales ilimitados', 'Varios locales', 'API e integraciones', 'Soporte prioritario'],
+    features: [
+      'Profesionales ilimitados',
+      'Locales ilimitados',
+      'Recordatorios por email y WhatsApp',
+      'Pagos y señales',
+      'Gestor dedicado',
+    ],
     cta: 'Contactar',
   },
 ];
