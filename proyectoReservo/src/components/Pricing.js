@@ -178,9 +178,11 @@ export function renderPricing(container) {
         </p>
       </div>
 
-      <!-- Interruptor mensual/anual: "Mensual" [interruptor] "Anual" "-20 %" -->
+      <!-- Interruptor mensual/anual: "Mensual" [interruptor] "Anual" "-20 %".
+           La opción activa sale en blanco y la otra en gris (lo cambia setBilling).
+           data-billing-label sirve para encontrar cada palabra desde el JavaScript -->
       <div class="mt-10 flex items-center justify-center gap-3 text-sm font-medium">
-        <span class="text-slate-300">Mensual</span>
+        <span data-billing-label="monthly" class="text-white transition-colors">Mensual</span>
 
         <!-- El interruptor es un <button> con role="switch": así los lectores de pantalla
              lo anuncian como un interruptor y se puede usar con el teclado (Tab + Espacio).
@@ -201,7 +203,7 @@ export function renderPricing(container) {
           <span class="inline-block h-5 w-5 translate-x-1 rounded-full bg-white transition group-aria-checked:translate-x-6"></span>
         </button>
 
-        <span class="text-slate-300">Anual</span>
+        <span data-billing-label="annual" class="text-slate-400 transition-colors">Anual</span>
         <!-- Etiqueta con el descuento del pago anual (apartado 2.4 del documento) -->
         <span class="rounded-full bg-cyan-500/10 px-2 py-0.5 text-xs font-semibold text-cyan-300">-20 %</span>
       </div>
@@ -219,18 +221,31 @@ export function renderPricing(container) {
   setupBillingToggle(container);
 }
 
+// Pone una palabra del interruptor en blanco (activa) o en gris (inactiva).
+// El gris es slate-400 y no slate-500 para mantener un contraste mínimo de 4.5:1 (apartado 3.2).
+// classList.toggle(clase, condición) añade la clase si la condición es true y la quita si es false.
+function highlightLabel(label, active) {
+  label.classList.toggle('text-white', active);
+  label.classList.toggle('text-slate-400', !active);
+}
+
 // Lógica del interruptor mensual/anual.
 // Al pulsarlo cambia su estado y actualiza solo los precios, sin volver a pintar toda la sección.
 function setupBillingToggle(container) {
   const toggle = container.querySelector('#billing-toggle');
+  const monthlyLabel = container.querySelector('[data-billing-label="monthly"]');
+  const annualLabel = container.querySelector('[data-billing-label="annual"]');
 
-  toggle.addEventListener('click', () => {
-    // Estado nuevo: si estaba en "false" (mensual) pasa a anual, y al revés
-    const annual = toggle.getAttribute('aria-checked') !== 'true';
-
+  // Aplica un modo de facturación: annual = true (anual) o false (mensual).
+  // Todo lo que tiene que cambiar al cambiar de modo está aquí, en un solo sitio.
+  function setBilling(annual) {
     // Al cambiar aria-checked, Tailwind mueve la bolita y cambia el color solo
     // (y el lector de pantalla anuncia "activado" / "desactivado")
     toggle.setAttribute('aria-checked', String(annual));
+
+    // Resalta la palabra de la opción activa y apaga la otra
+    highlightLabel(monthlyLabel, !annual);
+    highlightLabel(annualLabel, annual);
 
     // Recorre los bloques de precio que tienen data-price (Básico y Pro)
     // y los vuelve a generar con el precio mensual o el anual.
@@ -239,5 +254,11 @@ function setupBillingToggle(container) {
       const price = Number(block.dataset.price); // data-price="19" → 19 (número)
       block.innerHTML = priceBlock(price, annual);
     });
+  }
+
+  // Al pulsar el interruptor se pasa al modo contrario del actual
+  toggle.addEventListener('click', () => {
+    const isAnnual = toggle.getAttribute('aria-checked') === 'true';
+    setBilling(!isAnnual);
   });
 }
