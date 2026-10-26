@@ -4,6 +4,39 @@
 // (El plan Pro destacado y el interruptor mensual/anual son el issue #16)
 // =============================================================
 
+// Datos de los planes.
+// Cada objeto es un plan con:
+//   - name:        nombre del plan
+//   - description: frase corta debajo del nombre
+//   - price:       precio mensual en euros (número). null = "A medida"
+//   - features:    lista de características (cada una saldrá con un ✓)
+//   - cta:         texto del botón (CTA = "call to action", llamada a la acción)
+// El precio se guarda como número y no como texto ("19€") para poder
+// calcular el precio anual más adelante (issue #16).
+const plans = [
+  {
+    name: 'Básico',
+    description: 'Para empezar',
+    price: 19,
+    features: ['1 profesional', 'Reservas ilimitadas', 'Recordatorios por email'],
+    cta: 'Elegir plan',
+  },
+  {
+    name: 'Pro',
+    description: 'Para negocios en crecimiento',
+    price: 49,
+    features: ['Hasta 10 profesionales', 'SMS y WhatsApp', 'Pagos online y bonos', 'Estadísticas'],
+    cta: 'Empezar prueba',
+  },
+  {
+    name: 'Empresa',
+    description: 'Cadenas y franquicias',
+    price: null,
+    features: ['Profesionales ilimitados', 'Varios locales', 'API e integraciones', 'Soporte prioritario'],
+    cta: 'Contactar',
+  },
+];
+
 // Pinta la sección dentro del contenedor que le pasa main.js
 // (el <section id="precios">).
 export function renderPricing(container) {
