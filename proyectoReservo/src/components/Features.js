@@ -1,40 +1,50 @@
 // =============================================================
-// Features.js — Sección de funcionalidades (issue #11)
-// Muestra un título, un subtítulo y un grid de 6 tarjetas.
+// Features.js — Sección de funcionalidades (issue #11 e issue #13)
+// Muestra un título, un subtítulo y un grid de 6 tarjetas con iconos Lucide.
 // =============================================================
 
+import {
+  createIcons,
+  Calendar,
+  Bell,
+  CreditCard,
+  Users,
+  ChartColumn,
+  Smartphone,
+} from 'lucide';
+
 // Datos de las tarjetas.
-// Cada objeto es una funcionalidad: un icono (emoji), un título y un texto.
+// Cada objeto es una funcionalidad: un icono (nombre Lucide), un título y un texto.
 // Si queremos añadir, quitar o cambiar una tarjeta, solo hay que tocar este array:
 // el HTML se genera automáticamente a partir de él (ver featureCard).
 const features = [
   {
-    icon: '📅',
+    icon: 'calendar',
     title: 'Reservas online 24/7',
     text: 'Tu propia página de reservas lista en minutos, integrable en tu web o Instagram.',
   },
   {
-    icon: '🔔',
+    icon: 'bell',
     title: 'Recordatorios automáticos',
     text: 'Email, SMS y WhatsApp antes de cada cita. Reduce los "no-shows" hasta un 70%.',
   },
   {
-    icon: '💳',
+    icon: 'credit-card',
     title: 'Pagos y señales',
     text: 'Cobra por adelantado, pide una señal o vende bonos y membresías.',
   },
   {
-    icon: '👥',
+    icon: 'users',
     title: 'Gestión de equipo',
     text: 'Horarios por empleado, salas o mesas. Cada uno ve solo su agenda.',
   },
   {
-    icon: '📊',
+    icon: 'chart-column',
     title: 'Estadísticas',
     text: 'Ocupación, ingresos y clientes recurrentes en un panel claro.',
   },
   {
-    icon: '📱',
+    icon: 'smartphone',
     title: 'App móvil',
     text: 'Gestiona tu negocio desde el móvil, estés donde estés.',
   },
@@ -50,7 +60,9 @@ function featureCard({ icon, title, text }) {
          son más pequeños y crecen a partir de sm: -->
     <article class="rounded-xl border border-slate-800 bg-slate-800/30 p-4 transition hover:border-indigo-500/50 sm:p-6">
       <!-- Icono: es decorativo (el título ya dice lo que es), así que aria-hidden -->
-      <div class="text-2xl sm:text-3xl" aria-hidden="true">${icon}</div>
+      <div class="text-indigo-400" aria-hidden="true">
+        <i data-lucide="${icon}" class="h-6 w-6 sm:h-7 sm:w-7"></i>
+      </div>
       <h3 class="mt-3 text-base font-semibold text-white sm:mt-4 sm:text-lg">${title}</h3>
       <p class="mt-2 text-sm leading-relaxed text-slate-400">${text}</p>
     </article>
@@ -87,4 +99,17 @@ export function renderFeatures(container) {
       </div>
     </div>
   `;
+
+  // Renderizar los iconos de Lucide dentro del contenedor de la sección
+  createIcons({
+    root: container,
+    icons: {
+      Calendar,
+      Bell,
+      CreditCard,
+      Users,
+      ChartColumn,
+      Smartphone,
+    },
+  });
 }
