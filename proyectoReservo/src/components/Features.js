@@ -9,7 +9,7 @@ import {
   Bell,
   CreditCard,
   Users,
-  BarChart3,
+  ChartColumn,
   Smartphone,
 } from 'lucide';
 
@@ -39,7 +39,7 @@ const features = [
     text: 'Horarios por empleado, salas o mesas. Cada uno ve solo su agenda.',
   },
   {
-    icon: 'bar-chart-3',
+    icon: 'chart-column',
     title: 'Estadísticas',
     text: 'Ocupación, ingresos y clientes recurrentes en un panel claro.',
   },
@@ -108,7 +108,7 @@ export function renderFeatures(container) {
       Bell,
       CreditCard,
       Users,
-      BarChart3,
+      ChartColumn,
       Smartphone,
     },
   });
