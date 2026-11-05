@@ -9,6 +9,7 @@
 //   3. Tarjeta y pestaña de un plan → estilos de los botones, planCard y planTab
 //   4. HTML de la sección        → renderPricing (lo llama main.js)
 //   5. Interruptor mensual/anual → resaltar opciones y setupBillingToggle
+//   6. Pestañas de los planes    → setupPlanTabs (solo en móvil: un plan a la vez)
 // =============================================================
 
 // -------------------------------------------------------------
@@ -302,8 +303,9 @@ export function renderPricing(container) {
     </div>
   `;
 
-  // Una vez pintado el HTML, se activa el interruptor
+  // Una vez pintado el HTML, se activan el interruptor y las pestañas
   setupBillingToggle(container);
+  setupPlanTabs(container);
 }
 
 // -------------------------------------------------------------
@@ -396,4 +398,41 @@ function setupBillingToggle(container) {
   // Con el teclado no hace falta: el interruptor ya se puede usar con Tab + Espacio
   monthlyLabel.addEventListener('click', () => setBilling(false));
   annualLabel.addEventListener('click', () => setBilling(true));
+}
+
+// -------------------------------------------------------------
+// 6. Pestañas de los planes (móvil)
+// -------------------------------------------------------------
+
+// Lógica de las pestañas: al pulsar una, se muestra su plan y se ocultan los otros.
+// Solo se nota en móvil y tablet: en escritorio las pestañas no se ven y la clase
+// max-lg:hidden no hace nada, así que siempre se ven las tres tarjetas.
+function setupPlanTabs(container) {
+  // --- Elementos: las 3 pestañas ---
+  const tabs = container.querySelectorAll('[role="tab"]');
+
+  // --- Seleccionar una pestaña ---
+  // Marca la pestaña elegida y enseña su tarjeta; a las demás les hace lo contrario.
+  function selectTab(selectedTab) {
+    tabs.forEach((tab) => {
+      const isSelected = tab === selectedTab;
+
+      // aria-selected cambia el color de la pestaña (aria-selected:bg-indigo-600)
+      // y hace que el lector de pantalla diga "seleccionada"
+      tab.setAttribute('aria-selected', String(isSelected));
+
+      // Solo la pestaña seleccionada se alcanza con la tecla Tab
+      tab.tabIndex = isSelected ? 0 : -1;
+
+      // aria-controls guarda el id de la tarjeta de esta pestaña ("plan-pro").
+      // Si no está seleccionada, se le pone max-lg:hidden para ocultarla en móvil
+      const panel = container.querySelector(`#${tab.getAttribute('aria-controls')}`);
+      panel.classList.toggle('max-lg:hidden', !isSelected);
+    });
+  }
+
+  // --- Clics del usuario ---
+  tabs.forEach((tab) => {
+    tab.addEventListener('click', () => selectTab(tab));
+  });
 }
