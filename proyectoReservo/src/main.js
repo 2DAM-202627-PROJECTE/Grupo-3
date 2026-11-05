@@ -6,7 +6,7 @@
 //   <footer>  → pie de página
 //
 // Partes del archivo:
-//   1. Importaciones            → estilos y funciones render de cada componente
+//   1. Importaciones            → funciones render de cada componente
 //   2. Lista de secciones       → el orden de la página
 //   3. Estructura de la página  → <nav>, <main> con sus secciones y <footer>
 //   4. Newsletter               → dentro del <footer>
@@ -17,8 +17,10 @@
 // 1. Importaciones
 // -------------------------------------------------------------
 
-// Estilos globales (Tailwind + style.css). Vite los mete en la página al importarlos.
-import './style.css';
+// Los estilos (style.css con Tailwind) no se importan aquí: van con un <link> en
+// index.html, igual que en las páginas legales. Si una página los importara desde
+// JavaScript y otra con <link>, Firefox guardaría en caché la versión CSS y, al
+// volver atrás a la landing, bloquearía este archivo y la página saldría en blanco.
 
 // Funciones que pintan cada sección. Cada componente exporta un renderX(container)
 // que recibe su <section> y le mete el HTML dentro.
