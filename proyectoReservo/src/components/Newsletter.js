@@ -54,7 +54,9 @@ export function renderNewsletter(container) {
         <!-- aria-labelledby: el lector de pantalla anuncia el formulario con el texto del título.
              novalidate: desactiva los avisos del navegador para usar los nuestros (setupNewsletter),
              que salen como texto debajo del formulario y son iguales en todos los navegadores -->
-        <form id="newsletter-form" class="mt-4" aria-labelledby="newsletter-title" novalidate>
+        <!-- text-left: el título y la frase van centrados, pero dentro del formulario la
+             etiqueta, la casilla y el mensaje se alinean a la izquierda con el campo de email -->
+        <form id="newsletter-form" class="mt-6 text-left" aria-labelledby="newsletter-title" novalidate>
           <!-- Etiqueta visible del campo: el documento pide que cada campo tenga la suya (apartado 3.2).
                for="newsletter-email" la une al input, así al pulsarla se pone el cursor en el campo -->
           <label for="newsletter-email" class="text-sm font-medium text-slate-300">Tu email</label>
@@ -90,9 +92,7 @@ export function renderNewsletter(container) {
           <!-- Consentimiento para guardar el email (RGPD, apartado 1.5 del documento).
                El <input> va dentro del <label>, así al pulsar el texto también se marca la casilla.
                accent-indigo-500 pinta la casilla con el color de la marca -->
-          <!-- justify-center: la casilla y su texto quedan centrados como el resto.
-               text-left: si el texto ocupa dos líneas (en móvil), se alinea a la izquierda junto a la casilla -->
-          <label class="mt-3 flex items-start justify-center gap-2 text-left text-sm text-slate-400">
+          <label class="mt-3 flex items-start gap-2 text-sm text-slate-400">
             <input
               type="checkbox"
               name="consent"
