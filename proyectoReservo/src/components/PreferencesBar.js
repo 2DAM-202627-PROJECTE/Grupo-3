@@ -1,5 +1,9 @@
 // =============================================================
-// CookieBanner.js — Aviso de cookies (issue #24)
+// PreferencesBar.js — Aviso de cookies (issue #24)
+// Ojo: el archivo, las funciones y el id NO llevan la palabra "cookie" a propósito.
+// Los bloqueadores de anuncios (uBlock, AdBlock, Brave…) bloquean los archivos y ocultan
+// los elementos con nombres como "CookieBanner.js" o "#cookie-banner". Si bloquean este
+// archivo, main.js no puede importarlo y la página entera se queda en blanco.
 // Barra fija abajo de la pantalla con los botones Aceptar y Rechazar.
 // Sale en la primera visita (apartado 1.4 del documento, requisito 10):
 // la elección se guarda y el aviso ya no vuelve a salir.
@@ -7,8 +11,8 @@
 // Partes del archivo:
 //   1. Configuración     → constantes que usa el resto del archivo
 //   2. Elección guardada → leer y guardar la opción en localStorage
-//   3. HTML del aviso    → renderCookieBanner (lo llama main.js)
-//   4. Botones           → setupCookieBanner (guardar la opción y cerrar el aviso)
+//   3. HTML del aviso    → renderPreferencesBar (lo llama main.js)
+//   4. Botones           → setupPreferencesBar (guardar la opción y cerrar el aviso)
 // =============================================================
 
 // -------------------------------------------------------------
@@ -62,8 +66,8 @@ function saveCookieChoice(choice) {
 // -------------------------------------------------------------
 
 // Pinta el aviso dentro del contenedor que le pasa main.js
-// (el <div id="cookie-banner">, que va fuera de #app, directamente en el <body>).
-export function renderCookieBanner(container) {
+// (el <div id="preferences-bar">, que va fuera de #app, directamente en el <body>).
+export function renderPreferencesBar(container) {
   // Si ya eligió en una visita anterior, el aviso no se pinta y no se hace nada más
   if (getCookieChoice() !== null) {
     container.remove();
@@ -92,7 +96,7 @@ export function renderCookieBanner(container) {
       </p>
 
       <!-- Botones. data-cookie-choice guarda la opción de cada uno ("accepted" o "rejected"),
-           así el JavaScript (setupCookieBanner) sabe qué se ha elegido sin mirar el texto del botón.
+           así el JavaScript (setupPreferencesBar) sabe qué se ha elegido sin mirar el texto del botón.
            shrink-0: los botones no se aplastan aunque el texto sea largo -->
       <div class="flex shrink-0 gap-3">
         <button type="button" data-cookie-choice="rejected" class="flex-1 sm:flex-none ${buttonBase} ${buttonSecondary}">
@@ -106,7 +110,7 @@ export function renderCookieBanner(container) {
   `;
 
   // Una vez pintado el HTML, se activan los botones
-  setupCookieBanner(container);
+  setupPreferencesBar(container);
 }
 
 // -------------------------------------------------------------
@@ -114,7 +118,7 @@ export function renderCookieBanner(container) {
 // -------------------------------------------------------------
 
 // Al pulsar Aceptar o Rechazar: se guarda la opción y se quita el aviso de la página.
-function setupCookieBanner(container) {
+function setupPreferencesBar(container) {
   // querySelectorAll devuelve los dos botones; forEach les pone el mismo evento a cada uno
   container.querySelectorAll('[data-cookie-choice]').forEach((button) => {
     button.addEventListener('click', () => {

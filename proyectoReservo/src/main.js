@@ -32,7 +32,7 @@ import { renderFeatures } from './components/Features.js';
 import { renderPricing } from './components/Pricing.js';
 import { renderNewsletter } from './components/Newsletter.js';
 import { renderFooter } from './components/Footer.js';
-import { renderCookieBanner } from './components/CookieBanner.js';
+import { renderPreferencesBar } from './components/PreferencesBar.js';
 
 // -------------------------------------------------------------
 // 2. Lista de secciones
@@ -120,7 +120,9 @@ renderFooter(footerContent);
 
 // Aviso de cookies (issue #24). Va directamente en el <body>, fuera de #app,
 // porque no es parte del contenido: es una barra fija que flota encima de la página.
-const cookieBanner = document.createElement('div');
-cookieBanner.id = 'cookie-banner';
-document.body.appendChild(cookieBanner);
-renderCookieBanner(cookieBanner);
+// Se llama "preferences-bar" y no "cookie-banner" para que no lo bloqueen los
+// bloqueadores de anuncios (ver el comentario al principio de PreferencesBar.js)
+const preferencesBar = document.createElement('div');
+preferencesBar.id = 'preferences-bar';
+document.body.appendChild(preferencesBar);
+renderPreferencesBar(preferencesBar);
