@@ -4,7 +4,17 @@
 //   <nav>     → barra de navegación
 //   <main>    → contenido principal, con un <section> por componente
 //   <footer>  → pie de página
+//
+// Partes del archivo:
+//   1. Importaciones            → estilos y funciones render de cada componente
+//   2. Lista de secciones       → el orden de la página
+//   3. Estructura de la página  → <nav>, <main> con sus secciones y <footer>
+//   4. Newsletter               → dentro del <footer>
 // =============================================================
+
+// -------------------------------------------------------------
+// 1. Importaciones
+// -------------------------------------------------------------
 
 // Estilos globales (Tailwind + style.css). Vite los mete en la página al importarlos.
 import './style.css';
@@ -17,6 +27,10 @@ import { renderHero } from './components/Hero.js';
 import { renderFeatures } from './components/Features.js';
 import { renderPricing } from './components/Pricing.js';
 import { renderNewsletter } from './components/Newsletter.js';
+
+// -------------------------------------------------------------
+// 2. Lista de secciones
+// -------------------------------------------------------------
 
 // Lista de secciones de la página, en el orden en que aparecen.
 //   - id:     el id del <section>. Los enlaces del menú y los botones usan estos
@@ -35,6 +49,10 @@ const sections = [
   { id: 'faq', render: null }, // Faq.js
   { id: 'cta', render: null }, // Cta.js
 ];
+
+// -------------------------------------------------------------
+// 3. Estructura de la página
+// -------------------------------------------------------------
 
 // Contenedor raíz que hay en index.html. Todo lo que se pinta va dentro de él.
 const app = document.querySelector('#app');
@@ -68,6 +86,10 @@ sections.forEach(({ id, render }) => {
 const footer = document.createElement('footer');
 footer.id = 'footer';
 app.appendChild(footer);
+
+// -------------------------------------------------------------
+// 4. Newsletter
+// -------------------------------------------------------------
 
 // Newsletter (issue #24). Va dentro del pie de página, en su propio contenedor,
 // para que Footer.js (issue #19) no tenga que tocarla: cuando el footer esté hecho,

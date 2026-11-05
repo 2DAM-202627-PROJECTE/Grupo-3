@@ -10,7 +10,6 @@
 //   4. Validación y envío     → setupNewsletter (errores y confirmación)
 // =============================================================
 
-
 // -------------------------------------------------------------
 // 1. Configuración
 // -------------------------------------------------------------
@@ -27,7 +26,6 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 // No hay servidor, así que la "lista de distribución" del documento (apartado 1.4)
 // se guarda aquí. localStorage solo guarda texto: la lista se pasa a JSON y al revés.
 const STORAGE_KEY = 'reservo-newsletter';
-
 
 // -------------------------------------------------------------
 // 2. HTML del formulario
@@ -107,7 +105,6 @@ export function renderNewsletter(container) {
   // Una vez pintado el HTML, se activa la validación del formulario
   setupNewsletter(container);
 }
-
 
 // -------------------------------------------------------------
 // 3. Lista de suscriptores (localStorage)

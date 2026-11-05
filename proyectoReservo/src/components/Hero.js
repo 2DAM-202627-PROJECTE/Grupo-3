@@ -2,7 +2,16 @@
 // Hero.js — Primera sección de la página (issue #8)
 // Izquierda: badge, título, subtítulo y botones.
 // Derecha: hueco para la tarjeta de reserva (issue #9, Arnau).
+//
+// Partes del archivo:
+//   1. HTML de la sección → renderHero (lo llama main.js)
+//      Dentro del HTML: columna de texto (badge, título, subtítulo, botones)
+//      y columna de la tarjeta de reserva
 // =============================================================
+
+// -------------------------------------------------------------
+// 1. HTML de la sección
+// -------------------------------------------------------------
 
 // Pinta el Hero dentro del contenedor que le pasa main.js
 // (el <section id="hero">).
