@@ -25,8 +25,10 @@ export function renderHero(container) {
     <!-- Contenedor centrado. Es un grid: 1 columna en móvil y 2 en escritorio (lg:grid-cols-2) -->
     <div class="mx-auto grid max-w-7xl items-center gap-12 px-4 py-20 sm:px-6 lg:grid-cols-2 lg:px-8 lg:py-28">
 
-      <!-- Columna izquierda: texto y botones -->
-      <div id="hero-text" class="max-w-xl">
+      <!-- Columna izquierda: texto y botones.
+           En móvil y tablet va centrada, como en el mockup móvil (mx-auto + text-center).
+           En escritorio (lg:) vuelve a la izquierda, junto a la tarjeta de reserva -->
+      <div id="hero-text" class="mx-auto max-w-xl text-center lg:mx-0 lg:text-left">
 
         <!-- Badge: etiqueta en forma de píldora con un puntito delante -->
         <span class="inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-3 py-1 text-xs font-medium text-indigo-300">
@@ -51,7 +53,9 @@ export function renderHero(container) {
 
         <!-- Botones: apilados en móvil (flex-col) y en fila a partir de sm (sm:flex-row).
              Son enlaces <a> porque llevan a otras secciones de la página -->
-        <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+        <!-- sm:justify-center: cuando van en fila (tablet), los botones quedan centrados como el texto;
+             lg:justify-start: en escritorio vuelven a la izquierda -->
+        <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center lg:justify-start">
           <!-- Botón principal: va al formulario de prueba gratuita.
                focus-visible:ring muestra un anillo al navegar con el teclado (accesibilidad) -->
           <a href="#cta" class="rounded-lg bg-indigo-600 px-6 py-3 text-center font-semibold text-white transition hover:bg-indigo-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400">
