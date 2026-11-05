@@ -68,6 +68,8 @@ export function renderNewsletter(container) {
                  min-w-0 + flex-1: el campo ocupa el espacio que deja el botón sin desbordarse.
                  aria-describedby: une el campo con el mensaje de abajo, así el lector de pantalla
                  lee el error al volver al campo.
+                 bg-slate-800 + border-slate-600: fondo y borde más claros que el fondo del footer,
+                 para que el campo se distinga bien. Al pasar el ratón el borde se aclara un poco.
                  aria-invalid:border-red-400: si el JavaScript marca el campo como erróneo
                  (aria-invalid="true"), el borde se pone rojo -->
             <input
@@ -78,7 +80,7 @@ export function renderNewsletter(container) {
               placeholder="tu@email.com"
               required
               aria-describedby="newsletter-message"
-              class="min-w-0 flex-1 rounded-lg border border-slate-700 bg-slate-800/60 px-4 py-3 text-white placeholder:text-slate-400 aria-invalid:border-red-400 ${focusRing}"
+              class="min-w-0 flex-1 rounded-lg border border-slate-600 bg-slate-800 px-4 py-3 text-white placeholder:text-slate-400 transition hover:border-slate-500 aria-invalid:border-red-400 ${focusRing}"
             />
             <!-- Botón principal, con el mismo estilo que el del Hero -->
             <button
@@ -91,13 +93,15 @@ export function renderNewsletter(container) {
 
           <!-- Consentimiento para guardar el email (RGPD, apartado 1.5 del documento).
                El <input> va dentro del <label>, así al pulsar el texto también se marca la casilla.
-               accent-indigo-500 pinta la casilla con el color de la marca -->
+               accent-indigo-500 pinta la casilla con el color de la marca.
+               mt-0.5: la línea de texto mide 20 px y la casilla 16 px; bajándola 2 px queda
+               centrada con la primera línea (si el texto ocupa dos, sigue alineada con la de arriba) -->
           <label class="mt-3 flex items-start gap-2 text-sm text-slate-400">
             <input
               type="checkbox"
               name="consent"
               required
-              class="mt-1 h-4 w-4 shrink-0 accent-indigo-500 ${focusRing}"
+              class="mt-0.5 h-4 w-4 shrink-0 accent-indigo-500 ${focusRing}"
             />
             Acepto que Reservo guarde mi email para enviarme la newsletter.
           </label>
