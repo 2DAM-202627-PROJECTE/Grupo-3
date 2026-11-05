@@ -2,7 +2,16 @@
 // HowItWorks.js — Sección "Cómo funciona" en 3 pasos (issue #12)
 // Muestra el título, subtítulo y 3 pasos explicativos con
 // círculo numerado en degradado, desarrollados con detalle.
+//
+// Partes del archivo:
+//   1. Datos de los pasos   → el array steps
+//   2. Un paso              → stepItem
+//   3. HTML de la sección   → renderHowItWorks (lo llama main.js)
 // =============================================================
+
+// -------------------------------------------------------------
+// 1. Datos de los pasos
+// -------------------------------------------------------------
 
 // Datos de los 3 pasos.
 // El profesor pidió desarrollarlos con más detalle (issue #12).
@@ -28,13 +37,19 @@ const steps = [
   },
 ];
 
+// -------------------------------------------------------------
+// 2. Un paso
+// -------------------------------------------------------------
+
 // Genera el HTML de una tarjeta/paso
 function stepItem({ number, title, text }) {
   return /*html*/ `
     <article class="flex flex-col items-center text-center">
-      <!-- Círculo numerado con degradado índigo a cian -->
-      <div 
-        class="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-tr from-indigo-500 to-cyan-400 text-xl font-bold text-white shadow-lg shadow-indigo-500/25"
+      <!-- Círculo numerado con degradado índigo a cian.
+           bg-linear-to-tr es el nombre de Tailwind 4 (en Tailwind 3 era bg-gradient-to-tr),
+           el mismo que usa el título del Hero -->
+      <div
+        class="flex h-14 w-14 items-center justify-center rounded-full bg-linear-to-tr from-indigo-500 to-cyan-400 text-xl font-bold text-white shadow-lg shadow-indigo-500/25"
         aria-hidden="true"
       >
         ${number}
@@ -53,6 +68,10 @@ function stepItem({ number, title, text }) {
   `;
 }
 
+// -------------------------------------------------------------
+// 3. HTML de la sección
+// -------------------------------------------------------------
+
 // Pinta la sección dentro del contenedor que le pasa main.js (el <section id="como-funciona">)
 export function renderHowItWorks(container) {
   // Fondo más oscuro (bg-slate-950/60) y bordes sutiles para alternar y destacar la sección
@@ -60,7 +79,7 @@ export function renderHowItWorks(container) {
 
   container.innerHTML = /*html*/ `
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      
+
       <!-- Cabecera de la sección -->
       <div class="mx-auto max-w-2xl text-center">
         <h2 class="text-3xl font-bold tracking-tight text-white sm:text-4xl">
@@ -79,4 +98,3 @@ export function renderHowItWorks(container) {
     </div>
   `;
 }
-
