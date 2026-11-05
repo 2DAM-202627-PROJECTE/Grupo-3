@@ -1,7 +1,13 @@
 // =============================================================
 // Hero.js — Primera sección de la página (issue #8)
 // Izquierda: badge, título, subtítulo y botones.
-// Derecha: tarjeta de reserva de ejemplo para FitZone Gym.
+// Derecha: tarjeta de reserva de ejemplo para FitZone Gym (issue #9, Arnau).
+//
+// Partes del archivo:
+//   1. HTML de la sección          → renderHero (lo llama main.js)
+//      Dentro del HTML: columna de texto (badge, título, subtítulo, botones)
+//      y columna de la tarjeta de reserva (días, clases y botón de confirmar)
+//   2. Interactividad de la tarjeta → elegir día, elegir clase y confirmar
 // =============================================================
 
 // -------------------------------------------------------------
@@ -128,12 +134,21 @@ export function renderHero(container) {
     </div>
   `;
 
+  // -----------------------------------------------------------
+  // 2. Interactividad de la tarjeta
+  // -----------------------------------------------------------
+
+  // --- Elementos de la tarjeta que se van a usar ---
+  // Las clases desactivadas (CrossFit, "Completo") no se pueden elegir: :not(:disabled) las deja fuera
   const dayButtons = container.querySelectorAll('.hero-day');
   const classButtons = container.querySelectorAll('.hero-class:not(:disabled)');
   const selectedDay = container.querySelector('#hero-selected-day');
   const confirmButton = container.querySelector('#hero-confirm-booking');
   const bookingStatus = container.querySelector('#hero-booking-status');
 
+  // --- Elegir una clase ---
+  // Al pulsar una clase, se marca esa (aria-pressed="true" y borde índigo)
+  // y se desmarcan las demás. classList.toggle(clase, condición) pone o quita cada clase de Tailwind
   classButtons.forEach((button) => {
     button.addEventListener('click', () => {
       classButtons.forEach((classButton) => {
@@ -144,10 +159,14 @@ export function renderHero(container) {
         classButton.classList.toggle('border-transparent', !isActive);
         classButton.classList.toggle('bg-slate-800/70', !isActive);
       });
+      // Si había un mensaje de reserva confirmada, se oculta: la elección ha cambiado
       bookingStatus.classList.add('hidden');
     });
   });
 
+  // --- Elegir un día ---
+  // Igual que las clases: se resalta el día pulsado (fondo índigo) y se apagan los demás.
+  // Cada botón tiene dos <span>: el primero es el nombre del día ("Mié") y el segundo el número ("24")
   dayButtons.forEach((button) => {
     button.addEventListener('click', () => {
       dayButtons.forEach((dayButton) => {
@@ -163,11 +182,15 @@ export function renderHero(container) {
         dayButton.querySelectorAll('span')[1].classList.toggle('text-white', isActive);
         dayButton.querySelectorAll('span')[1].classList.toggle('text-slate-200', !isActive);
       });
+      // El día elegido se muestra junto a "Clases disponibles" (data-day="Mié 24" → "Mié 24")
       selectedDay.textContent = button.dataset.day;
       bookingStatus.classList.add('hidden');
     });
   });
 
+  // --- Confirmar la reserva ---
+  // Es una simulación: no se envía nada, solo se muestra un mensaje con la clase y el día elegidos.
+  // El mensaje tiene aria-live, así el lector de pantalla lo lee cuando aparece
   confirmButton.addEventListener('click', () => {
     const selectedClass = container.querySelector('.hero-class[aria-pressed="true"]');
     bookingStatus.textContent = `Reserva de prueba confirmada: ${selectedClass.dataset.class} · ${selectedDay.textContent}`;
