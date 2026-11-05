@@ -59,7 +59,7 @@ export function renderNewsletter(container) {
         <form id="newsletter-form" class="mt-6 text-left" aria-labelledby="newsletter-title" novalidate>
           <!-- Etiqueta visible del campo: el documento pide que cada campo tenga la suya (apartado 3.2).
                for="newsletter-email" la une al input, así al pulsarla se pone el cursor en el campo -->
-          <label for="newsletter-email" class="text-sm font-medium text-slate-300">Tu email</label>
+          <label for="newsletter-email" class="text-sm font-medium text-slate-300">Tu email:</label>
 
           <!-- Campo y botón: apilados en móvil (flex-col) y en fila a partir de sm (sm:flex-row) -->
           <div class="mt-2 flex flex-col gap-3 sm:flex-row">
