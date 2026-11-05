@@ -30,6 +30,7 @@
 import { renderHero } from './components/Hero.js';
 import { renderFeatures } from './components/Features.js';
 import { renderPricing } from './components/Pricing.js';
+import { renderHowItWorks } from './components/HowItWorks.js';
 import { renderNewsletter } from './components/Newsletter.js';
 import { renderFooter } from './components/Footer.js';
 import { renderPreferencesBar } from './components/PreferencesBar.js';
@@ -49,7 +50,7 @@ const sections = [
   { id: 'hero', render: renderHero },
   { id: 'sectores', render: null }, // Sectors.js
   { id: 'funciones', render: renderFeatures },
-  { id: 'como-funciona', render: null }, // HowItWorks.js
+  { id: 'como-funciona', render: renderHowItWorks }, // HowItWorks.js
   { id: 'precios', render: renderPricing },
   { id: 'testimonios', render: null }, // Testimonials.js
   { id: 'faq', render: null }, // Faq.js
