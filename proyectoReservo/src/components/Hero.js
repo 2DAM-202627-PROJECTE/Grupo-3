@@ -1,11 +1,11 @@
 // =============================================================
 // Hero.js — Primera sección de la página (issue #8)
-// Izquierda: badge, título, subtítulo y botones.
+// Izquierda: título, subtítulo y botones.
 // Derecha: tarjeta de reserva de ejemplo para FitZone Gym (issue #9, Arnau).
 //
 // Partes del archivo:
 //   1. HTML de la sección          → renderHero (lo llama main.js)
-//      Dentro del HTML: columna de texto (badge, título, subtítulo, botones)
+//      Dentro del HTML: columna de texto (título, subtítulo, botones)
 //      y columna de la tarjeta de reserva (días, clases y botón de confirmar)
 //   2. Interactividad de la tarjeta → elegir día, elegir clase y confirmar
 // =============================================================
@@ -30,15 +30,9 @@ export function renderHero(container) {
            En escritorio (lg:) vuelve a la izquierda, junto a la tarjeta de reserva -->
       <div id="hero-text" class="mx-auto max-w-xl text-center lg:mx-0 lg:text-left">
 
-        <!-- Badge: etiqueta en forma de píldora con un puntito delante -->
-        <span class="inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-3 py-1 text-xs font-medium text-indigo-300">
-          <!-- aria-hidden: el punto es decorativo, los lectores de pantalla lo ignoran -->
-          <span class="h-1.5 w-1.5 rounded-full bg-indigo-400" aria-hidden="true"></span>
-          Nuevo · Recordatorios por WhatsApp
-        </span>
-
-        <!-- Título principal (el único h1 de la página). El tamaño crece con la pantalla: 4xl → 5xl → 6xl -->
-        <h1 class="mt-6 text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl">
+        <!-- Título principal (el único h1 de la página). El tamaño crece con la pantalla: 4xl → 5xl → 6xl.
+             Es lo primero de la columna, así que no lleva margen arriba -->
+        <h1 class="text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl">
           Las reservas de tu negocio,
           <!-- Texto con degradado: el fondo es el degradado, se recorta a la forma
                de las letras (bg-clip-text) y el texto se hace transparente para que se vea -->
