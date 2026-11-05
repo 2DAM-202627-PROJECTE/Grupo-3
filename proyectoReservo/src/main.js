@@ -30,6 +30,7 @@ import { renderHero } from './components/Hero.js';
 import { renderFeatures } from './components/Features.js';
 import { renderPricing } from './components/Pricing.js';
 import { renderNewsletter } from './components/Newsletter.js';
+import { renderFooter } from './components/Footer.js';
 
 // Lista de secciones de la página, en el orden en que aparecen.
 //   - id:     el id del <section>. Los enlaces del menú y los botones usan estos
@@ -95,3 +96,14 @@ const newsletter = document.createElement('div');
 newsletter.id = 'footer-newsletter';
 footer.appendChild(newsletter);
 renderNewsletter(newsletter);
+
+// -------------------------------------------------------------
+// Contenido del footer (issue #19)
+// -------------------------------------------------------------
+
+// Logo, copyright, redes sociales y enlaces legales.
+// Va en su propio contenedor debajo de la newsletter.
+const footerContent = document.createElement('div');
+footerContent.id = 'footer-content';
+footer.appendChild(footerContent);
+renderFooter(footerContent);
