@@ -103,10 +103,12 @@ export function renderNavbar(container) {
   // 4. Menú móvil
   // -----------------------------------------------------------
 
-  // --- Elementos: el botón ☰, el desplegable y sus enlaces ---
+  // --- Elementos: el botón ☰, el desplegable y todos los enlaces de la barra ---
+  // Los enlaces se buscan en toda la barra (container) y no solo en el desplegable:
+  // el logo y "Prueba gratis" están fuera de él, y al pulsarlos el menú también se tiene que cerrar
   const toggle = container.querySelector('#mobile-menu-toggle');
   const navigation = container.querySelector('#primary-navigation');
-  const menuLinks = navigation.querySelectorAll('a');
+  const menuLinks = container.querySelectorAll('a');
 
   // --- Abrir o cerrar el menú ---
   // isOpen = true abre y false cierra. Cambia tres cosas a la vez:
@@ -124,7 +126,7 @@ export function renderNavbar(container) {
     setMenuOpen(toggle.getAttribute('aria-expanded') !== 'true');
   });
 
-  // --- Al pulsar un enlace del menú, se cierra (la página baja a la sección) ---
+  // --- Al pulsar cualquier enlace de la barra, el menú se cierra (la página baja a la sección) ---
   menuLinks.forEach((link) => {
     link.addEventListener('click', () => setMenuOpen(false));
   });
