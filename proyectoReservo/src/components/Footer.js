@@ -74,8 +74,9 @@ function logoSvg() {
 // Pinta el footer dentro del contenedor que le pasa main.js
 // (el <div id="footer-content">).
 export function renderFooter(container) {
-  // Borde superior sutil para separar de la newsletter y fondo ligeramente más oscuro
-  container.className = 'border-t border-slate-800 bg-slate-900/80';
+  // Borde superior sutil para separar de la newsletter. Mismo fondo oscuro que la
+  // newsletter (--bg-dark de style.css), así el pie se ve como un solo bloque, como en el mockup
+  container.className = 'border-t border-slate-800 bg-(--bg-dark)';
 
   // Año dinámico con JS: si la página se abre en 2027, pondrá "© 2027"
   const year = new Date().getFullYear();
