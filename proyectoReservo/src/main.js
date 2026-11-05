@@ -28,6 +28,7 @@
 // Solo se importan los componentes que ya tienen código: importar algo que un
 // archivo vacío todavía no exporta daría error.
 import { renderHero } from './components/Hero.js';
+import { renderNavbar } from './components/Navbar.js';
 import { renderFeatures } from './components/Features.js';
 import { renderPricing } from './components/Pricing.js';
 import { renderNewsletter } from './components/Newsletter.js';
@@ -70,6 +71,7 @@ const nav = document.createElement('nav');
 nav.id = 'navbar';
 nav.setAttribute('aria-label', 'Navegación principal');
 app.appendChild(nav);
+renderNavbar(nav);
 
 // Contenido principal de la página. Solo puede haber un <main>.
 const main = document.createElement('main');
