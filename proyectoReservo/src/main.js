@@ -9,8 +9,9 @@
 //   1. Importaciones            → funciones render de cada componente
 //   2. Lista de secciones       → el orden de la página
 //   3. Estructura de la página  → <nav>, <main> con sus secciones y <footer>
-//   4. Newsletter               → dentro del <footer>
-//   5. Aviso de cookies         → fuera de #app, en el <body>
+//   4. Newsletter               → dentro del <footer>, arriba
+//   5. Contenido del footer     → logo, redes y enlaces legales, debajo de la newsletter
+//   6. Aviso de cookies         → fuera de #app, en el <body>
 // =============================================================
 
 // -------------------------------------------------------------
@@ -31,6 +32,11 @@ import { renderFeatures } from './components/Features.js';
 import { renderPricing } from './components/Pricing.js';
 import { renderNewsletter } from './components/Newsletter.js';
 import { renderFooter } from './components/Footer.js';
+import { renderCookieBanner } from './components/CookieBanner.js';
+
+// -------------------------------------------------------------
+// 2. Lista de secciones
+// -------------------------------------------------------------
 
 // Lista de secciones de la página, en el orden en que aparecen.
 //   - id:     el id del <section>. Los enlaces del menú y los botones usan estos
@@ -98,7 +104,7 @@ footer.appendChild(newsletter);
 renderNewsletter(newsletter);
 
 // -------------------------------------------------------------
-// Contenido del footer (issue #19)
+// 5. Contenido del footer (issue #19)
 // -------------------------------------------------------------
 
 // Logo, copyright, redes sociales y enlaces legales.
@@ -107,3 +113,14 @@ const footerContent = document.createElement('div');
 footerContent.id = 'footer-content';
 footer.appendChild(footerContent);
 renderFooter(footerContent);
+
+// -------------------------------------------------------------
+// 6. Aviso de cookies
+// -------------------------------------------------------------
+
+// Aviso de cookies (issue #24). Va directamente en el <body>, fuera de #app,
+// porque no es parte del contenido: es una barra fija que flota encima de la página.
+const cookieBanner = document.createElement('div');
+cookieBanner.id = 'cookie-banner';
+document.body.appendChild(cookieBanner);
+renderCookieBanner(cookieBanner);
