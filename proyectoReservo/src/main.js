@@ -17,6 +17,7 @@ import { renderHero } from './components/Hero.js';
 import { renderFeatures } from './components/Features.js';
 import { renderPricing } from './components/Pricing.js';
 import { renderNewsletter } from './components/Newsletter.js';
+import { renderFooter } from './components/Footer.js';
 
 // Lista de secciones de la página, en el orden en que aparecen.
 //   - id:     el id del <section>. Los enlaces del menú y los botones usan estos
@@ -64,15 +65,20 @@ sections.forEach(({ id, render }) => {
   }
 });
 
-// Pie de página. Su contenido lo pintará Footer.js cuando esté hecho.
+// Pie de página.
 const footer = document.createElement('footer');
 footer.id = 'footer';
 app.appendChild(footer);
 
-// Newsletter (issue #24). Va dentro del pie de página, en su propio contenedor,
-// para que Footer.js (issue #19) no tenga que tocarla: cuando el footer esté hecho,
-// solo hay que colocar este <div id="footer-newsletter"> donde corresponda.
+// Newsletter (issue #24). Va primero dentro del pie de página.
 const newsletter = document.createElement('div');
 newsletter.id = 'footer-newsletter';
 footer.appendChild(newsletter);
 renderNewsletter(newsletter);
+
+// Contenido principal del footer (issue #19): copyright, redes y enlaces legales.
+// Va en su propio contenedor debajo de la newsletter.
+const footerContent = document.createElement('div');
+footerContent.id = 'footer-content';
+footer.appendChild(footerContent);
+renderFooter(footerContent);
