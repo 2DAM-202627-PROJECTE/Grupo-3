@@ -198,7 +198,7 @@ function planCard({ id, name, description, price, features, cta, featured = fals
 //   - role="tab" y aria-selected: el lector de pantalla dice "Pro, pestaña, seleccionada"
 //   - aria-controls: indica qué tarjeta muestra esta pestaña (plan-pro)
 //   - tabindex: solo la pestaña seleccionada se alcanza con Tab (0); las otras no (-1).
-//     Entre pestañas uno se moverá con las flechas del teclado (parte 3 del issue #20)
+//     Entre pestañas uno se mueve con las flechas del teclado (ver setupPlanTabs)
 // El aspecto depende de aria-selected (aria-selected:bg-indigo-600), como el interruptor
 // mensual/anual: el JavaScript solo tendrá que cambiar ese atributo.
 function planTab({ id, name, featured = false }) {
@@ -434,5 +434,39 @@ function setupPlanTabs(container) {
   // --- Clics del usuario ---
   tabs.forEach((tab) => {
     tab.addEventListener('click', () => selectTab(tab));
+  });
+
+  // --- Teclado ---
+  // Patrón de pestañas accesibles: con Tab se entra en la pestaña seleccionada y,
+  // una vez dentro, las flechas cambian de pestaña (así no hay que pulsar Tab tres veces):
+  //   → / ←    siguiente / anterior (al llegar al final vuelve al principio, y al revés)
+  //   Inicio   primera pestaña
+  //   Fin      última pestaña
+  // Al moverse con las flechas, la pestaña nueva se selecciona y recibe el foco.
+  tabs.forEach((tab, index) => {
+    tab.addEventListener('keydown', (event) => {
+      const last = tabs.length - 1;
+      let next;
+
+      if (event.key === 'ArrowRight') {
+        // (index + 1) % 3: de 0 a 1, de 1 a 2 y de 2 vuelve a 0
+        next = (index + 1) % tabs.length;
+      } else if (event.key === 'ArrowLeft') {
+        // Si estamos en la primera (0), se va a la última
+        next = index === 0 ? last : index - 1;
+      } else if (event.key === 'Home') {
+        next = 0;
+      } else if (event.key === 'End') {
+        next = last;
+      } else {
+        // Cualquier otra tecla (Tab, Enter, Espacio…) funciona como siempre
+        return;
+      }
+
+      // Evita que la flecha o Inicio/Fin hagan scroll en la página
+      event.preventDefault();
+      selectTab(tabs[next]);
+      tabs[next].focus();
+    });
   });
 }
