@@ -1,6 +1,18 @@
 // =============================================================
-// Navbar.js — Navegación principal adaptable a móvil y escritorio.
+// Navbar.js — Navegación principal adaptable a móvil y escritorio (issue #7, Arnau).
+// En escritorio: logo, enlaces en el centro y botones a la derecha.
+// En móvil: logo, "Prueba gratis" y un botón (☰) que abre los enlaces en un desplegable.
+//
+// Partes del archivo:
+//   1. Datos y estilos   → los enlaces del menú y las clases del foco
+//   2. Un enlace         → navLink
+//   3. HTML de la barra  → renderNavbar (lo llama main.js)
+//   4. Menú móvil        → abrir y cerrar el desplegable (dentro de renderNavbar)
 // =============================================================
+
+// -------------------------------------------------------------
+// 1. Datos y estilos
+// -------------------------------------------------------------
 
 // Enlaces a las secciones de la página (RF1). Si se añade o quita alguno, solo hay que tocar este array.
 const links = [
@@ -13,6 +25,10 @@ const links = [
 // Clases comunes para el foco visible al navegar con el teclado (accesibilidad)
 const focusRing = 'focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400';
 
+// -------------------------------------------------------------
+// 2. Un enlace
+// -------------------------------------------------------------
+
 // Devuelve el HTML de un enlace del menú.
 // En móvil ocupa toda la fila del desplegable (block + relleno) y en escritorio es un enlace de texto
 function navLink({ label, href }) {
@@ -23,6 +39,11 @@ function navLink({ label, href }) {
   `;
 }
 
+// -------------------------------------------------------------
+// 3. HTML de la barra
+// -------------------------------------------------------------
+
+// Pinta la barra dentro del <nav id="navbar"> que le pasa main.js
 export function renderNavbar(container) {
   container.innerHTML = /*html*/ `
     <!-- Barra con borde inferior y fondo del color de la página, como en el mockup.
@@ -78,24 +99,38 @@ export function renderNavbar(container) {
     </div>
   `;
 
+  // -----------------------------------------------------------
+  // 4. Menú móvil
+  // -----------------------------------------------------------
+
+  // --- Elementos: el botón ☰, el desplegable y sus enlaces ---
   const toggle = container.querySelector('#mobile-menu-toggle');
   const navigation = container.querySelector('#primary-navigation');
   const menuLinks = navigation.querySelectorAll('a');
 
+  // --- Abrir o cerrar el menú ---
+  // isOpen = true abre y false cierra. Cambia tres cosas a la vez:
+  //   - aria-expanded: el lector de pantalla dice "expandido" o "contraído"
+  //   - aria-label: el nombre del botón pasa a "Cerrar menú…" o "Abrir menú…"
+  //   - la clase hidden del desplegable (en escritorio no afecta: md:flex lo muestra siempre)
   const setMenuOpen = (isOpen) => {
     toggle.setAttribute('aria-expanded', String(isOpen));
     toggle.setAttribute('aria-label', isOpen ? 'Cerrar menú de navegación' : 'Abrir menú de navegación');
     navigation.classList.toggle('hidden', !isOpen);
   };
 
+  // --- Clic en el botón ☰: si está cerrado lo abre, y al revés ---
   toggle.addEventListener('click', () => {
     setMenuOpen(toggle.getAttribute('aria-expanded') !== 'true');
   });
 
+  // --- Al pulsar un enlace del menú, se cierra (la página baja a la sección) ---
   menuLinks.forEach((link) => {
     link.addEventListener('click', () => setMenuOpen(false));
   });
 
+  // --- Tecla Escape: cierra el menú y devuelve el foco al botón ☰ ---
+  // Así quien navega con teclado no se queda "perdido" dentro de un menú que ya no se ve
   container.addEventListener('keydown', (event) => {
     if (event.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
       setMenuOpen(false);
