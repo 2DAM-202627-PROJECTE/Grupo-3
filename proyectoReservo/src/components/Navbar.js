@@ -54,9 +54,11 @@ export function renderNavbar(container) {
       <div class="relative mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
 
         <!-- Logo: el icono "R" (el mismo que el favicon) y el nombre, como en el mockup.
-             El icono es decorativo (alt=""): el texto "Reservo" ya dice qué es -->
+             El icono es decorativo (alt=""): el texto "Reservo" ya dice qué es.
+             La ruta empieza por import.meta.env.BASE_URL ("/" en local y "/Grupo-3/" en
+             GitHub Pages): Vite no corrige las rutas que van dentro de textos de JavaScript -->
         <a href="#hero" class="flex shrink-0 items-center gap-2 rounded-lg text-lg font-bold text-white ${focusRing}" aria-label="Reservo, ir al inicio">
-          <img src="/favicon.svg" alt="" class="h-8 w-8" />
+          <img src="${import.meta.env.BASE_URL}favicon.svg" alt="" class="h-8 w-8" />
           Reservo
         </a>
 
