@@ -34,12 +34,19 @@ const STORAGE_KEY = 'reservo-newsletter';
 // Pinta el formulario dentro del contenedor que le pasa main.js
 // (el <div id="footer-newsletter"> que hay dentro del <footer>).
 export function renderNewsletter(container) {
+  // Fondo más oscuro que el resto de la página, como el footer del mockup.
+  // bg-(--bg-dark) usa la variable --bg-dark de style.css (#080d1f).
+  // border-t: línea fina que la separa de la última sección
+  container.className = 'border-t border-slate-800 bg-(--bg-dark)';
+
   container.innerHTML = /*html*/ `
-    <!-- Contenedor centrado con ancho máximo y márgenes laterales, como el resto de secciones -->
-    <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-      <div class="max-w-md">
+    <!-- Contenedor con márgenes laterales, como el resto de secciones -->
+    <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+      <!-- Bloque centrado: mx-auto lo centra en la página y text-center centra los textos.
+           max-w-xl: ancho máximo para que el campo de email no quede demasiado largo -->
+      <div class="mx-auto max-w-xl text-center">
         <!-- id del título: el formulario lo usa como nombre (aria-labelledby) -->
-        <h2 id="newsletter-title" class="text-lg font-semibold text-white">Suscríbete a la newsletter</h2>
+        <h2 id="newsletter-title" class="text-2xl font-bold tracking-tight text-white">Suscríbete a la newsletter</h2>
         <p class="mt-2 text-sm text-slate-400">
           Novedades de Reservo y consejos para tu negocio, una vez al mes.
         </p>
@@ -83,7 +90,9 @@ export function renderNewsletter(container) {
           <!-- Consentimiento para guardar el email (RGPD, apartado 1.5 del documento).
                El <input> va dentro del <label>, así al pulsar el texto también se marca la casilla.
                accent-indigo-500 pinta la casilla con el color de la marca -->
-          <label class="mt-3 flex items-start gap-2 text-sm text-slate-400">
+          <!-- justify-center: la casilla y su texto quedan centrados como el resto.
+               text-left: si el texto ocupa dos líneas (en móvil), se alinea a la izquierda junto a la casilla -->
+          <label class="mt-3 flex items-start justify-center gap-2 text-left text-sm text-slate-400">
             <input
               type="checkbox"
               name="consent"
