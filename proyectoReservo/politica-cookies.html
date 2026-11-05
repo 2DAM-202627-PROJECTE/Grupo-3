@@ -1,0 +1,145 @@
+<!doctype html>
+<!-- =============================================================
+     politica-cookies.html — Política de cookies (issue #24)
+     Página legal separada de la landing (apartado 3 del documento:
+     configuración multipágina de Vite, ver vite.config.js).
+     Se enlaza desde el aviso de cookies y, más adelante, desde el footer.
+
+     Partes de la página:
+       1. Cabecera  → logo y enlace para volver a la landing
+       2. Contenido → qué son las cookies, cuáles usamos y cómo cambiar la elección
+       3. Pie       → copyright
+     ============================================================= -->
+<html lang="es" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <!-- Mismos estilos que la landing. Vite procesa este CSS (con Tailwind) igual que
+         cuando main.js lo importa, así no hace falta JavaScript en esta página -->
+    <link rel="stylesheet" href="/src/style.css" />
+    <meta name="description" content="Política de cookies de Reservo: qué cookies usa la web, para qué sirven y cómo cambiar tu elección." />
+    <title>Política de cookies · Reservo</title>
+  </head>
+  <body class="bg-slate-900 text-slate-100 antialiased">
+
+    <!-- ===== 1. Cabecera ===== -->
+    <header class="border-b border-slate-800">
+      <nav aria-label="Navegación principal" class="mx-auto flex max-w-3xl items-center justify-between px-4 py-5 sm:px-6">
+        <!-- Logo: enlace a la landing. El logo es decorativo (alt=""): el texto "Reservo" ya dice qué es -->
+        <a href="/" class="flex items-center gap-2 rounded-lg font-bold text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400">
+          <img src="/favicon.svg" alt="" class="h-8 w-8" />
+          Reservo
+        </a>
+        <a href="/" class="rounded-lg text-sm font-medium text-slate-300 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400">
+          ← Volver al inicio
+        </a>
+      </nav>
+    </header>
+
+    <!-- ===== 2. Contenido ===== -->
+    <!-- max-w-3xl: líneas de texto no demasiado largas para que se lea cómodo.
+         Cada apartado es un <section> con su <h2>; el <h1> es el título de la página -->
+    <main class="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:py-16">
+      <h1 class="text-3xl font-bold tracking-tight text-white sm:text-4xl">Política de cookies</h1>
+      <p class="mt-2 text-sm text-slate-400">Última actualización: 5 de noviembre de 2026</p>
+
+      <!-- Clases comunes de los apartados: separación arriba y texto gris claro -->
+      <section class="mt-10 space-y-4 leading-relaxed text-slate-300">
+        <h2 class="text-xl font-semibold text-white">¿Qué son las cookies?</h2>
+        <p>
+          Las cookies son pequeños archivos que una web guarda en tu navegador para recordar
+          información entre visitas. Algunas son necesarias para que la web funcione y otras
+          sirven, por ejemplo, para saber cómo se usa y mejorarla.
+        </p>
+        <p>
+          Reservo también usa el <strong class="text-white">almacenamiento local</strong>
+          (localStorage) del navegador, que funciona de forma parecida: los datos se guardan
+          solo en tu dispositivo y no se envían a ningún servidor.
+        </p>
+      </section>
+
+      <section class="mt-10 space-y-4 leading-relaxed text-slate-300">
+        <h2 class="text-xl font-semibold text-white">¿Qué cookies usa Reservo?</h2>
+
+        <!-- Tabla con los datos que guarda la web. overflow-x-auto: en móvil, si la tabla
+             no cabe, se puede desplazar de lado sin romper el resto de la página.
+             min-w-xl (576 px): la tabla nunca se estrecha más, así las columnas no se aplastan -->
+        <div class="overflow-x-auto rounded-xl border border-slate-800">
+          <table class="w-full min-w-xl text-left text-sm">
+            <!-- <caption> da nombre a la tabla para los lectores de pantalla (sr-only: no se ve) -->
+            <caption class="sr-only">Cookies y datos que guarda Reservo en tu navegador</caption>
+            <thead class="bg-slate-800/60 text-white">
+              <tr>
+                <!-- scope="col": indica que la celda es el título de su columna -->
+                <th scope="col" class="px-4 py-3 font-semibold">Nombre</th>
+                <th scope="col" class="px-4 py-3 font-semibold">Tipo</th>
+                <th scope="col" class="px-4 py-3 font-semibold">Para qué sirve</th>
+                <th scope="col" class="px-4 py-3 font-semibold">Duración</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800">
+              <tr>
+                <td class="px-4 py-3 font-mono text-xs whitespace-nowrap text-indigo-300">reservo-cookies</td>
+                <td class="px-4 py-3">Técnica (necesaria)</td>
+                <td class="px-4 py-3">Recuerda si has aceptado o rechazado las cookies, para no volver a preguntarte.</td>
+                <td class="px-4 py-3">Hasta que borres los datos del navegador</td>
+              </tr>
+              <tr>
+                <td class="px-4 py-3 font-mono text-xs whitespace-nowrap text-indigo-300">reservo-newsletter</td>
+                <td class="px-4 py-3">Técnica (necesaria)</td>
+                <td class="px-4 py-3">Guarda tu email si te suscribes a la newsletter.</td>
+                <td class="px-4 py-3">Hasta que borres los datos del navegador</td>
+              </tr>
+              <tr>
+                <td class="px-4 py-3 text-slate-400">—</td>
+                <td class="px-4 py-3">De análisis</td>
+                <td class="px-4 py-3">Saber cómo se usa la web para mejorarla. Solo se activarían si las aceptas; ahora mismo Reservo no instala ninguna.</td>
+                <td class="px-4 py-3">—</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>
+          Las cookies técnicas no necesitan tu permiso porque sin ellas la web no podría
+          recordar tus elecciones. Las de análisis solo se usan si pulsas
+          <strong class="text-white">Aceptar</strong> en el aviso de cookies.
+        </p>
+      </section>
+
+      <section class="mt-10 space-y-4 leading-relaxed text-slate-300">
+        <h2 class="text-xl font-semibold text-white">¿Cómo cambiar tu elección?</h2>
+        <p>
+          Puedes cambiar de opinión en cualquier momento borrando los datos de este sitio
+          en tu navegador. La próxima vez que entres a Reservo volverá a salir el aviso
+          de cookies para que elijas de nuevo.
+        </p>
+        <!-- Lista con los pasos en los navegadores más usados -->
+        <ul class="list-disc space-y-2 pl-6">
+          <li><strong class="text-white">Chrome:</strong> Configuración → Privacidad y seguridad → Cookies y otros datos de sitios.</li>
+          <li><strong class="text-white">Firefox:</strong> Ajustes → Privacidad &amp; Seguridad → Cookies y datos del sitio.</li>
+          <li><strong class="text-white">Safari:</strong> Ajustes → Privacidad → Gestionar datos de sitios web.</li>
+          <li><strong class="text-white">Edge:</strong> Configuración → Cookies y permisos del sitio.</li>
+        </ul>
+      </section>
+
+      <section class="mt-10 space-y-4 leading-relaxed text-slate-300">
+        <h2 class="text-xl font-semibold text-white">Contacto</h2>
+        <p>
+          Si tienes cualquier duda sobre esta política, escríbenos a
+          <!-- mailto: al pulsarlo se abre el programa de correo con la dirección puesta -->
+          <a href="mailto:hola@reservo.es" class="rounded text-indigo-300 underline hover:text-indigo-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400">hola@reservo.es</a>.
+        </p>
+      </section>
+    </main>
+
+    <!-- ===== 3. Pie ===== -->
+    <footer class="border-t border-slate-800">
+      <p class="mx-auto max-w-3xl px-4 py-6 text-sm text-slate-400 sm:px-6">© 2026 Reservo</p>
+    </footer>
+  </body>
+</html>

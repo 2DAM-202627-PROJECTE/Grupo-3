@@ -2,7 +2,18 @@
 // Pricing.js — Sección de precios (issue #14)
 // Muestra un título, un subtítulo y una tarjeta por cada plan.
 // (El plan Pro destacado y el interruptor mensual/anual son el issue #16)
+//
+// Partes del archivo:
+//   1. Datos de los planes       → plans y el descuento anual
+//   2. Cálculo del precio        → annualPrice y priceBlock
+//   3. Tarjeta de un plan        → estilos de los botones y planCard
+//   4. HTML de la sección        → renderPricing (lo llama main.js)
+//   5. Interruptor mensual/anual → resaltar opciones y setupBillingToggle
 // =============================================================
+
+// -------------------------------------------------------------
+// 1. Datos de los planes
+// -------------------------------------------------------------
 
 // Datos de los planes.
 // Cada objeto es un plan con:
@@ -61,6 +72,10 @@ const plans = [
 // Descuento del pago anual: 20 % (apartado 2.4 del documento).
 const ANNUAL_DISCOUNT = 0.2;
 
+// -------------------------------------------------------------
+// 2. Cálculo del precio
+// -------------------------------------------------------------
+
 // Precio mensual con el descuento anual aplicado, redondeado a euros enteros.
 // 19 € → 15 €  y  49 € → 39 €, como en la tabla del documento.
 function annualPrice(price) {
@@ -91,6 +106,10 @@ function priceBlock(price, annual = false) {
     <p class="mt-1 h-5 text-xs text-slate-400">${note}</p>
   `;
 }
+
+// -------------------------------------------------------------
+// 3. Tarjeta de un plan
+// -------------------------------------------------------------
 
 // Clases de los dos estilos de botón: el principal (relleno índigo) para el plan
 // destacado y el secundario (con borde) para el resto.
@@ -160,6 +179,10 @@ function planCard({ name, description, price, features, cta, featured = false })
     </article>
   `;
 }
+
+// -------------------------------------------------------------
+// 4. HTML de la sección
+// -------------------------------------------------------------
 
 // Pinta la sección dentro del contenedor que le pasa main.js
 // (el <section id="precios">).
@@ -240,6 +263,10 @@ export function renderPricing(container) {
   setupBillingToggle(container);
 }
 
+// -------------------------------------------------------------
+// 5. Interruptor mensual/anual
+// -------------------------------------------------------------
+
 // Pone una palabra del interruptor en blanco (activa) o en gris (inactiva).
 // El gris es slate-400 y no slate-500 para mantener un contraste mínimo de 4.5:1 (apartado 3.2).
 // classList.toggle(clase, condición) añade la clase si la condición es true y la quita si es false.
@@ -261,11 +288,14 @@ function highlightBadge(badge, active) {
 // Lógica del interruptor mensual/anual.
 // Al pulsarlo cambia su estado y actualiza solo los precios, sin volver a pintar toda la sección.
 function setupBillingToggle(container) {
+  // --- Elementos que cambian al cambiar de modo ---
   const toggle = container.querySelector('#billing-toggle');
   const monthlyLabel = container.querySelector('[data-billing-label="monthly"]');
   const annualLabel = container.querySelector('[data-billing-label="annual"]');
   const discountBadge = container.querySelector('[data-billing-badge]');
   const status = container.querySelector('[data-billing-status]');
+
+  // --- Cambiar de modo ---
 
   // Aplica un modo de facturación: annual = true (anual) o false (mensual).
   // Todo lo que tiene que cambiar al cambiar de modo está aquí, en un solo sitio.
@@ -309,6 +339,8 @@ function setupBillingToggle(container) {
       }, 150);
     });
   }
+
+  // --- Clics del usuario ---
 
   // Al pulsar el interruptor se pasa al modo contrario del actual
   toggle.addEventListener('click', () => {

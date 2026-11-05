@@ -4,6 +4,10 @@
 // Derecha: tarjeta de reserva de ejemplo para FitZone Gym.
 // =============================================================
 
+// -------------------------------------------------------------
+// 1. HTML de la sección
+// -------------------------------------------------------------
+
 // Pinta el Hero dentro del contenedor que le pasa main.js
 // (el <section id="hero">).
 export function renderHero(container) {
