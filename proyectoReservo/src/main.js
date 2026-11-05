@@ -30,11 +30,7 @@ import { renderHero } from './components/Hero.js';
 import { renderFeatures } from './components/Features.js';
 import { renderPricing } from './components/Pricing.js';
 import { renderNewsletter } from './components/Newsletter.js';
-import { renderCookieBanner } from './components/CookieBanner.js';
-
-// -------------------------------------------------------------
-// 2. Lista de secciones
-// -------------------------------------------------------------
+import { renderFooter } from './components/Footer.js';
 
 // Lista de secciones de la página, en el orden en que aparecen.
 //   - id:     el id del <section>. Los enlaces del menú y los botones usan estos
@@ -86,7 +82,7 @@ sections.forEach(({ id, render }) => {
   }
 });
 
-// Pie de página. Su contenido lo pintará Footer.js cuando esté hecho.
+// Pie de página.
 const footer = document.createElement('footer');
 footer.id = 'footer';
 app.appendChild(footer);
@@ -95,21 +91,19 @@ app.appendChild(footer);
 // 4. Newsletter
 // -------------------------------------------------------------
 
-// Newsletter (issue #24). Va dentro del pie de página, en su propio contenedor,
-// para que Footer.js (issue #19) no tenga que tocarla: cuando el footer esté hecho,
-// solo hay que colocar este <div id="footer-newsletter"> donde corresponda.
+// Newsletter (issue #24). Va primero dentro del pie de página.
 const newsletter = document.createElement('div');
 newsletter.id = 'footer-newsletter';
 footer.appendChild(newsletter);
 renderNewsletter(newsletter);
 
 // -------------------------------------------------------------
-// 5. Aviso de cookies
+// Contenido del footer (issue #19)
 // -------------------------------------------------------------
 
-// Aviso de cookies (issue #24). Va directamente en el <body>, fuera de #app,
-// porque no es parte del contenido: es una barra fija que flota encima de la página.
-const cookieBanner = document.createElement('div');
-cookieBanner.id = 'cookie-banner';
-document.body.appendChild(cookieBanner);
-renderCookieBanner(cookieBanner);
+// Logo, copyright, redes sociales y enlaces legales.
+// Va en su propio contenedor debajo de la newsletter.
+const footerContent = document.createElement('div');
+footerContent.id = 'footer-content';
+footer.appendChild(footerContent);
+renderFooter(footerContent);
