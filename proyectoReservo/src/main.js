@@ -4,10 +4,23 @@
 //   <nav>     → barra de navegación
 //   <main>    → contenido principal, con un <section> por componente
 //   <footer>  → pie de página
+//
+// Partes del archivo:
+//   1. Importaciones            → funciones render de cada componente
+//   2. Lista de secciones       → el orden de la página
+//   3. Estructura de la página  → <nav>, <main> con sus secciones y <footer>
+//   4. Newsletter               → dentro del <footer>
+//   5. Aviso de cookies         → fuera de #app, en el <body>
 // =============================================================
 
-// Estilos globales (Tailwind + style.css). Vite los mete en la página al importarlos.
-import './style.css';
+// -------------------------------------------------------------
+// 1. Importaciones
+// -------------------------------------------------------------
+
+// Los estilos (style.css con Tailwind) no se importan aquí: van con un <link> en
+// index.html, igual que en las páginas legales. Si una página los importara desde
+// JavaScript y otra con <link>, Firefox guardaría en caché la versión CSS y, al
+// volver atrás a la landing, bloquearía este archivo y la página saldría en blanco.
 
 // Funciones que pintan cada sección. Cada componente exporta un renderX(container)
 // que recibe su <section> y le mete el HTML dentro.
@@ -17,7 +30,6 @@ import { renderHero } from './components/Hero.js';
 import { renderFeatures } from './components/Features.js';
 import { renderPricing } from './components/Pricing.js';
 import { renderNewsletter } from './components/Newsletter.js';
-import { renderFooter } from './components/Footer.js';
 
 // Lista de secciones de la página, en el orden en que aparecen.
 //   - id:     el id del <section>. Los enlaces del menú y los botones usan estos
@@ -36,6 +48,10 @@ const sections = [
   { id: 'faq', render: null }, // Faq.js
   { id: 'cta', render: null }, // Cta.js
 ];
+
+// -------------------------------------------------------------
+// 3. Estructura de la página
+// -------------------------------------------------------------
 
 // Contenedor raíz que hay en index.html. Todo lo que se pinta va dentro de él.
 const app = document.querySelector('#app');
@@ -70,15 +86,12 @@ const footer = document.createElement('footer');
 footer.id = 'footer';
 app.appendChild(footer);
 
+// -------------------------------------------------------------
+// 4. Newsletter
+// -------------------------------------------------------------
+
 // Newsletter (issue #24). Va primero dentro del pie de página.
 const newsletter = document.createElement('div');
 newsletter.id = 'footer-newsletter';
 footer.appendChild(newsletter);
 renderNewsletter(newsletter);
-
-// Contenido principal del footer (issue #19): copyright, redes y enlaces legales.
-// Va en su propio contenedor debajo de la newsletter.
-const footerContent = document.createElement('div');
-footerContent.id = 'footer-content';
-footer.appendChild(footerContent);
-renderFooter(footerContent);

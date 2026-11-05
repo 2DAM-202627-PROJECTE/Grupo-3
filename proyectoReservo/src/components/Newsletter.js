@@ -2,10 +2,34 @@
 // Newsletter.js — Suscripción a la newsletter (issue #24)
 // Formulario con el email y la casilla de consentimiento (RGPD).
 // Va dentro del pie de página; Footer.js es el issue #19 (Jean).
+//
+// Partes del archivo:
+//   1. Configuración          → constantes que usa el resto del archivo
+//   2. HTML del formulario    → renderNewsletter (lo llama main.js)
+//   3. Lista de suscriptores  → leer y guardar emails en localStorage
+//   4. Validación y envío     → setupNewsletter (errores y confirmación)
 // =============================================================
+
+// -------------------------------------------------------------
+// 1. Configuración
+// -------------------------------------------------------------
 
 // Clases comunes para el foco visible al navegar con el teclado (accesibilidad)
 const focusRing = 'focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400';
+
+// Comprueba que el texto tiene forma de email: algo + @ + algo + . + algo,
+// sin espacios. No dice si el email existe, solo si está bien escrito.
+//   "ana@negocio.com" → true     "ana@negocio" → false     "ana negocio.com" → false
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+// Nombre con el que se guarda la lista de emails en el localStorage del navegador.
+// No hay servidor, así que la "lista de distribución" del documento (apartado 1.4)
+// se guarda aquí. localStorage solo guarda texto: la lista se pasa a JSON y al revés.
+const STORAGE_KEY = 'reservo-newsletter';
+
+// -------------------------------------------------------------
+// 2. HTML del formulario
+// -------------------------------------------------------------
 
 // Pinta el formulario dentro del contenedor que le pasa main.js
 // (el <div id="footer-newsletter"> que hay dentro del <footer>).
@@ -82,15 +106,9 @@ export function renderNewsletter(container) {
   setupNewsletter(container);
 }
 
-// Comprueba que el texto tiene forma de email: algo + @ + algo + . + algo,
-// sin espacios. No dice si el email existe, solo si está bien escrito.
-//   "ana@negocio.com" → true     "ana@negocio" → false     "ana negocio.com" → false
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-// Nombre con el que se guarda la lista de emails en el localStorage del navegador.
-// No hay servidor, así que la "lista de distribución" del documento (apartado 1.4)
-// se guarda aquí. localStorage solo guarda texto: la lista se pasa a JSON y al revés.
-const STORAGE_KEY = 'reservo-newsletter';
+// -------------------------------------------------------------
+// 3. Lista de suscriptores (localStorage)
+// -------------------------------------------------------------
 
 // Devuelve la lista de emails guardados (un array). Si no hay nada, un array vacío.
 function getSubscribers() {
@@ -119,12 +137,20 @@ function addSubscriber(email) {
   return true;
 }
 
-// Lógica del formulario: al enviarlo comprueba los datos y muestra los errores.
+// -------------------------------------------------------------
+// 4. Validación y envío del formulario
+// -------------------------------------------------------------
+
+// Lógica del formulario: al enviarlo comprueba los datos y muestra los errores
+// o la confirmación.
 function setupNewsletter(container) {
+  // --- Elementos del formulario que se van a usar ---
   const form = container.querySelector('#newsletter-form');
   const emailInput = form.querySelector('#newsletter-email');
   const consentInput = form.querySelector('input[name="consent"]');
   const message = form.querySelector('#newsletter-message');
+
+  // --- Mensajes de error ---
 
   // Muestra un error: texto en rojo debajo del formulario (no solo color: el documento
   // pide que los errores se lean como texto, apartado 3.2) y el foco en el campo que falla.
@@ -141,9 +167,11 @@ function setupNewsletter(container) {
     message.textContent = '';
   }
 
+  // El error se quita en cuanto el usuario escribe en el campo o marca la casilla
   emailInput.addEventListener('input', () => clearError(emailInput));
   consentInput.addEventListener('change', () => clearError(consentInput));
 
+  // --- Envío del formulario ---
   form.addEventListener('submit', (event) => {
     // Sin esto, el navegador enviaría el formulario y recargaría la página
     event.preventDefault();
@@ -151,7 +179,7 @@ function setupNewsletter(container) {
     // trim() quita los espacios del principio y del final ("  ana@x.com " → "ana@x.com")
     const email = emailInput.value.trim();
 
-    // Se comprueba en orden y se para en el primer error
+    // a) Validación: se comprueba en orden y se para en el primer error
     if (email === '') {
       showError('Escribe tu email.', emailInput);
       return;
@@ -165,7 +193,7 @@ function setupNewsletter(container) {
       return;
     }
 
-    // Todo correcto: se guarda el email y se muestra la confirmación en verde.
+    // b) Todo correcto: se guarda el email y se muestra la confirmación en verde.
     // toLowerCase(): "Ana@Negocio.com" y "ana@negocio.com" cuentan como el mismo email
     const isNew = addSubscriber(email.toLowerCase());
     message.textContent = isNew

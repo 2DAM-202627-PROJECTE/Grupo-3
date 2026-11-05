@@ -1,8 +1,20 @@
 // =============================================================
 // Features.js — Sección de funcionalidades (issue #11 e issue #13)
 // Muestra un título, un subtítulo y un grid de 6 tarjetas con iconos Lucide.
+//
+// Partes del archivo:
+//   1. Iconos               → los iconos de Lucide que se usan
+//   2. Datos de las tarjetas → el array features
+//   3. Tarjeta              → featureCard
+//   4. HTML de la sección   → renderFeatures (lo llama main.js) y pintar los iconos
 // =============================================================
 
+// -------------------------------------------------------------
+// 1. Iconos
+// -------------------------------------------------------------
+
+// createIcons convierte cada <i data-lucide="..."> en su dibujo SVG.
+// Solo se importan los iconos que se usan: así el JavaScript final pesa menos.
 import {
   createIcons,
   Calendar,
@@ -12,6 +24,10 @@ import {
   ChartColumn,
   Smartphone,
 } from 'lucide';
+
+// -------------------------------------------------------------
+// 2. Datos de las tarjetas
+// -------------------------------------------------------------
 
 // Datos de las tarjetas.
 // Cada objeto es una funcionalidad: un icono (nombre Lucide), un título y un texto.
@@ -50,6 +66,10 @@ const features = [
   },
 ];
 
+// -------------------------------------------------------------
+// 3. Tarjeta
+// -------------------------------------------------------------
+
 // Devuelve el HTML de UNA tarjeta a partir de un objeto del array.
 // Usamos desestructuración ({ icon, title, text }) para sacar las propiedades directamente.
 function featureCard({ icon, title, text }) {
@@ -68,6 +88,10 @@ function featureCard({ icon, title, text }) {
     </article>
   `;
 }
+
+// -------------------------------------------------------------
+// 4. HTML de la sección
+// -------------------------------------------------------------
 
 // Pinta la sección dentro del contenedor que le pasa main.js
 // (el <section id="funciones">).
