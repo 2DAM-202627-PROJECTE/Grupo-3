@@ -10,6 +10,7 @@
 //   2. Lista de secciones       → el orden de la página
 //   3. Estructura de la página  → <nav>, <main> con sus secciones y <footer>
 //   4. Newsletter               → dentro del <footer>
+//   5. Aviso de cookies         → fuera de #app, en el <body>
 // =============================================================
 
 // -------------------------------------------------------------
@@ -27,6 +28,7 @@ import { renderHero } from './components/Hero.js';
 import { renderFeatures } from './components/Features.js';
 import { renderPricing } from './components/Pricing.js';
 import { renderNewsletter } from './components/Newsletter.js';
+import { renderCookieBanner } from './components/CookieBanner.js';
 
 // -------------------------------------------------------------
 // 2. Lista de secciones
@@ -98,3 +100,14 @@ const newsletter = document.createElement('div');
 newsletter.id = 'footer-newsletter';
 footer.appendChild(newsletter);
 renderNewsletter(newsletter);
+
+// -------------------------------------------------------------
+// 5. Aviso de cookies
+// -------------------------------------------------------------
+
+// Aviso de cookies (issue #24). Va directamente en el <body>, fuera de #app,
+// porque no es parte del contenido: es una barra fija que flota encima de la página.
+const cookieBanner = document.createElement('div');
+cookieBanner.id = 'cookie-banner';
+document.body.appendChild(cookieBanner);
+renderCookieBanner(cookieBanner);
