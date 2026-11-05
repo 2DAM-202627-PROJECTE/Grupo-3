@@ -7,7 +7,7 @@
 //   1. Datos y estilos   → los enlaces del menú y las clases del foco
 //   2. Un enlace         → navLink
 //   3. HTML de la barra  → renderNavbar (lo llama main.js)
-//   4. Menú móvil        → abrir y cerrar el desplegable (dentro de renderNavbar)
+//   4. Menú móvil        → abrir y cerrar el desplegable: ☰, enlaces, Escape y clic fuera
 // =============================================================
 
 // -------------------------------------------------------------
@@ -81,6 +81,8 @@ export function renderNavbar(container) {
 
           <!-- Botón del menú (☰), solo en móvil (md:hidden).
                aria-expanded dice si el menú está abierto y aria-controls qué menú abre.
+               aria-label es fijo ("Menú de navegación"): el estado ya lo dice aria-expanded,
+               así el lector de pantalla dice "Menú de navegación, contraído" o "…, expandido"
                p-2.5 + icono de 24 px: zona de pulsación de 44 px, el mínimo para el dedo -->
           <button
             id="mobile-menu-toggle"
@@ -88,7 +90,7 @@ export function renderNavbar(container) {
             class="inline-flex items-center justify-center rounded-lg p-2.5 text-slate-200 transition hover:bg-slate-800 md:hidden ${focusRing}"
             aria-expanded="false"
             aria-controls="primary-navigation"
-            aria-label="Abrir menú de navegación"
+            aria-label="Menú de navegación"
           >
             <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
               <path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round" />
@@ -111,13 +113,11 @@ export function renderNavbar(container) {
   const menuLinks = container.querySelectorAll('a');
 
   // --- Abrir o cerrar el menú ---
-  // isOpen = true abre y false cierra. Cambia tres cosas a la vez:
+  // isOpen = true abre y false cierra. Cambia dos cosas a la vez:
   //   - aria-expanded: el lector de pantalla dice "expandido" o "contraído"
-  //   - aria-label: el nombre del botón pasa a "Cerrar menú…" o "Abrir menú…"
   //   - la clase hidden del desplegable (en escritorio no afecta: md:flex lo muestra siempre)
   const setMenuOpen = (isOpen) => {
     toggle.setAttribute('aria-expanded', String(isOpen));
-    toggle.setAttribute('aria-label', isOpen ? 'Cerrar menú de navegación' : 'Abrir menú de navegación');
     navigation.classList.toggle('hidden', !isOpen);
   };
 
@@ -137,6 +137,17 @@ export function renderNavbar(container) {
     if (event.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
       setMenuOpen(false);
       toggle.focus();
+    }
+  });
+
+  // --- Clic fuera de la barra: cierra el menú ---
+  // El evento se escucha en todo el documento. container.contains(event.target) dice si el clic
+  // ha sido dentro de la barra (en el ☰, en un enlace…); si ha sido fuera (en el Hero, por ejemplo)
+  // y el menú está abierto, se cierra. No se mueve el foco: el usuario ha elegido dónde pulsar
+  document.addEventListener('click', (event) => {
+    const isOpen = toggle.getAttribute('aria-expanded') === 'true';
+    if (isOpen && !container.contains(event.target)) {
+      setMenuOpen(false);
     }
   });
 }
