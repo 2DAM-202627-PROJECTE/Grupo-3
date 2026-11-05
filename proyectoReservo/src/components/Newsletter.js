@@ -69,7 +69,7 @@ export function renderNewsletter(container) {
             Acepto que Reservo guarde mi email para enviarme la newsletter.
           </label>
 
-          <!-- Mensaje del formulario (errores y, en la parte 3, la confirmación).
+          <!-- Mensaje del formulario: los errores o la confirmación.
                Empieza vacío. aria-live="polite" hace que el lector de pantalla lo lea
                cada vez que cambia. min-h-5 reserva su alto para que el resto no salte -->
           <p id="newsletter-message" class="mt-3 min-h-5 text-sm" aria-live="polite"></p>
@@ -86,6 +86,38 @@ export function renderNewsletter(container) {
 // sin espacios. No dice si el email existe, solo si está bien escrito.
 //   "ana@negocio.com" → true     "ana@negocio" → false     "ana negocio.com" → false
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+// Nombre con el que se guarda la lista de emails en el localStorage del navegador.
+// No hay servidor, así que la "lista de distribución" del documento (apartado 1.4)
+// se guarda aquí. localStorage solo guarda texto: la lista se pasa a JSON y al revés.
+const STORAGE_KEY = 'reservo-newsletter';
+
+// Devuelve la lista de emails guardados (un array). Si no hay nada, un array vacío.
+function getSubscribers() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) ?? [];
+  } catch {
+    // Si el navegador bloquea localStorage (modo privado estricto) o el dato está roto
+    return [];
+  }
+}
+
+// Añade un email a la lista y la vuelve a guardar.
+// Devuelve false si el email ya estaba, para avisar al usuario en vez de repetirlo.
+function addSubscriber(email) {
+  const subscribers = getSubscribers();
+  if (subscribers.includes(email)) {
+    return false;
+  }
+  subscribers.push(email);
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(subscribers));
+  } catch {
+    // Si no se puede guardar, la suscripción sigue contando para el usuario:
+    // en la página no hay nada más que hacer
+  }
+  return true;
+}
 
 // Lógica del formulario: al enviarlo comprueba los datos y muestra los errores.
 function setupNewsletter(container) {
@@ -133,8 +165,15 @@ function setupNewsletter(container) {
       return;
     }
 
-    // Todo correcto: se borra cualquier mensaje anterior.
-    // Guardar el email y mostrar la confirmación es la parte 3.
-    message.textContent = '';
+    // Todo correcto: se guarda el email y se muestra la confirmación en verde.
+    // toLowerCase(): "Ana@Negocio.com" y "ana@negocio.com" cuentan como el mismo email
+    const isNew = addSubscriber(email.toLowerCase());
+    message.textContent = isNew
+      ? '¡Gracias! Te has suscrito a la newsletter.'
+      : 'Este email ya estaba suscrito. ¡Gracias!';
+    message.className = 'mt-3 min-h-5 text-sm text-emerald-400';
+
+    // Vacía el formulario. reset() no borra el mensaje porque es un <p>, no un campo
+    form.reset();
   });
 }
