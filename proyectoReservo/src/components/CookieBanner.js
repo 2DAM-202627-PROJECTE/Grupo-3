@@ -1,11 +1,14 @@
 // =============================================================
 // CookieBanner.js — Aviso de cookies (issue #24)
 // Barra fija abajo de la pantalla con los botones Aceptar y Rechazar.
-// Sale en la primera visita (apartado 1.4 del documento, requisito 10).
+// Sale en la primera visita (apartado 1.4 del documento, requisito 10):
+// la elección se guarda y el aviso ya no vuelve a salir.
 //
 // Partes del archivo:
-//   1. Configuración → constantes que usa el resto del archivo
-//   2. HTML del aviso → renderCookieBanner (lo llama main.js)
+//   1. Configuración     → constantes que usa el resto del archivo
+//   2. Elección guardada → leer y guardar la opción en localStorage
+//   3. HTML del aviso    → renderCookieBanner (lo llama main.js)
+//   4. Botones           → setupCookieBanner (guardar la opción y cerrar el aviso)
 // =============================================================
 
 // -------------------------------------------------------------
@@ -23,13 +26,50 @@ const buttonBase = `rounded-lg px-5 py-2.5 text-sm font-semibold transition ${fo
 const buttonPrimary = 'bg-indigo-600 text-white hover:bg-indigo-500';
 const buttonSecondary = 'border border-slate-600 bg-slate-800 text-slate-200 hover:bg-slate-700';
 
+// Nombre con el que se guarda la elección en el localStorage del navegador.
+// Es el mismo que aparece en la tabla de politica-cookies.html
+const STORAGE_KEY = 'reservo-cookies';
+
 // -------------------------------------------------------------
-// 2. HTML del aviso
+// 2. Elección guardada (localStorage)
+// -------------------------------------------------------------
+
+// Devuelve la opción guardada: "accepted", "rejected" o null si aún no ha elegido.
+// localStorage se guarda en el navegador y sigue ahí en las siguientes visitas
+// (apartado 3 del documento: "La elección se guardará en localStorage").
+// Se exporta para que, si algún día se añaden cookies de análisis, se pueda
+// comprobar con getCookieChoice() === 'accepted' antes de cargarlas.
+export function getCookieChoice() {
+  try {
+    return localStorage.getItem(STORAGE_KEY);
+  } catch {
+    // Si el navegador bloquea localStorage, se trata como si no hubiera elegido
+    return null;
+  }
+}
+
+// Guarda la opción elegida ("accepted" o "rejected")
+function saveCookieChoice(choice) {
+  try {
+    localStorage.setItem(STORAGE_KEY, choice);
+  } catch {
+    // Si no se puede guardar, el aviso se cierra igual; volverá a salir en la próxima visita
+  }
+}
+
+// -------------------------------------------------------------
+// 3. HTML del aviso
 // -------------------------------------------------------------
 
 // Pinta el aviso dentro del contenedor que le pasa main.js
 // (el <div id="cookie-banner">, que va fuera de #app, directamente en el <body>).
 export function renderCookieBanner(container) {
+  // Si ya eligió en una visita anterior, el aviso no se pinta y no se hace nada más
+  if (getCookieChoice() !== null) {
+    container.remove();
+    return;
+  }
+
   // fixed inset-x-0 bottom-0: el aviso se queda pegado abajo, de lado a lado,
   // aunque el usuario haga scroll. z-50 lo pone por encima del resto de la página.
   // role="region" + aria-label: el lector de pantalla lo anuncia como "Aviso de cookies"
@@ -52,7 +92,7 @@ export function renderCookieBanner(container) {
       </p>
 
       <!-- Botones. data-cookie-choice guarda la opción de cada uno ("accepted" o "rejected"),
-           así el JavaScript (parte 5) sabe qué se ha elegido sin mirar el texto del botón.
+           así el JavaScript (setupCookieBanner) sabe qué se ha elegido sin mirar el texto del botón.
            shrink-0: los botones no se aplastan aunque el texto sea largo -->
       <div class="flex shrink-0 gap-3">
         <button type="button" data-cookie-choice="rejected" class="flex-1 sm:flex-none ${buttonBase} ${buttonSecondary}">
@@ -64,4 +104,25 @@ export function renderCookieBanner(container) {
       </div>
     </div>
   `;
+
+  // Una vez pintado el HTML, se activan los botones
+  setupCookieBanner(container);
+}
+
+// -------------------------------------------------------------
+// 4. Botones
+// -------------------------------------------------------------
+
+// Al pulsar Aceptar o Rechazar: se guarda la opción y se quita el aviso de la página.
+function setupCookieBanner(container) {
+  // querySelectorAll devuelve los dos botones; forEach les pone el mismo evento a cada uno
+  container.querySelectorAll('[data-cookie-choice]').forEach((button) => {
+    button.addEventListener('click', () => {
+      // dataset.cookieChoice lee el atributo data-cookie-choice ("accepted" o "rejected")
+      saveCookieChoice(button.dataset.cookieChoice);
+
+      // remove() quita el aviso del HTML: desaparece y ya no se puede llegar a él con Tab
+      container.remove();
+    });
+  });
 }
