@@ -10,7 +10,7 @@
 //   4. Llueven las reservas desde los móviles de los clientes
 //   5. Los recordatorios salen solos hacia los móviles
 //   6. La agenda cambia de sector: gimnasio, peluquería, restaurante, clínica
-//   7. Final: la agenda se aleja, aparece el logo y empieza la landing
+//   7. Final: la agenda se aleja, amanece (de noche a día), aparece el logo y empieza la landing
 //
 // Librerías:
 //   - GSAP: hace las animaciones. Una "timeline" es una lista de animaciones
@@ -149,6 +149,10 @@ const introHTML = /*html*/ `
       <span class="aurora-blob blob-4"></span>
     </div>
 
+    <!-- "Amanecer" (escena 7): fondo claro con la aurora pastel de la landing.
+         Aparece al final para que la intro (de noche) acabe igual que empieza la landing (de día) -->
+    <div class="stage-dawn" aria-hidden="true"></div>
+
     <!-- Logo arriba a la izquierda, en el mismo sitio donde luego estará el de la navbar.
          Así la marca se ve desde el primer momento -->
     <div class="intro-brand">
@@ -197,10 +201,11 @@ const introHTML = /*html*/ `
     <div class="bubbles" aria-hidden="true"></div>
 
     <!-- ESCENA 7: logo y nombre antes de pasar a la landing -->
+    <!-- Textos en oscuro: cuando aparecen ya ha "amanecido" y el fondo es claro -->
     <div class="outro">
       <img src="${import.meta.env.BASE_URL}favicon.svg" alt="" class="h-20 w-20" />
-      <p class="mt-6 text-4xl font-extrabold tracking-tight text-white sm:text-5xl">Reservo</p>
-      <p class="mt-3 text-lg text-slate-400">Las reservas de tu negocio, en piloto automático</p>
+      <p class="mt-6 text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl">Reservo</p>
+      <p class="mt-3 text-lg text-slate-600">Las reservas de tu negocio, en piloto automático</p>
     </div>
 
     <!-- Escena 3D: perspective da profundidad a los giros -->
@@ -440,6 +445,7 @@ function buildTimeline(section) {
   // así la tapa, que está en la mitad derecha, queda justo en el centro
   gsap.set(book, { autoAlpha: 0, xPercent: -25 });
   gsap.set(captions, { autoAlpha: 0, y: 20 });
+  gsap.set($('.stage-dawn'), { autoAlpha: 0 });
   gsap.set(phones, { autoAlpha: 0, scale: 0.6 });
   gsap.set($$('.week .hline'), { scaleX: 0 });
   gsap.set($$('.week .day-head, .week .hour'), { autoAlpha: 0 });
@@ -605,11 +611,13 @@ function buildTimeline(section) {
     );
   });
 
-  // ESCENA 7: todo se va, la aurora se apaga (queda el fondo de la landing) y aparece el logo
+  // ESCENA 7: todo se va, la aurora se apaga, "amanece" (fondo claro de la landing) y aparece el logo
   tl.to(captions[4], { autoAlpha: 0, y: -20, duration: 0.4 }, 19.4)
     .to(phones, { autoAlpha: 0, scale: 0.6, stagger: 0.05, duration: 0.4 }, 19.4)
     .to(book, { scale: 0.5, y: -40, autoAlpha: 0, duration: 0.9, ease: 'power2.in' }, 19.5)
     .to($('.aurora'), { autoAlpha: 0, duration: 1.2, ease: 'power1.inOut' }, 19.6)
+    // Amanece: el fondo claro de la landing aparece encima de la noche
+    .to($('.stage-dawn'), { autoAlpha: 1, duration: 1.2, ease: 'power1.inOut' }, 19.6)
     // El logo de arriba a la izquierda se va: ahora el logo está en el centro
     .to($('.intro-brand'), { autoAlpha: 0, duration: 0.4 }, 19.6)
     .fromTo($('.outro'), { autoAlpha: 0, scale: 0.8 }, { autoAlpha: 1, scale: 1, duration: 0.6, ease: 'power2.out' }, 20.2)

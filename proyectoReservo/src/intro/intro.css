@@ -819,6 +819,20 @@ html.lenis {
   display: inline-block;
 }
 
+/* "Amanecer" de la escena 7: el mismo fondo que la landing (--bg claro de :root, que aquí
+   dentro de .story no se puede usar porque está redefinido en oscuro) con manchas pastel
+   parecidas a las de .page-aurora. Empieza invisible; Intro.js lo enseña al final */
+.stage-dawn {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(30% 35% at 15% 15%, rgb(129 140 248 / 0.3), transparent 70%),
+    radial-gradient(28% 32% at 85% 20%, rgb(103 232 249 / 0.3), transparent 70%),
+    radial-gradient(32% 35% at 75% 80%, rgb(196 181 253 / 0.35), transparent 70%),
+    radial-gradient(25% 30% at 25% 85%, rgb(249 168 212 / 0.25), transparent 70%),
+    #fbfaff;
+}
+
 /* Final: el logo y el nombre en el centro, antes de pasar a la landing */
 .outro {
   position: absolute;
