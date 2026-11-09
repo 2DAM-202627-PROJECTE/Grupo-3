@@ -13,6 +13,7 @@
 //   5. Contenido del footer     → logo, redes y enlaces legales, debajo de la newsletter
 //   6. Aviso de cookies         → fuera de #app, en el <body>
 //   7. Al hacer scroll          → animación de las secciones y enlace activo del menú
+//   8. Intro animada            → "Un día con Reservo", antes de la landing (solo la primera vez)
 // =============================================================
 
 // -------------------------------------------------------------
@@ -40,6 +41,9 @@ import { renderPreferencesBar } from './components/PreferencesBar.js';
 
 // Animación de las secciones al hacer scroll (no es un componente, no pinta nada)
 import { initScrollReveal } from './scrollReveal.js';
+
+// Intro animada que va antes de la landing (tampoco es una sección de <main>)
+import { initIntro } from './intro/Intro.js';
 
 // -------------------------------------------------------------
 // 2. Lista de secciones
@@ -146,3 +150,11 @@ initScrollReveal();
 // Enlace del menú marcado según la sección que se ve. También va al final
 // porque necesita las secciones (ver Navbar.js, apartado 6)
 initActiveNavLink();
+
+// -------------------------------------------------------------
+// 8. Intro animada
+// -------------------------------------------------------------
+
+// Se crea la última: se coloca antes de #app y necesita que la landing ya esté pintada
+// para calcular bien dónde empieza y dónde acaba. Si ya se ha visto, no hace nada (ver Intro.js)
+initIntro();
