@@ -79,13 +79,13 @@ function featureCard({ icon, title, text }) {
          (motion-safe: lo de subir solo si no se han pedido animaciones reducidas).
          En móvil hay 2 tarjetas por fila, así que el relleno, el icono y el título
          son más pequeños y crecen a partir de sm: -->
-    <article class="rounded-xl border border-slate-800 bg-slate-800/30 p-4 transition duration-200 hover:border-indigo-500/50 hover:shadow-lg hover:shadow-indigo-500/10 motion-safe:hover:-translate-y-1 sm:p-6">
+    <article class="glass rounded-xl p-4 transition duration-200 hover:border-indigo-500/50 hover:shadow-lg hover:shadow-indigo-500/10 motion-safe:hover:-translate-y-1 sm:p-6">
       <!-- Icono: es decorativo (el título ya dice lo que es), así que aria-hidden -->
-      <div class="text-indigo-400" aria-hidden="true">
+      <div class="text-indigo-600" aria-hidden="true">
         <i data-lucide="${icon}" class="h-6 w-6 sm:h-7 sm:w-7"></i>
       </div>
-      <h3 class="mt-3 text-base font-semibold text-white sm:mt-4 sm:text-lg">${title}</h3>
-      <p class="mt-2 text-sm leading-relaxed text-slate-400">${text}</p>
+      <h3 class="mt-3 text-base font-semibold text-slate-900 sm:mt-4 sm:text-lg">${title}</h3>
+      <p class="mt-2 text-sm leading-relaxed text-slate-600">${text}</p>
     </article>
   `;
 }
@@ -107,10 +107,10 @@ export function renderFeatures(container) {
       <!-- Cabecera de la sección: título y subtítulo centrados -->
       <div class="mx-auto max-w-2xl text-center">
         <!-- h2 porque el h1 ya es el título del Hero (solo puede haber uno) -->
-        <h2 class="text-3xl font-bold tracking-tight text-white sm:text-4xl">
+        <h2 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
           Todo lo que necesitas para gestionar reservas
         </h2>
-        <p class="mt-4 text-lg text-slate-400">
+        <p class="mt-4 text-lg text-slate-600">
           Una sola herramienta para tu agenda, tus clientes y tus cobros.
         </p>
       </div>
