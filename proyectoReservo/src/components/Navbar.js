@@ -9,6 +9,7 @@
 //   3. HTML de la barra  → renderNavbar (lo llama main.js)
 //   4. Menú móvil        → abrir y cerrar el desplegable: ☰, enlaces, Escape y clic fuera
 //   5. Barra fija        → se queda arriba al bajar y le aparece fondo, borde y sombra
+//   6. Enlace activo     → initActiveNavLink (lo llama main.js): marca la sección que se ve
 // =============================================================
 
 // -------------------------------------------------------------
@@ -30,12 +31,22 @@ const focusRing = 'focus:outline-none focus-visible:ring-2 focus-visible:ring-in
 // 2. Un enlace
 // -------------------------------------------------------------
 
+// Estilos del enlace de la sección que se está viendo (los activa el apartado 6 con aria-current):
+//   - texto blanco
+//   - en móvil, fondo gris como el del hover
+//   - en escritorio, una raya índigo debajo (el pseudo-elemento after:) que crece desde el centro:
+//     normalmente tiene scale-x-0 (ancho 0) y con el enlace activo pasa a scale-x-100
+const activeLink =
+  'aria-[current=location]:text-white aria-[current=location]:bg-slate-800 md:aria-[current=location]:bg-transparent ' +
+  'md:relative md:after:absolute md:after:inset-x-0 md:after:-bottom-0.5 md:after:h-0.5 md:after:rounded-full md:after:bg-indigo-500 ' +
+  'md:after:scale-x-0 md:after:transition-transform md:after:duration-300 md:aria-[current=location]:after:scale-x-100';
+
 // Devuelve el HTML de un enlace del menú.
 // En móvil ocupa toda la fila del desplegable (block + relleno) y en escritorio es un enlace de texto
 function navLink({ label, href }) {
   return /*html*/ `
     <li>
-      <a href="${href}" class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-300 transition hover:bg-slate-800 hover:text-white md:px-0 md:py-1 md:hover:bg-transparent ${focusRing}">${label}</a>
+      <a href="${href}" class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-300 transition hover:bg-slate-800 hover:text-white md:px-0 md:py-1 md:hover:bg-transparent ${activeLink} ${focusRing}">${label}</a>
     </li>
   `;
 }
@@ -185,4 +196,46 @@ export function renderNavbar(container) {
 
   // Una vez al cargar: si se recarga la página a mitad de scroll, la barra ya sale con fondo
   updateBar();
+}
+
+// -------------------------------------------------------------
+// 6. Enlace activo según la sección
+// -------------------------------------------------------------
+
+// Marca en el menú el enlace de la sección que se está viendo.
+// Se exporta aparte (no va dentro de renderNavbar) porque necesita que las secciones
+// ya existan, y main.js pinta la barra antes que ellas: main.js la llama al final.
+export function initActiveNavLink() {
+  const navbar = document.querySelector('#navbar');
+
+  // Las secciones que hay que vigilar: las de los enlaces del menú y el Hero
+  // (el Hero no tiene enlace: cuando se ve, no se marca ninguno)
+  const ids = ['hero', ...links.map((link) => link.href.slice(1))];
+  const sections = ids.map((id) => document.getElementById(id)).filter(Boolean);
+
+  // Marca el enlace de la sección id y desmarca el resto.
+  // aria-current="location" es el atributo pensado para esto: el lector de pantalla dice
+  // "ubicación actual" en ese enlace. Además los estilos lo usan (aria-[current=location]: en navLink)
+  const setActive = (id) => {
+    navbar.querySelectorAll('#primary-navigation a').forEach((link) => {
+      if (link.getAttribute('href') === `#${id}`) {
+        link.setAttribute('aria-current', 'location');
+      } else {
+        link.removeAttribute('aria-current');
+      }
+    });
+  };
+
+  // rootMargin '-50% 0px -50% 0px' encoge la zona vigilada hasta una línea en el centro
+  // de la pantalla: la sección activa es la que está cruzando esa línea
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) setActive(entry.target.id);
+      });
+    },
+    { rootMargin: '-50% 0px -50% 0px' },
+  );
+
+  sections.forEach((section) => observer.observe(section));
 }

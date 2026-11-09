@@ -12,7 +12,7 @@
 //   4. Newsletter               → dentro del <footer>, arriba
 //   5. Contenido del footer     → logo, redes y enlaces legales, debajo de la newsletter
 //   6. Aviso de cookies         → fuera de #app, en el <body>
-//   7. Al hacer scroll          → animación de las secciones al entrar en pantalla
+//   7. Al hacer scroll          → animación de las secciones y enlace activo del menú
 // =============================================================
 
 // -------------------------------------------------------------
@@ -29,7 +29,7 @@
 // Solo se importan los componentes que ya tienen código: importar algo que un
 // archivo vacío todavía no exporta daría error.
 import { renderHero } from './components/Hero.js';
-import { renderNavbar } from './components/Navbar.js';
+import { renderNavbar, initActiveNavLink } from './components/Navbar.js';
 import { renderFeatures } from './components/Features.js';
 import { renderPricing } from './components/Pricing.js';
 import { renderHowItWorks } from './components/HowItWorks.js';
@@ -141,3 +141,7 @@ renderPreferencesBar(preferencesBar);
 // Animación de las secciones al entrar en pantalla. Va al final porque necesita que
 // todas las secciones ya estén pintadas para buscar dentro de ellas qué animar (ver scrollReveal.js)
 initScrollReveal();
+
+// Enlace del menú marcado según la sección que se ve. También va al final
+// porque necesita las secciones (ver Navbar.js, apartado 6)
+initActiveNavLink();
