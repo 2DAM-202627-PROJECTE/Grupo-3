@@ -417,7 +417,9 @@ function buildTimeline(section) {
     // En escritorio la tarjeta es la protagonista: se ve un 22% más grande (letras incluidas).
     // Si la pantalla es baja, se limita para que quepa con 160px de margen entre arriba y abajo
     const scale = Math.min(1.22, (window.innerHeight - 160) / card.offsetHeight);
-    gsap.set(card, { xPercent: -50, yPercent: -50, x: '24vw', y: 0, scale });
+    // y: -32px → la escena tiene 2rem (32px) más de margen arriba que el texto,
+    // así que se sube eso para que la tarjeta quede a la misma altura que el texto
+    gsap.set(card, { xPercent: -50, yPercent: -50, x: '24vw', y: -32, scale });
   } else {
     // En móvil se calcula dónde cabe: justo debajo del texto (24px de separación)
     // y por encima del indicador de scroll (deja 90px abajo).

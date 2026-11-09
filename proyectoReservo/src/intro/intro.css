@@ -54,6 +54,19 @@
   display: grid;
   place-items: center;
   background: var(--bg);
+  /* Cuánto se suben el texto de entrada y las frases por encima del centro de la pantalla.
+     Centrado del todo se veía demasiado abajo */
+  --lift: 5vh;
+  /* Cuánto se suben la tarjeta y la agenda. En escritorio más que las frases, para que
+     no quede tanto espacio entre la frase y la agenda. En móvil igual que --lift
+     (no hay sitio de sobra: la frase se montaría encima de la agenda) */
+  --scene-lift: var(--lift);
+}
+
+@media (min-width: 1024px) {
+  .stage {
+    --scene-lift: 9vh;
+  }
 }
 
 /* --- Aurora ---
@@ -127,7 +140,9 @@
   position: relative;
   width: calc(var(--pw) * 2);
   height: var(--ph);
-  margin-top: 4rem;
+  /* El margen de arriba deja sitio a las frases encima de la agenda. Como la escena
+     está centrada, restarle 2 veces --scene-lift la sube exactamente --scene-lift */
+  margin-top: calc(4rem - 2 * var(--scene-lift));
   perspective: 2200px;
 }
 
@@ -464,7 +479,7 @@ html.lenis {
   position: absolute;
   z-index: 2;
   left: max(1.5rem, calc((100vw - 80rem) / 2 + 2rem));
-  top: 50%;
+  top: calc(50% - var(--lift));
   max-width: min(36rem, 44vw);
   transform: translateY(-50%);
 }
@@ -687,7 +702,7 @@ html.lenis {
 .captions {
   position: absolute;
   z-index: 2;
-  top: calc(50% - var(--ph) / 2 - 2.5rem);
+  top: calc(50% - var(--ph) / 2 - 2.5rem - var(--lift));
   left: 0;
   right: 0;
   height: 3rem;
