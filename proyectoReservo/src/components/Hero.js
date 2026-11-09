@@ -64,6 +64,17 @@ export function renderHero(container) {
         <!-- Texto pequeño bajo los botones. slate-400 y no slate-500 para mantener
              un contraste mínimo de 4.5:1 con el fondo (apartado 3.2) -->
         <p class="mt-4 text-sm text-slate-400">Sin tarjeta de crédito · Cancela cuando quieras</p>
+
+        <!-- Enlace para volver a ver la intro animada (src/intro/Intro.js), que solo sale sola
+             la primera vez. Carga la página con ?intro, que hace que la intro salga siempre.
+             La ruta empieza por BASE_URL ("/" en local y "/Grupo-3/" en GitHub Pages) -->
+        <a href="${import.meta.env.BASE_URL}?intro" class="mt-3 inline-flex items-center gap-1.5 rounded-lg text-sm font-medium text-indigo-300 transition hover:text-indigo-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400">
+          <!-- Icono de "play" (decorativo: el texto ya dice lo que hace) -->
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z" />
+          </svg>
+          Ver la intro otra vez
+        </a>
       </div>
 
       <!-- Columna derecha: ejemplo de reserva para FitZone Gym -->
