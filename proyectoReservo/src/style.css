@@ -235,4 +235,20 @@
       0 20px 45px -15px rgb(79 70 229 / 0.25),
       inset 0 1px 0 rgb(255 255 255 / 0.8);
   }
+
+  /* --- Borde con degradado (índigo → violeta → cian) ---
+     Para destacar algo, por ejemplo el plan Pro. CSS no tiene "border con degradado",
+     así que se hace con dos fondos:
+       - padding-box: el de dentro, blanco casi opaco, que tapa todo menos el borde
+       - border-box: el de fuera, con el degradado, que solo asoma por el borde transparente
+     border-width con !important: los elementos suelen llevar la clase border de Tailwind
+     (1px) y aquí queremos 2px para que el degradado se vea bien */
+  .gradient-border {
+    border-style: solid;
+    border-color: transparent;
+    border-width: 2px !important;
+    background:
+      linear-gradient(rgb(255 255 255 / 0.85), rgb(255 255 255 / 0.85)) padding-box,
+      linear-gradient(135deg, #6366f1, #a855f7, #06b6d4) border-box;
+  }
 }
