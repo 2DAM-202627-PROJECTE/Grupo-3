@@ -27,6 +27,9 @@
 
   html {
     scroll-behavior: smooth;
+    /* La navbar es fija (sticky): al saltar a una sección con un enlace del menú,
+       se deja este hueco arriba para que la barra no tape el título de la sección */
+    scroll-padding-top: 4rem;
   }
 
   body {

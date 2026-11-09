@@ -8,6 +8,7 @@
 //   2. Un enlace         → navLink
 //   3. HTML de la barra  → renderNavbar (lo llama main.js)
 //   4. Menú móvil        → abrir y cerrar el desplegable: ☰, enlaces, Escape y clic fuera
+//   5. Barra fija        → se queda arriba al bajar y le aparece fondo, borde y sombra
 // =============================================================
 
 // -------------------------------------------------------------
@@ -47,8 +48,11 @@ function navLink({ label, href }) {
 export function renderNavbar(container) {
   container.innerHTML = /*html*/ `
     <!-- Barra con borde inferior y fondo del color de la página, como en el mockup.
-         relative + z-20: el menú desplegable de móvil queda por encima del Hero -->
-    <div class="relative z-20 border-b border-slate-800 bg-slate-900/95 backdrop-blur">
+         relative + z-20: el menú desplegable de móvil queda por encima del Hero.
+         Arriba del todo es transparente y sin borde; al bajar, el apartado 5 le pone
+         fondo, borde y sombra (las clases de scrolledClasses).
+         transition-[...]: el cambio entre los dos estados es suave (300ms) -->
+    <div id="navbar-bar" class="relative z-20 border-b border-transparent backdrop-blur transition-[background-color,border-color,box-shadow] duration-300">
       <!-- Tres zonas en fila: logo (izquierda), enlaces (centro) y acciones (derecha).
            relative: el desplegable de móvil (absolute top-full) se coloca justo debajo de esta fila -->
       <div class="relative mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
@@ -152,4 +156,33 @@ export function renderNavbar(container) {
       setMenuOpen(false);
     }
   });
+
+  // -----------------------------------------------------------
+  // 5. Barra fija que cambia al hacer scroll
+  // -----------------------------------------------------------
+
+  // La barra se queda pegada arriba al bajar por la página.
+  // sticky + top-0 va en el <nav> (el que crea main.js) y no en la barra de dentro,
+  // porque sticky solo funciona dentro de su padre: el <nav> mide lo mismo que la barra,
+  // pero su padre (#app) es toda la página. z-30: por encima de las secciones
+  container.classList.add('sticky', 'top-0', 'z-30');
+
+  const bar = container.querySelector('#navbar-bar');
+
+  // Clases que se ponen al bajar: fondo casi opaco, borde de abajo y sombra
+  const scrolledClasses = ['bg-slate-900/90', 'border-slate-800', 'shadow-lg', 'shadow-black/20'];
+
+  // Se comprueba si la página está arriba del todo (scrollY es lo que se ha bajado, en px).
+  // classList.toggle(clase, condición) pone la clase si la condición es true y la quita si es false
+  const updateBar = () => {
+    const isScrolled = window.scrollY > 8;
+    scrolledClasses.forEach((cls) => bar.classList.toggle(cls, isScrolled));
+  };
+
+  // passive: true le dice al navegador que este código no va a bloquear el scroll,
+  // así el scroll sigue siendo fluido
+  window.addEventListener('scroll', updateBar, { passive: true });
+
+  // Una vez al cargar: si se recarga la página a mitad de scroll, la barra ya sale con fondo
+  updateBar();
 }
