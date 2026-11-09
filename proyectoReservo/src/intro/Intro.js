@@ -25,8 +25,9 @@
 //   4. Pintar la semana      → cabeceras, horas, líneas y reservas
 //   5. Estado inicial        → cómo está todo antes de empezar a bajar
 //   6. La película           → la timeline, escena a escena
-//   7. Scroll                → Lenis y ScrollTrigger
-//   8. Función principal     → initIntro(), que se llama desde main.js
+//   7. Principio "vivo"      → entrada al cargar, tarjeta que se usa sola e inclinación con el ratón
+//   8. Scroll                → Lenis y ScrollTrigger
+//   9. Función principal     → initIntro(), que se llama desde main.js
 // =============================================================
 
 import gsap from 'gsap';
@@ -607,7 +608,155 @@ function buildTimeline(section) {
 }
 
 // -------------------------------------------------------------
-// 7 y 8. Scroll y función principal
+// 7. Principio "vivo" (antes de empezar a bajar)
+// -------------------------------------------------------------
+
+// Estas animaciones van por tiempo, no por scroll:
+//   - Entrada al cargar: logo, título palabra a palabra, subtítulo, tarjeta e indicador
+//   - Tarjeta viva: un cursor de mentira elige día, clase y confirma la reserva, en bucle
+//   - Inclinación: la tarjeta se inclina un poco hacia donde está el ratón
+// En cuanto se empieza a bajar se paran (la tarjeta pasa a ser la tapa de la agenda),
+// y si se vuelve arriba del todo, vuelven a empezar.
+// Devuelve una función update(progreso) que se llama cada vez que cambia el scroll de la intro
+function buildStartScene(section) {
+  const $ = (selector) => section.querySelector(selector);
+  const $$ = (selector) => [...section.querySelectorAll(selector)];
+
+  const inner = $('.card-inner');
+  const days = $$('.card-inner .day');
+  const slots = $$('.card-inner .slot');
+  const button = $('.card-button');
+  const cursor = $('.fake-cursor');
+  const buttonText = button.textContent;
+
+  // --- Tarjeta viva: estados de la tarjeta ---
+  const setDay = (index) => days.forEach((day, i) => day.classList.toggle('is-active', i === index));
+  const setSlot = (index) => slots.forEach((slot, i) => slot.classList.toggle('is-selected', i === index));
+  const setDone = (done) => {
+    button.classList.toggle('is-done', done);
+    button.textContent = done ? '¡Reservado! ✓' : buttonText;
+  };
+  // Como al principio: miércoles marcado, ninguna clase elegida y el botón normal
+  const resetCard = () => {
+    setDay(2);
+    setSlot(-1);
+    setDone(false);
+  };
+
+  // Punto de un elemento donde "hace clic" el cursor (un poco a la derecha y abajo del centro).
+  // offsetLeft/offsetTop: posición dentro de .card-inner (que tiene position: relative)
+  const pointAt = (el) => ({ x: el.offsetLeft + el.offsetWidth * 0.55, y: el.offsetTop + el.offsetHeight * 0.6 });
+
+  // --- Tarjeta viva: el bucle ---
+  // repeat: -1 → se repite siempre. paused: empieza parado (arranca al acabar la entrada)
+  const loop = gsap.timeline({ repeat: -1, paused: true });
+
+  // Mueve el cursor hasta un elemento y "hace clic" (se encoge y vuelve)
+  const clickOn = (el, action) => {
+    loop
+      .to(cursor, { x: () => pointAt(el).x, y: () => pointAt(el).y, duration: 0.7, ease: 'power2.inOut' })
+      .to(cursor, { scale: 0.75, duration: 0.1 })
+      .call(action)
+      .to(cursor, { scale: 1, duration: 0.15 })
+      .to({}, { duration: 0.35 });
+  };
+
+  // Una reserva completa: aparece el cursor, elige día y clase, confirma, espera y se resetea
+  const booking = (dayIndex, slotIndex) => {
+    loop
+      .set(cursor, { x: () => pointAt(button).x + 70, y: () => pointAt(button).y + 50, scale: 1 })
+      .to(cursor, { autoAlpha: 1, duration: 0.3 });
+    clickOn(days[dayIndex], () => setDay(dayIndex));
+    clickOn(slots[slotIndex], () => setSlot(slotIndex));
+    clickOn(button, () => setDone(true));
+    loop.to(cursor, { autoAlpha: 0, duration: 0.3 }, '+=0.6').call(resetCard, [], '+=0.8');
+  };
+
+  // Dos reservas distintas, para que no parezca siempre lo mismo
+  booking(3, 1);
+  booking(0, 2);
+
+  // --- Inclinación con el ratón (solo con ratón, no en pantallas táctiles) ---
+  const hasMouse = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  // quickTo crea una función que anima una propiedad hacia el valor que se le pasa,
+  // reutilizando la misma animación (ideal para eventos que se repiten mucho, como mousemove)
+  const tiltX = gsap.quickTo(inner, 'rotationX', { duration: 0.6, ease: 'power3.out' });
+  const tiltY = gsap.quickTo(inner, 'rotationY', { duration: 0.6, ease: 'power3.out' });
+  let tiltOn = false;
+
+  section.addEventListener('pointermove', (event) => {
+    if (!hasMouse || !tiltOn) return;
+    // Posición del ratón de -0.5 a 0.5 (0 = centro de la pantalla)
+    const x = event.clientX / window.innerWidth - 0.5;
+    const y = event.clientY / window.innerHeight - 0.5;
+    tiltY(x * 16);
+    tiltX(-y * 12);
+  });
+
+  const resetTilt = () => {
+    tiltX(0);
+    tiltY(0);
+  };
+  section.addEventListener('pointerleave', resetTilt);
+
+  // --- Entrada al cargar ---
+  // Primero se colocan todos en su estado de salida (ocultos y desplazados) y después
+  // la timeline los lleva a su sitio. Se hace con set + to y no con from porque así
+  // las palabras que aún no han empezado se quedan ocultas esperando su turno
+  let entered = false;
+  let active = true;
+
+  const brand = $('.intro-brand');
+  const words = $$('.intro-title .word');
+  const subtitle = $('.intro-subtitle');
+  const hint = $('.scroll-hint-inner');
+
+  gsap.set(brand, { autoAlpha: 0, y: -12 });
+  gsap.set(words, { autoAlpha: 0, y: 40, rotationX: -50 });
+  gsap.set(subtitle, { autoAlpha: 0, y: 20 });
+  gsap.set(inner, { autoAlpha: 0, y: 80, rotationX: 30, rotationY: -20, scale: 0.9 });
+  gsap.set(hint, { autoAlpha: 0, y: 10 });
+
+  gsap
+    .timeline({
+      onComplete: () => {
+        entered = true;
+        // Si mientras entraba ya se ha empezado a bajar, no se arranca nada
+        if (active) {
+          tiltOn = true;
+          loop.play();
+        }
+      },
+    })
+    .to(brand, { autoAlpha: 1, y: 0, duration: 0.5, ease: 'power2.out' }, 0)
+    .to(words, { autoAlpha: 1, y: 0, rotationX: 0, stagger: 0.07, duration: 0.6, ease: 'power3.out' }, 0.1)
+    .to(subtitle, { autoAlpha: 1, y: 0, duration: 0.5, ease: 'power2.out' }, 0.55)
+    .to(inner, { autoAlpha: 1, y: 0, rotationX: 0, rotationY: 0, scale: 1, duration: 1, ease: 'power3.out' }, 0.2)
+    .to(hint, { autoAlpha: 1, y: 0, duration: 0.4 }, 0.9);
+
+  // --- Parar al bajar y volver a empezar arriba del todo ---
+  return function update(progress) {
+    const atTop = progress < 0.002;
+
+    if (!atTop && active) {
+      active = false;
+      tiltOn = false;
+      resetTilt();
+      loop.pause();
+      gsap.set(cursor, { autoAlpha: 0 });
+      resetCard();
+    } else if (atTop && !active) {
+      active = true;
+      if (entered) {
+        tiltOn = true;
+        loop.restart();
+      }
+    }
+  };
+}
+
+// -------------------------------------------------------------
+// 8 y 9. Scroll y función principal
 // -------------------------------------------------------------
 
 // Crea la intro antes de la landing, si toca enseñarla (ver apartado 1)
@@ -634,6 +783,7 @@ export function initIntro() {
   gsap.ticker.lagSmoothing(0);
 
   const tl = buildTimeline(section);
+  const updateStart = buildStartScene(section);
 
   ScrollTrigger.create({
     trigger: section,
@@ -654,5 +804,7 @@ export function initIntro() {
       document.documentElement.classList.remove('intro-playing');
     },
     onEnterBack: () => document.documentElement.classList.add('intro-playing'),
+    // En cada movimiento del scroll: el principio "vivo" se para o vuelve a empezar (apartado 7)
+    onUpdate: (self) => updateStart(self.progress),
   });
 }
