@@ -10,10 +10,11 @@
 
 // Enlaces legales. Si se añade o quita alguno, solo hay que tocar este array.
 // 'Cookies' apunta a su página estática; Privacidad y Aviso legal siguen sin página por ahora.
+// import.meta.env.BASE_URL es la ruta base de la web ("/" en local y "/Grupo-3/" en GitHub Pages).
 const legalLinks = [
   { label: 'Privacidad', href: '#' },
   { label: 'Aviso legal', href: '#' },
-  { label: 'Cookies', href: '/politica-cookies.html' },
+  { label: 'Cookies', href: `${import.meta.env.BASE_URL}politica-cookies.html` },
   { label: 'Contacto', href: '#' },
 ];
 
