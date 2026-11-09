@@ -640,6 +640,35 @@ html.lenis {
   background: #059669;
 }
 
+/* Aviso que sale al confirmar la reserva, como una notificación del móvil.
+   Sobresale por la esquina de arriba a la derecha de la tarjeta.
+   Empieza invisible; Intro.js lo enseña y lo esconde en cada reserva */
+.card-toast {
+  position: absolute;
+  top: -1.4rem;
+  right: -1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  padding: 0.6rem 0.9rem;
+  border-radius: 0.8rem;
+  border: 1px solid rgb(52 211 153 / 0.5);
+  background: rgb(6 78 59 / 0.95);
+  box-shadow: 0 1rem 2rem rgb(0 0 0 / 0.4);
+  font-size: 0.75rem;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.card-toast b {
+  color: white;
+}
+
+.card-toast span {
+  color: #a7f3d0;
+}
+
 /* Cursor de mentira de la tarjeta viva. Empieza invisible; Intro.js lo mueve.
    pointer-events: none → no molesta al ratón de verdad */
 .fake-cursor {

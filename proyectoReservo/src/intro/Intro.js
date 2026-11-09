@@ -229,6 +229,13 @@ const introHTML = /*html*/ `
           </div>
           <div class="card-button mt-5">Confirmar reserva</div>
 
+          <!-- Aviso que sale al confirmar, como una notificación del móvil del cliente.
+               El texto de abajo lo rellena el apartado 7 (cliente, día y clase) -->
+          <div class="card-toast">
+            <b>📱 Confirmación enviada</b>
+            <span data-toast-text></span>
+          </div>
+
           <!-- Cursor de mentira que usa la tarjeta solo (la tarjeta "viva") -->
           <svg class="fake-cursor" viewBox="0 0 24 24" aria-hidden="true">
             <path d="M5 3l14 8-6 1.5L10 19z" fill="white" stroke="#0f172a" stroke-width="1.5" stroke-linejoin="round" />
@@ -407,7 +414,10 @@ function buildTimeline(section) {
   const isDesktop = window.matchMedia('(min-width: 1024px)').matches;
 
   if (isDesktop) {
-    gsap.set(card, { xPercent: -50, yPercent: -50, x: '24vw', y: 0 });
+    // En escritorio la tarjeta es la protagonista: se ve un 22% más grande (letras incluidas).
+    // Si la pantalla es baja, se limita para que quepa con 160px de margen entre arriba y abajo
+    const scale = Math.min(1.22, (window.innerHeight - 160) / card.offsetHeight);
+    gsap.set(card, { xPercent: -50, yPercent: -50, x: '24vw', y: 0, scale });
   } else {
     // En móvil se calcula dónde cabe: justo debajo del texto (24px de separación)
     // y por encima del indicador de scroll (deja 90px abajo).
@@ -627,7 +637,13 @@ function buildStartScene(section) {
   const slots = $$('.card-inner .slot');
   const button = $('.card-button');
   const cursor = $('.fake-cursor');
+  const toast = $('.card-toast');
+  const toastText = $('[data-toast-text]');
   const buttonText = button.textContent;
+
+  // Texto de un día ("Jue 25") y de una clase ("Yoga"), sacados de la propia tarjeta
+  const dayLabel = (day) => `${day.firstChild.textContent} ${day.querySelector('b').textContent}`;
+  const slotLabel = (slot) => slot.firstChild.textContent.trim();
 
   // --- Tarjeta viva: estados de la tarjeta ---
   const setDay = (index) => days.forEach((day, i) => day.classList.toggle('is-active', i === index));
@@ -636,11 +652,12 @@ function buildStartScene(section) {
     button.classList.toggle('is-done', done);
     button.textContent = done ? '¡Reservado! ✓' : buttonText;
   };
-  // Como al principio: miércoles marcado, ninguna clase elegida y el botón normal
+  // Como al principio: miércoles marcado, ninguna clase elegida, el botón normal y sin aviso
   const resetCard = () => {
     setDay(2);
     setSlot(-1);
     setDone(false);
+    gsap.set(toast, { autoAlpha: 0 });
   };
 
   // Punto de un elemento donde "hace clic" el cursor (un poco a la derecha y abajo del centro).
@@ -661,20 +678,29 @@ function buildStartScene(section) {
       .to({}, { duration: 0.35 });
   };
 
-  // Una reserva completa: aparece el cursor, elige día y clase, confirma, espera y se resetea
-  const booking = (dayIndex, slotIndex) => {
+  // Una reserva completa: aparece el cursor, elige día y clase, confirma, sale el aviso,
+  // espera y se resetea. name es el cliente que sale en el aviso
+  const booking = (dayIndex, slotIndex, name) => {
     loop
       .set(cursor, { x: () => pointAt(button).x + 70, y: () => pointAt(button).y + 50, scale: 1 })
       .to(cursor, { autoAlpha: 1, duration: 0.3 });
     clickOn(days[dayIndex], () => setDay(dayIndex));
     clickOn(slots[slotIndex], () => setSlot(slotIndex));
     clickOn(button, () => setDone(true));
-    loop.to(cursor, { autoAlpha: 0, duration: 0.3 }, '+=0.6').call(resetCard, [], '+=0.8');
+
+    // Aviso: se rellena el texto y, en el mismo momento ('<' = donde empieza lo anterior),
+    // aparece con un pequeño rebote (back.out) desde abajo
+    loop
+      .call(() => (toastText.textContent = `${name} · ${dayLabel(days[dayIndex])} · ${slotLabel(slots[slotIndex])}`), [], '-=0.3')
+      .fromTo(toast, { autoAlpha: 0, y: 12, scale: 0.9 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.4, ease: 'back.out(2)' }, '<')
+      .to(cursor, { autoAlpha: 0, duration: 0.3 }, '+=0.3')
+      .to(toast, { autoAlpha: 0, y: -12, duration: 0.3 }, '+=0.9')
+      .call(resetCard, [], '+=0.3');
   };
 
   // Dos reservas distintas, para que no parezca siempre lo mismo
-  booking(3, 1);
-  booking(0, 2);
+  booking(3, 1, 'Laura');
+  booking(0, 2, 'Marc');
 
   // --- Inclinación con el ratón (solo con ratón, no en pantallas táctiles) ---
   const hasMouse = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
