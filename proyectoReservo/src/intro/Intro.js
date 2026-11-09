@@ -10,7 +10,7 @@
 //   4. Llueven las reservas desde los móviles de los clientes
 //   5. Los recordatorios salen solos hacia los móviles
 //   6. La agenda cambia de sector: gimnasio, peluquería, restaurante, clínica
-//   7. Final: la agenda se aleja, amanece (de noche a día), aparece el logo y empieza la landing
+//   7. Final: la agenda se aleja, aparece el logo y empieza la landing
 //
 // Librerías:
 //   - GSAP: hace las animaciones. Una "timeline" es una lista de animaciones
@@ -138,20 +138,9 @@ const TITLE_WORDS = ['¿Cómo', 'es', 'un', 'día', 'en'];
 
 // Toda la escena. Lo que es decoración lleva aria-hidden; los textos importantes son texto real
 const introHTML = /*html*/ `
+  <!-- El escenario no tiene fondo propio: detrás se ve la aurora pastel de toda la página
+       (.page-aurora de index.html y style.css), la misma que en la landing -->
   <div class="stage">
-
-    <!-- Fondo "aurora": manchas de color difuminadas que se mueven despacio (ver intro.css).
-         Al final de la intro se apagan y queda el fondo de la landing -->
-    <div class="aurora" aria-hidden="true">
-      <span class="aurora-blob blob-1"></span>
-      <span class="aurora-blob blob-2"></span>
-      <span class="aurora-blob blob-3"></span>
-      <span class="aurora-blob blob-4"></span>
-    </div>
-
-    <!-- "Amanecer" (escena 7): fondo claro con la aurora pastel de la landing.
-         Aparece al final para que la intro (de noche) acabe igual que empieza la landing (de día) -->
-    <div class="stage-dawn" aria-hidden="true"></div>
 
     <!-- Logo arriba a la izquierda, en el mismo sitio donde luego estará el de la navbar.
          Así la marca se ve desde el primer momento -->
@@ -163,11 +152,11 @@ const introHTML = /*html*/ `
     <!-- ESCENA 1: texto de entrada. No es un h1: el h1 de la página es el del Hero.
          Cada palabra va en su propio <span class="word"> para que aparezcan una a una al cargar -->
     <div class="intro">
-      <p class="intro-title text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl">
+      <p class="intro-title text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
         ${TITLE_WORDS.map((word) => `<span class="word">${word}</span>`).join(' ')}
-        <span class="word gradient-word bg-linear-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">tu negocio?</span>
+        <span class="word gradient-word bg-linear-to-r from-indigo-600 via-purple-600 to-cyan-600 bg-clip-text text-transparent">tu negocio?</span>
       </p>
-      <p class="intro-subtitle mt-6 text-lg leading-relaxed text-slate-300">
+      <p class="intro-subtitle mt-6 text-lg leading-relaxed text-slate-600">
         Baja despacio y mira cómo cambia con Reservo.
       </p>
     </div>
@@ -201,7 +190,7 @@ const introHTML = /*html*/ `
     <div class="bubbles" aria-hidden="true"></div>
 
     <!-- ESCENA 7: logo y nombre antes de pasar a la landing -->
-    <!-- Textos en oscuro: cuando aparecen ya ha "amanecido" y el fondo es claro -->
+    <!-- Logo y nombre en el centro, en oscuro sobre el fondo claro -->
     <div class="outro">
       <img src="${import.meta.env.BASE_URL}favicon.svg" alt="" class="h-20 w-20" />
       <p class="mt-6 text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl">Reservo</p>
@@ -218,8 +207,8 @@ const introHTML = /*html*/ `
            Separadas para que las animaciones no se pisen entre ellas -->
       <div class="hero-card" aria-hidden="true">
         <div class="card-inner">
-          <p class="text-xs font-semibold tracking-widest text-indigo-300">RESERVA ONLINE</p>
-          <p class="mt-1 text-lg font-bold text-white">FitZone Gym</p>
+          <p class="text-xs font-semibold tracking-widest text-indigo-600">RESERVA ONLINE</p>
+          <p class="mt-1 text-lg font-bold text-slate-900">FitZone Gym</p>
           <div class="mt-5 grid grid-cols-5 gap-2 text-center text-xs">
             <span class="day">Lun<b>22</b></span>
             <span class="day">Mar<b>23</b></span>
@@ -445,7 +434,6 @@ function buildTimeline(section) {
   // así la tapa, que está en la mitad derecha, queda justo en el centro
   gsap.set(book, { autoAlpha: 0, xPercent: -25 });
   gsap.set(captions, { autoAlpha: 0, y: 20 });
-  gsap.set($('.stage-dawn'), { autoAlpha: 0 });
   gsap.set(phones, { autoAlpha: 0, scale: 0.6 });
   gsap.set($$('.week .hline'), { scaleX: 0 });
   gsap.set($$('.week .day-head, .week .hour'), { autoAlpha: 0 });
@@ -611,13 +599,10 @@ function buildTimeline(section) {
     );
   });
 
-  // ESCENA 7: todo se va, la aurora se apaga, "amanece" (fondo claro de la landing) y aparece el logo
+  // ESCENA 7: todo se va y aparece el logo
   tl.to(captions[4], { autoAlpha: 0, y: -20, duration: 0.4 }, 19.4)
     .to(phones, { autoAlpha: 0, scale: 0.6, stagger: 0.05, duration: 0.4 }, 19.4)
     .to(book, { scale: 0.5, y: -40, autoAlpha: 0, duration: 0.9, ease: 'power2.in' }, 19.5)
-    .to($('.aurora'), { autoAlpha: 0, duration: 1.2, ease: 'power1.inOut' }, 19.6)
-    // Amanece: el fondo claro de la landing aparece encima de la noche
-    .to($('.stage-dawn'), { autoAlpha: 1, duration: 1.2, ease: 'power1.inOut' }, 19.6)
     // El logo de arriba a la izquierda se va: ahora el logo está en el centro
     .to($('.intro-brand'), { autoAlpha: 0, duration: 0.4 }, 19.6)
     .fromTo($('.outro'), { autoAlpha: 0, scale: 0.8 }, { autoAlpha: 1, scale: 1, duration: 0.6, ease: 'power2.out' }, 20.2)
