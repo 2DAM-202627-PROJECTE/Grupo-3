@@ -15,7 +15,7 @@
 // -------------------------------------------------------------
 
 // Clases comunes para el foco visible al navegar con el teclado (accesibilidad)
-const focusRing = 'focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400';
+const focusRing = 'focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500';
 
 // Comprueba que el texto tiene forma de email: algo + @ + algo + . + algo,
 // sin espacios. No dice si el email existe, solo si está bien escrito.
@@ -34,10 +34,10 @@ const STORAGE_KEY = 'reservo-newsletter';
 // Pinta el formulario dentro del contenedor que le pasa main.js
 // (el <div id="footer-newsletter"> que hay dentro del <footer>).
 export function renderNewsletter(container) {
-  // Fondo más oscuro que el resto de la página, como el footer del mockup.
-  // bg-(--bg-dark) usa la variable --bg-dark de style.css (#080d1f).
+  // Fondo lila muy claro, un poco más oscuro que el resto de la página, igual que el footer.
+  // bg-(--bg-dark)/80 usa la variable --bg-dark de style.css (#f3f1fd) al 80%: deja ver un poco la aurora.
   // border-t: línea fina que la separa de la última sección
-  container.className = 'border-t border-slate-800 bg-(--bg-dark)';
+  container.className = 'border-t border-slate-200/70 bg-(--bg-dark)/80';
 
   container.innerHTML = /*html*/ `
     <!-- Contenedor con márgenes laterales, como el resto de secciones -->
@@ -46,8 +46,8 @@ export function renderNewsletter(container) {
            max-w-xl: ancho máximo para que el campo de email no quede demasiado largo -->
       <div class="mx-auto max-w-xl text-center">
         <!-- id del título: el formulario lo usa como nombre (aria-labelledby) -->
-        <h2 id="newsletter-title" class="text-2xl font-bold tracking-tight text-white">Suscríbete a la newsletter</h2>
-        <p class="mt-2 text-sm text-slate-400">
+        <h2 id="newsletter-title" class="text-2xl font-bold tracking-tight text-slate-900">Suscríbete a la newsletter</h2>
+        <p class="mt-2 text-sm text-slate-600">
           Novedades de Reservo y consejos para tu negocio, una vez al mes.
         </p>
 
@@ -59,7 +59,7 @@ export function renderNewsletter(container) {
         <form id="newsletter-form" class="mt-6 text-left" aria-labelledby="newsletter-title" novalidate>
           <!-- Etiqueta visible del campo: el documento pide que cada campo tenga la suya (apartado 3.2).
                for="newsletter-email" la une al input, así al pulsarla se pone el cursor en el campo -->
-          <label for="newsletter-email" class="text-sm font-medium text-slate-300">Tu email:</label>
+          <label for="newsletter-email" class="text-sm font-medium text-slate-700">Tu email:</label>
 
           <!-- Campo y botón: apilados en móvil (flex-col) y en fila a partir de sm (sm:flex-row) -->
           <div class="mt-2 flex flex-col gap-3 sm:flex-row">
@@ -68,9 +68,9 @@ export function renderNewsletter(container) {
                  min-w-0 + flex-1: el campo ocupa el espacio que deja el botón sin desbordarse.
                  aria-describedby: une el campo con el mensaje de abajo, así el lector de pantalla
                  lee el error al volver al campo.
-                 bg-slate-800 + border-slate-600: fondo y borde más claros que el fondo del footer,
-                 para que el campo se distinga bien. Al pasar el ratón el borde se aclara un poco.
-                 aria-invalid:border-red-400: si el JavaScript marca el campo como erróneo
+                 bg-white + border-slate-300: campo blanco con borde gris, para que se distinga
+                 bien del fondo. Al pasar el ratón el borde se oscurece un poco.
+                 aria-invalid:border-red-500: si el JavaScript marca el campo como erróneo
                  (aria-invalid="true"), el borde se pone rojo -->
             <input
               id="newsletter-email"
@@ -80,7 +80,7 @@ export function renderNewsletter(container) {
               placeholder="tu@email.com"
               required
               aria-describedby="newsletter-message"
-              class="min-w-0 flex-1 rounded-lg border border-slate-600 bg-slate-800 px-4 py-3 text-white placeholder:text-slate-400 transition hover:border-slate-500 aria-invalid:border-red-400 ${focusRing}"
+              class="min-w-0 flex-1 rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder:text-slate-500 transition hover:border-slate-400 aria-invalid:border-red-500 ${focusRing}"
             />
             <!-- Botón principal, con el mismo estilo que el del Hero -->
             <button
@@ -96,7 +96,7 @@ export function renderNewsletter(container) {
                accent-indigo-500 pinta la casilla con el color de la marca.
                mt-0.5: la línea de texto mide 20 px y la casilla 16 px; bajándola 2 px queda
                centrada con la primera línea (si el texto ocupa dos, sigue alineada con la de arriba) -->
-          <label class="mt-3 flex items-start gap-2 text-sm text-slate-400">
+          <label class="mt-3 flex items-start gap-2 text-sm text-slate-600">
             <input
               type="checkbox"
               name="consent"
@@ -169,7 +169,7 @@ function setupNewsletter(container) {
   // pide que los errores se lean como texto, apartado 3.2) y el foco en el campo que falla.
   function showError(text, input) {
     message.textContent = text;
-    message.className = 'mt-3 min-h-5 text-sm text-red-400';
+    message.className = 'mt-3 min-h-5 text-sm text-red-600';
     input.setAttribute('aria-invalid', 'true');
     input.focus();
   }
@@ -212,7 +212,7 @@ function setupNewsletter(container) {
     message.textContent = isNew
       ? '¡Gracias! Te has suscrito a la newsletter.'
       : 'Este email ya estaba suscrito. ¡Gracias!';
-    message.className = 'mt-3 min-h-5 text-sm text-emerald-400';
+    message.className = 'mt-3 min-h-5 text-sm text-emerald-700';
 
     // Vacía el formulario. reset() no borra el mensaje porque es un <p>, no un campo
     form.reset();
