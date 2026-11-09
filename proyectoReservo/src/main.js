@@ -12,6 +12,8 @@
 //   4. Newsletter               → dentro del <footer>, arriba
 //   5. Contenido del footer     → logo, redes y enlaces legales, debajo de la newsletter
 //   6. Aviso de cookies         → fuera de #app, en el <body>
+//   7. Al hacer scroll          → animación de las secciones y enlace activo del menú
+//   8. Intro animada            → "Un día con Reservo", antes de la landing (solo la primera vez)
 // =============================================================
 
 // -------------------------------------------------------------
@@ -32,9 +34,17 @@ import { renderSectors } from './components/Sectors.js';
 import { renderNavbar } from './components/Navbar.js';
 import { renderFeatures } from './components/Features.js';
 import { renderPricing } from './components/Pricing.js';
+import { renderFaq } from './components/Faq.js';
+import { renderHowItWorks } from './components/HowItWorks.js';
 import { renderNewsletter } from './components/Newsletter.js';
 import { renderFooter } from './components/Footer.js';
 import { renderPreferencesBar } from './components/PreferencesBar.js';
+
+// Animación de las secciones al hacer scroll (no es un componente, no pinta nada)
+import { initScrollReveal } from './scrollReveal.js';
+
+// Intro animada que va antes de la landing (tampoco es una sección de <main>)
+import { initIntro } from './intro/Intro.js';
 
 // -------------------------------------------------------------
 // 2. Lista de secciones
@@ -51,10 +61,10 @@ const sections = [
   { id: 'hero', render: renderHero },
   { id: 'sectores', render: renderSectors },
   { id: 'funciones', render: renderFeatures },
-  { id: 'como-funciona', render: null }, // HowItWorks.js
+  { id: 'como-funciona', render: renderHowItWorks }, // HowItWorks.js
   { id: 'precios', render: renderPricing },
   { id: 'testimonios', render: null }, // Testimonials.js
-  { id: 'faq', render: null }, // Faq.js
+  { id: 'faq', render: renderFaq }, // Faq.js
   { id: 'cta', render: null }, // Cta.js
 ];
 
@@ -129,3 +139,23 @@ const preferencesBar = document.createElement('div');
 preferencesBar.id = 'preferences-bar';
 document.body.appendChild(preferencesBar);
 renderPreferencesBar(preferencesBar);
+
+// -------------------------------------------------------------
+// 7. Al hacer scroll
+// -------------------------------------------------------------
+
+// Animación de las secciones al entrar en pantalla. Va al final porque necesita que
+// todas las secciones ya estén pintadas para buscar dentro de ellas qué animar (ver scrollReveal.js)
+initScrollReveal();
+
+// Enlace del menú marcado según la sección que se ve. También va al final
+// porque necesita las secciones (ver Navbar.js, apartado 6)
+initActiveNavLink();
+
+// -------------------------------------------------------------
+// 8. Intro animada
+// -------------------------------------------------------------
+
+// Se crea la última: se coloca antes de #app y necesita que la landing ya esté pintada
+// para calcular bien dónde empieza y dónde acaba. Si ya se ha visto, no hace nada (ver Intro.js)
+initIntro();

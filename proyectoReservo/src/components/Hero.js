@@ -1,7 +1,13 @@
 // =============================================================
 // Hero.js — Primera sección de la página (issue #8)
-// Izquierda: badge, título, subtítulo y botones.
-// Derecha: tarjeta de reserva de ejemplo para FitZone Gym.
+// Izquierda: título, subtítulo y botones.
+// Derecha: tarjeta de reserva de ejemplo para FitZone Gym (issue #9, Arnau).
+//
+// Partes del archivo:
+//   1. HTML de la sección          → renderHero (lo llama main.js)
+//      Dentro del HTML: columna de texto (título, subtítulo, botones)
+//      y columna de la tarjeta de reserva (días, clases y botón de confirmar)
+//   2. Interactividad de la tarjeta → elegir día, elegir clase y confirmar
 // =============================================================
 
 const sectorDemos = {
@@ -107,8 +113,10 @@ export function renderHero(container) {
     <!-- Contenedor centrado. Es un grid: 1 columna en móvil y 2 en escritorio (lg:grid-cols-2) -->
     <div class="mx-auto grid max-w-7xl items-center gap-12 px-4 py-20 sm:px-6 lg:grid-cols-2 lg:px-8 lg:py-28">
 
-      <!-- Columna izquierda: texto y botones -->
-      <div id="hero-text" class="max-w-xl">
+      <!-- Columna izquierda: texto y botones.
+           En móvil y tablet va centrada, como en el mockup móvil (mx-auto + text-center).
+           En escritorio (lg:) vuelve a la izquierda, junto a la tarjeta de reserva -->
+      <div id="hero-text" class="mx-auto max-w-xl text-center lg:mx-0 lg:text-left">
 
         <!-- Badge: etiqueta en forma de píldora con un puntito delante -->
         <span class="inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-3 py-1 text-xs font-medium text-indigo-300">
@@ -132,7 +140,9 @@ export function renderHero(container) {
 
         <!-- Botones: apilados en móvil (flex-col) y en fila a partir de sm (sm:flex-row).
              Son enlaces <a> porque llevan a otras secciones de la página -->
-        <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+        <!-- sm:justify-center: cuando van en fila (tablet), los botones quedan centrados como el texto;
+             lg:justify-start: en escritorio vuelven a la izquierda -->
+        <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center lg:justify-start">
           <!-- Botón principal: va al formulario de prueba gratuita.
                focus-visible:ring muestra un anillo al navegar con el teclado (accesibilidad) -->
           <a href="#cta" class="rounded-lg bg-indigo-600 px-6 py-3 text-center font-semibold text-white transition hover:bg-indigo-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400">
@@ -196,6 +206,12 @@ export function renderHero(container) {
     </div>
   `;
 
+  // -----------------------------------------------------------
+  // 2. Interactividad de la tarjeta
+  // -----------------------------------------------------------
+
+  // --- Elementos de la tarjeta que se van a usar ---
+  // Las clases desactivadas (CrossFit, "Completo") no se pueden elegir: :not(:disabled) las deja fuera
   const dayButtons = container.querySelectorAll('.hero-day');
   renderSectorDemo('gimnasio');
   const selectedDay = container.querySelector('#hero-selected-day');
@@ -216,6 +232,9 @@ export function renderHero(container) {
     bookingStatus.classList.add('hidden');
   });
 
+  // --- Elegir un día ---
+  // Igual que las clases: se resalta el día pulsado (fondo índigo) y se apagan los demás.
+  // Cada botón tiene dos <span>: el primero es el nombre del día ("Mié") y el segundo el número ("24")
   dayButtons.forEach((button) => {
     button.addEventListener('click', () => {
       dayButtons.forEach((dayButton) => {
@@ -231,11 +250,15 @@ export function renderHero(container) {
         dayButton.querySelectorAll('span')[1].classList.toggle('text-white', isActive);
         dayButton.querySelectorAll('span')[1].classList.toggle('text-slate-200', !isActive);
       });
+      // El día elegido se muestra junto a "Clases disponibles" (data-day="Mié 24" → "Mié 24")
       selectedDay.textContent = button.dataset.day;
       bookingStatus.classList.add('hidden');
     });
   });
 
+  // --- Confirmar la reserva ---
+  // Es una simulación: no se envía nada, solo se muestra un mensaje con la clase y el día elegidos.
+  // El mensaje tiene aria-live, así el lector de pantalla lo lee cuando aparece
   confirmButton.addEventListener('click', () => {
     const selectedClass = container.querySelector('.hero-class[aria-pressed="true"]');
     bookingStatus.textContent = `Reserva de prueba confirmada: ${selectedClass.dataset.class} · ${selectedDay.textContent}`;

@@ -1,0 +1,83 @@
+# =============================================================
+# deploy.yml — Publicar la web en GitHub Pages (issue #31)
+# Sigue el tutorial del profesor ("Deploy site ViteJS en GitHub Pages amb GitHub Actions")
+# y la plantilla de la documentación de Vite (https://vite.dev/guide/static-deploy).
+#
+# Qué hace: cada vez que se sube algo a main, GitHub instala las dependencias,
+# compila la web con Vite (npm run build) y publica la carpeta dist en GitHub Pages.
+# La web queda en https://2dam-202627-projecte.github.io/Grupo-3/
+#
+# Diferencia con el tutorial: el proyecto no está en la raíz del repositorio sino en la
+# carpeta proyectoReservo/, así que los comandos se ejecutan dentro de esa carpeta.
+# =============================================================
+
+name: Deploy a GitHub Pages
+
+on:
+  # Se ejecuta con cada push a la rama main
+  push:
+    branches: ['main']
+
+  # También se puede lanzar a mano desde la pestaña Actions (botón "Run workflow")
+  workflow_dispatch:
+
+# Permisos del token que usa el workflow: leer el código y publicar en Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Solo un deploy a la vez: si se hace otro push mientras se publica, se cancela el anterior
+concurrency:
+  group: 'pages'
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    # Entorno "github-pages": en Actions muestra el enlace a la web publicada
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+
+    # Todos los comandos "run" se ejecutan dentro de proyectoReservo/ (donde está package.json)
+    defaults:
+      run:
+        working-directory: proyectoReservo
+
+    steps:
+      # 1. Descargar el código del repositorio
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      # 2. Instalar Node (última versión LTS). La caché de npm usa el package-lock.json
+      #    de la subcarpeta, así las siguientes ejecuciones instalan más rápido
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: lts/*
+          cache: 'npm'
+          cache-dependency-path: proyectoReservo/package-lock.json
+
+      # 3. Instalar las dependencias exactas del package-lock.json
+      - name: Install dependencies
+        run: npm ci
+
+      # 4. Compilar la web. vite.config.js pone la base /Grupo-3/ al compilar
+      - name: Build
+        run: npm run build
+
+      # 5. Preparar GitHub Pages
+      - name: Setup Pages
+        uses: actions/configure-pages@v6
+
+      # 6. Subir la carpeta compilada (proyectoReservo/dist, no la raíz del repositorio)
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: './proyectoReservo/dist'
+
+      # 7. Publicar en GitHub Pages
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5

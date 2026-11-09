@@ -6,9 +6,10 @@
 // Partes del archivo:
 //   1. Datos de los planes       → plans y el descuento anual
 //   2. Cálculo del precio        → annualPrice y priceBlock
-//   3. Tarjeta de un plan        → estilos de los botones y planCard
+//   3. Tarjeta y pestaña de un plan → estilos de los botones, planCard y planTab
 //   4. HTML de la sección        → renderPricing (lo llama main.js)
 //   5. Interruptor mensual/anual → resaltar opciones y setupBillingToggle
+//   6. Pestañas de los planes    → setupPlanTabs (solo en móvil: un plan a la vez)
 // =============================================================
 
 // -------------------------------------------------------------
@@ -17,6 +18,8 @@
 
 // Datos de los planes.
 // Cada objeto es un plan con:
+//   - id:          identificador sin acentos ni espacios, para los id del HTML
+//                  (la pestaña "tab-pro" controla la tarjeta "plan-pro")
 //   - name:        nombre del plan
 //   - description: frase corta debajo del nombre
 //   - price:       precio mensual en euros (número). null = "A medida"
@@ -28,6 +31,7 @@
 // Los datos siguen la tabla del apartado 2.4 del documento de planificación.
 const plans = [
   {
+    id: 'basico',
     name: 'Básico',
     description: 'Autónomos y negocios con un profesional',
     price: 19,
@@ -41,6 +45,7 @@ const plans = [
     cta: 'Elegir plan',
   },
   {
+    id: 'pro',
     name: 'Pro',
     description: 'Negocios con equipo',
     price: 49,
@@ -55,6 +60,7 @@ const plans = [
     featured: true,
   },
   {
+    id: 'empresa',
     name: 'Empresa',
     description: 'Cadenas y negocios con varios locales',
     price: null,
@@ -108,7 +114,7 @@ function priceBlock(price, annual = false) {
 }
 
 // -------------------------------------------------------------
-// 3. Tarjeta de un plan
+// 3. Tarjeta y pestaña de un plan
 // -------------------------------------------------------------
 
 // Clases de los dos estilos de botón: el principal (relleno índigo) para el plan
@@ -120,13 +126,19 @@ const buttonSecondary = 'border border-slate-700 bg-slate-800/60 text-slate-200 
 
 // Devuelve el HTML de UNA tarjeta de plan a partir de un objeto del array.
 // featured = false por defecto, así los planes que no lo tienen no se destacan.
-function planCard({ name, description, price, features, cta, featured = false }) {
+function planCard({ id, name, description, price, features, cta, featured = false }) {
   // Estilos de la tarjeta según si es el plan destacado o no:
   // el destacado lleva borde índigo, fondo índigo oscuro y una sombra suave.
   // "relative" hace falta para colocar el badge "Más popular" encima de la tarjeta.
+  // Al pasar el ratón, el destacado refuerza su sombra índigo y el resto aclara el borde
   const cardClasses = featured
-    ? 'relative border-indigo-500 bg-indigo-950/40 shadow-lg shadow-indigo-500/10'
-    : 'border-slate-800 bg-slate-800/30';
+    ? 'relative border-indigo-500 bg-indigo-950/40 shadow-lg shadow-indigo-500/10 hover:shadow-indigo-500/25'
+    : 'border-slate-800 bg-slate-800/30 hover:border-slate-600';
+
+  // Todas las tarjetas suben 4px al pasar el ratón (-translate-y-1).
+  // motion-safe: solo si la persona no ha pedido reducir las animaciones.
+  // transition + duration-200: el cambio es suave y no de golpe
+  const hoverLift = 'transition duration-200 motion-safe:hover:-translate-y-1';
 
   // El badge solo existe en el plan destacado. Si no lo es, se deja un string vacío.
   // absolute + -top-3 + left-1/2 + -translate-x-1/2: centrado sobre el borde superior.
@@ -134,10 +146,17 @@ function planCard({ name, description, price, features, cta, featured = false })
     ? /*html*/ `<span class="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-indigo-600 px-3 py-1 text-xs font-semibold text-white">Más popular</span>`
     : '';
 
+  // En móvil solo se ve un plan a la vez (apartado 7.2 del documento: "los planes de precios
+  // se muestran de uno en uno mediante pestañas"). Al cargar se ve el destacado (Pro).
+  // max-lg:hidden oculta la tarjeta solo por debajo de lg; en escritorio se ven las tres.
+  const hiddenOnMobile = featured ? '' : 'max-lg:hidden';
+
   return /*html*/ `
     <!-- Tarjeta: flex en columna para poder empujar el botón al fondo
-         y que los botones de las 3 tarjetas queden alineados -->
-    <article class="flex flex-col rounded-xl border p-8 ${cardClasses}">
+         y que los botones de las 3 tarjetas queden alineados.
+         role="tabpanel" + aria-labelledby: en móvil es el panel de su pestaña,
+         y el lector de pantalla lo anuncia con el nombre de la pestaña ("Pro") -->
+    <article id="plan-${id}" role="tabpanel" aria-labelledby="tab-${id}" class="flex flex-col rounded-xl border p-8 ${cardClasses} ${hoverLift} ${hiddenOnMobile}">
       ${badge}
 
       <!-- Nombre y descripción del plan -->
@@ -177,6 +196,30 @@ function planCard({ name, description, price, features, cta, featured = false })
         ${cta}
       </a>
     </article>
+  `;
+}
+
+// Devuelve el HTML de UNA pestaña (solo se ven en móvil).
+// Sigue el patrón de pestañas accesibles (ARIA "tabs"):
+//   - role="tab" y aria-selected: el lector de pantalla dice "Pro, pestaña, seleccionada"
+//   - aria-controls: indica qué tarjeta muestra esta pestaña (plan-pro)
+//   - tabindex: solo la pestaña seleccionada se alcanza con Tab (0); las otras no (-1).
+//     Entre pestañas uno se mueve con las flechas del teclado (ver setupPlanTabs)
+// El aspecto depende de aria-selected (aria-selected:bg-indigo-600), como el interruptor
+// mensual/anual: el JavaScript solo tendrá que cambiar ese atributo.
+function planTab({ id, name, featured = false }) {
+  return /*html*/ `
+    <button
+      type="button"
+      id="tab-${id}"
+      role="tab"
+      aria-selected="${featured}"
+      aria-controls="plan-${id}"
+      tabindex="${featured ? 0 : -1}"
+      class="flex-1 rounded-lg px-3 py-2.5 text-sm font-semibold text-slate-400 transition hover:text-white aria-selected:bg-indigo-600 aria-selected:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
+    >
+      ${name}
+    </button>
   `;
 }
 
@@ -250,17 +293,25 @@ export function renderPricing(container) {
            Así, quien no ve la pantalla se entera de que los precios han cambiado -->
       <p data-billing-status class="sr-only" aria-live="polite"></p>
 
+      <!-- Pestañas de los planes: solo en móvil y tablet (lg:hidden las oculta en escritorio,
+           donde se ven las tres tarjetas a la vez). Fondo gris con las pestañas dentro,
+           como un control segmentado. role="tablist" agrupa las pestañas para el lector de pantalla -->
+      <div role="tablist" aria-label="Planes" class="mx-auto mt-8 flex max-w-md gap-1 rounded-xl border border-slate-800 bg-slate-800/40 p-1 lg:hidden">
+        ${plans.map(planTab).join('')}
+      </div>
+
       <!-- Grid de tarjetas: 1 columna en móvil (con ancho máximo para que no queden
-           demasiado anchas) y 3 columnas en escritorio (lg:).
+           demasiado anchas) y 3 columnas en escritorio (lg:). En móvil solo se ve una (ver planCard).
            plans.map() convierte cada plan en su tarjeta y .join('') las une en un string -->
-      <div id="pricing-grid" class="mx-auto mt-12 grid max-w-md gap-6 lg:max-w-none lg:grid-cols-3">
+      <div id="pricing-grid" class="mx-auto mt-8 grid max-w-md gap-6 lg:mt-12 lg:max-w-none lg:grid-cols-3">
         ${plans.map(planCard).join('')}
       </div>
     </div>
   `;
 
-  // Una vez pintado el HTML, se activa el interruptor
+  // Una vez pintado el HTML, se activan el interruptor y las pestañas
   setupBillingToggle(container);
+  setupPlanTabs(container);
 }
 
 // -------------------------------------------------------------
@@ -353,4 +404,75 @@ function setupBillingToggle(container) {
   // Con el teclado no hace falta: el interruptor ya se puede usar con Tab + Espacio
   monthlyLabel.addEventListener('click', () => setBilling(false));
   annualLabel.addEventListener('click', () => setBilling(true));
+}
+
+// -------------------------------------------------------------
+// 6. Pestañas de los planes (móvil)
+// -------------------------------------------------------------
+
+// Lógica de las pestañas: al pulsar una, se muestra su plan y se ocultan los otros.
+// Solo se nota en móvil y tablet: en escritorio las pestañas no se ven y la clase
+// max-lg:hidden no hace nada, así que siempre se ven las tres tarjetas.
+function setupPlanTabs(container) {
+  // --- Elementos: las 3 pestañas ---
+  const tabs = container.querySelectorAll('[role="tab"]');
+
+  // --- Seleccionar una pestaña ---
+  // Marca la pestaña elegida y enseña su tarjeta; a las demás les hace lo contrario.
+  function selectTab(selectedTab) {
+    tabs.forEach((tab) => {
+      const isSelected = tab === selectedTab;
+
+      // aria-selected cambia el color de la pestaña (aria-selected:bg-indigo-600)
+      // y hace que el lector de pantalla diga "seleccionada"
+      tab.setAttribute('aria-selected', String(isSelected));
+
+      // Solo la pestaña seleccionada se alcanza con la tecla Tab
+      tab.tabIndex = isSelected ? 0 : -1;
+
+      // aria-controls guarda el id de la tarjeta de esta pestaña ("plan-pro").
+      // Si no está seleccionada, se le pone max-lg:hidden para ocultarla en móvil
+      const panel = container.querySelector(`#${tab.getAttribute('aria-controls')}`);
+      panel.classList.toggle('max-lg:hidden', !isSelected);
+    });
+  }
+
+  // --- Clics del usuario ---
+  tabs.forEach((tab) => {
+    tab.addEventListener('click', () => selectTab(tab));
+  });
+
+  // --- Teclado ---
+  // Patrón de pestañas accesibles: con Tab se entra en la pestaña seleccionada y,
+  // una vez dentro, las flechas cambian de pestaña (así no hay que pulsar Tab tres veces):
+  //   → / ←    siguiente / anterior (al llegar al final vuelve al principio, y al revés)
+  //   Inicio   primera pestaña
+  //   Fin      última pestaña
+  // Al moverse con las flechas, la pestaña nueva se selecciona y recibe el foco.
+  tabs.forEach((tab, index) => {
+    tab.addEventListener('keydown', (event) => {
+      const last = tabs.length - 1;
+      let next;
+
+      if (event.key === 'ArrowRight') {
+        // (index + 1) % 3: de 0 a 1, de 1 a 2 y de 2 vuelve a 0
+        next = (index + 1) % tabs.length;
+      } else if (event.key === 'ArrowLeft') {
+        // Si estamos en la primera (0), se va a la última
+        next = index === 0 ? last : index - 1;
+      } else if (event.key === 'Home') {
+        next = 0;
+      } else if (event.key === 'End') {
+        next = last;
+      } else {
+        // Cualquier otra tecla (Tab, Enter, Espacio…) funciona como siempre
+        return;
+      }
+
+      // Evita que la flecha o Inicio/Fin hagan scroll en la página
+      event.preventDefault();
+      selectTab(tabs[next]);
+      tabs[next].focus();
+    });
+  });
 }

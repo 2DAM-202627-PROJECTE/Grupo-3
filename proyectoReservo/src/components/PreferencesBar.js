@@ -88,11 +88,12 @@ export function renderPreferencesBar(container) {
     <div class="mx-auto flex max-w-3xl flex-col gap-4 rounded-xl border border-slate-700 bg-slate-900 p-5 shadow-lg shadow-black/40 sm:flex-row sm:items-center">
       <!-- Texto del aviso. flex-1: ocupa el espacio que dejan los botones.
            El enlace lleva a la página de la política de cookies (politica-cookies.html).
+           import.meta.env.BASE_URL es la ruta base de la web ("/" en local y "/Grupo-3/" en GitHub Pages).
            Va subrayado para que se vea que es un enlace sin depender solo del color -->
       <p class="flex-1 text-sm text-slate-300">
         Usamos cookies propias para que la web funcione y, si las aceptas,
         cookies de análisis para mejorarla. Más información en nuestra
-        <a href="/politica-cookies.html" class="rounded text-indigo-300 underline hover:text-indigo-200 ${focusRing}">política de cookies</a>.
+        <a href="${import.meta.env.BASE_URL}politica-cookies.html" class="rounded text-indigo-300 underline hover:text-indigo-200 ${focusRing}">política de cookies</a>.
       </p>
 
       <!-- Botones. data-cookie-choice guarda la opción de cada uno ("accepted" o "rejected"),
