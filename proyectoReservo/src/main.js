@@ -12,6 +12,7 @@
 //   4. Newsletter               → dentro del <footer>, arriba
 //   5. Contenido del footer     → logo, redes y enlaces legales, debajo de la newsletter
 //   6. Aviso de cookies         → fuera de #app, en el <body>
+//   7. Al hacer scroll          → animación de las secciones al entrar en pantalla
 // =============================================================
 
 // -------------------------------------------------------------
@@ -35,6 +36,9 @@ import { renderHowItWorks } from './components/HowItWorks.js';
 import { renderNewsletter } from './components/Newsletter.js';
 import { renderFooter } from './components/Footer.js';
 import { renderPreferencesBar } from './components/PreferencesBar.js';
+
+// Animación de las secciones al hacer scroll (no es un componente, no pinta nada)
+import { initScrollReveal } from './scrollReveal.js';
 
 // -------------------------------------------------------------
 // 2. Lista de secciones
@@ -129,3 +133,11 @@ const preferencesBar = document.createElement('div');
 preferencesBar.id = 'preferences-bar';
 document.body.appendChild(preferencesBar);
 renderPreferencesBar(preferencesBar);
+
+// -------------------------------------------------------------
+// 7. Al hacer scroll
+// -------------------------------------------------------------
+
+// Animación de las secciones al entrar en pantalla. Va al final porque necesita que
+// todas las secciones ya estén pintadas para buscar dentro de ellas qué animar (ver scrollReveal.js)
+initScrollReveal();
