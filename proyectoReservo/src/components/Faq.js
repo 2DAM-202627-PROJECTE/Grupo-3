@@ -32,22 +32,23 @@ const faqs = [
 // native HTML: funciona con teclado y lectores de pantalla de forma accesible
 function faqItem({ question, answer }) {
   return /*html*/ `
-    <!-- open:bg-slate-800/60: la pregunta abierta tiene el fondo un poco más claro
-         (slate-850 no existe en Tailwind: los tonos van de 800 a 900) -->
+    <!-- Cada pregunta es una tarjeta de cristal (glass de style.css).
+         open:bg-white/80: la pregunta abierta tiene el fondo más opaco, para que la respuesta se lea bien.
+         Al pasar el ratón y abierta, el borde se vuelve índigo muy claro -->
     <details 
-      class="group rounded-xl border border-slate-800 bg-slate-900/50 p-6 transition-colors hover:border-slate-700 open:border-slate-700 open:bg-slate-800/60"
+      class="group glass rounded-xl p-6 transition-colors hover:border-indigo-200 open:border-indigo-200 open:bg-white/80"
     >
       <!-- list-none quita el triángulo por defecto de <summary> en Chrome y Firefox.
            Safari lo dibuja con ::-webkit-details-marker, así que hace falta
            [&::-webkit-details-marker]:hidden para quitarlo también ahí -->
       <summary 
-        class="flex cursor-pointer items-center justify-between gap-4 font-semibold text-white list-none [&::-webkit-details-marker]:hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 rounded-lg select-none"
+        class="flex cursor-pointer items-center justify-between gap-4 font-semibold text-slate-900 list-none [&::-webkit-details-marker]:hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded-lg select-none"
       >
         <span class="text-base sm:text-lg">${question}</span>
         
         <!-- Icono + que cambia a − cuando está abierto (open) -->
         <span 
-          class="relative flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-slate-800 text-slate-400 transition-colors group-hover:bg-slate-700 group-hover:text-white group-open:bg-indigo-600 group-open:text-white"
+          class="relative flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-600 transition-colors group-hover:bg-slate-200 group-hover:text-slate-900 group-open:bg-indigo-600 group-open:text-white"
           aria-hidden="true"
         >
           <!-- Signo + visible cuando está cerrado -->
@@ -58,7 +59,7 @@ function faqItem({ question, answer }) {
       </summary>
 
       <!-- Respuesta desplegable -->
-      <p class="mt-4 text-sm leading-relaxed text-slate-400 sm:text-base">
+      <p class="mt-4 text-sm leading-relaxed text-slate-600 sm:text-base">
         ${answer}
       </p>
     </details>
@@ -75,10 +76,10 @@ export function renderFaq(container) {
       
       <!-- Cabecera de la sección -->
       <div class="mx-auto max-w-2xl text-center">
-        <h2 class="text-3xl font-bold tracking-tight text-white sm:text-4xl">
+        <h2 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
           Preguntas frecuentes
         </h2>
-        <p class="mt-4 text-lg text-slate-400">
+        <p class="mt-4 text-lg text-slate-600">
           Todo lo que necesitas saber antes de empezar con Reservo.
         </p>
       </div>
