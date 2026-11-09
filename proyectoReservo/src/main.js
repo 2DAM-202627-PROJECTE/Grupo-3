@@ -28,6 +28,7 @@
 // Solo se importan los componentes que ya tienen código: importar algo que un
 // archivo vacío todavía no exporta daría error.
 import { renderHero } from './components/Hero.js';
+import { renderSectors } from './components/Sectors.js';
 import { renderNavbar } from './components/Navbar.js';
 import { renderFeatures } from './components/Features.js';
 import { renderPricing } from './components/Pricing.js';
@@ -48,7 +49,7 @@ import { renderPreferencesBar } from './components/PreferencesBar.js';
 // cambiar su null por la función.
 const sections = [
   { id: 'hero', render: renderHero },
-  { id: 'sectores', render: null }, // Sectors.js
+  { id: 'sectores', render: renderSectors },
   { id: 'funciones', render: renderFeatures },
   { id: 'como-funciona', render: null }, // HowItWorks.js
   { id: 'precios', render: renderPricing },
