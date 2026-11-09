@@ -30,13 +30,18 @@ const faqs = [
 
 // Genera el HTML de cada elemento del acordeón usando <details> y <summary>
 // native HTML: funciona con teclado y lectores de pantalla de forma accesible
-function faqItem({ question, answer }, index) {
+function faqItem({ question, answer }) {
   return /*html*/ `
+    <!-- open:bg-slate-800/60: la pregunta abierta tiene el fondo un poco más claro
+         (slate-850 no existe en Tailwind: los tonos van de 800 a 900) -->
     <details 
-      class="group rounded-xl border border-slate-800 bg-slate-900/50 p-6 transition-colors hover:border-slate-700 open:border-slate-700 open:bg-slate-850"
+      class="group rounded-xl border border-slate-800 bg-slate-900/50 p-6 transition-colors hover:border-slate-700 open:border-slate-700 open:bg-slate-800/60"
     >
+      <!-- list-none quita el triángulo por defecto de <summary> en Chrome y Firefox.
+           Safari lo dibuja con ::-webkit-details-marker, así que hace falta
+           [&::-webkit-details-marker]:hidden para quitarlo también ahí -->
       <summary 
-        class="flex cursor-pointer items-center justify-between gap-4 font-semibold text-white list-none focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 rounded-lg select-none"
+        class="flex cursor-pointer items-center justify-between gap-4 font-semibold text-white list-none [&::-webkit-details-marker]:hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 rounded-lg select-none"
       >
         <span class="text-base sm:text-lg">${question}</span>
         
