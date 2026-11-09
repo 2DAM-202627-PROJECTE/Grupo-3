@@ -39,8 +39,15 @@
    2. Escenario
    ======================================== */
 
+/* La landing es clara (style.css), pero la intro es de noche: aquí dentro se vuelven
+   a poner los colores oscuros. Las variables CSS se heredan, así que todo lo que hay
+   dentro de .story usa estos valores en vez de los de :root */
 .story {
   position: relative;
+  --bg: #0f172a;
+  --text: #f8fafc;
+  --text-muted: #94a3b8;
+  --gradient: linear-gradient(135deg, #4f35f5, #06b6d4);
 }
 
 /* Ocupa toda la pantalla. ScrollTrigger la deja fija (pin) mientras dura la animación.

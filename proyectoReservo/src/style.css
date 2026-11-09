@@ -5,15 +5,18 @@
    1. Variables de diseño
    ======================================== */
 
+/* Tema claro "aurora clara" (issue #57): fondo blanco con un toque lila,
+   textos casi negros y el índigo/cian de la marca para botones y detalles.
+   La intro (src/intro/intro.css) redefine estas variables para seguir oscura */
 :root {
-  --bg: #0f172a;
-  --bg-dark: #080d1f;
+  --bg: #fbfaff;
+  --bg-dark: #f3f1fd;
   --primary: #4f35f5;
-  --secondary: #1e293b;
-  --text: #f8fafc;
-  --text-muted: #94a3b8;
-  --border: #1e293b;
-  --gradient: linear-gradient(135deg, #4f35f5, #06b6d4);
+  --secondary: #f1f5f9;
+  --text: #0f172a;
+  --text-muted: #475569;
+  --border: #e2e8f0;
+  --gradient: linear-gradient(135deg, #4f46e5, #9333ea, #0891b2);
 }
 
 /* ========================================
@@ -90,7 +93,7 @@
   .btn-secondary {
     display: inline-block;
     background: var(--secondary);
-    color: white;
+    color: var(--text);
     padding: 12px 24px;
     border: none;
     border-radius: 8px;
@@ -99,7 +102,7 @@
   }
 
   .btn-secondary:hover {
-    background: #334155;
+    background: #e2e8f0;
   }
 
   /* Tarjetas */
@@ -179,5 +182,57 @@
       animation: reveal-up 0.6s ease-out backwards;
       animation-delay: var(--reveal-delay, 0ms);
     }
+  }
+}
+
+/* ========================================
+   6. Tema claro: fondo aurora y cristal (issue #57)
+   ======================================== */
+
+/* --- Fondo aurora de toda la página ---
+   Manchas de color pastel (índigo, violeta, cian y rosa) muy difuminadas, detrás de
+   todo el contenido. Es un <div class="page-aurora"> que está en index.html.
+   position: fixed → se queda quieto mientras la página se mueve por encima, y así las
+   tarjetas de cristal dejan ver colores distintos según dónde estén.
+   z-index: -1 → por detrás de todas las secciones (que no tienen fondo propio) */
+.page-aurora {
+  position: fixed;
+  inset: -15%;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(30% 35% at 15% 15%, rgb(129 140 248 / 0.3), transparent 70%),
+    radial-gradient(28% 32% at 85% 20%, rgb(103 232 249 / 0.3), transparent 70%),
+    radial-gradient(32% 35% at 75% 80%, rgb(196 181 253 / 0.35), transparent 70%),
+    radial-gradient(25% 30% at 25% 85%, rgb(249 168 212 / 0.25), transparent 70%);
+}
+
+/* Las manchas se mueven muy despacio (solo si no se han reducido las animaciones).
+   Solo se anima transform, que el navegador mueve con la tarjeta gráfica sin esfuerzo */
+@media (prefers-reduced-motion: no-preference) {
+  .page-aurora {
+    animation: page-aurora 30s ease-in-out infinite alternate;
+  }
+
+  @keyframes page-aurora {
+    to {
+      transform: translate(4%, 3%) scale(1.08) rotate(3deg);
+    }
+  }
+}
+
+@layer components {
+  /* --- Cristal ---
+     Para tarjetas y barras: blanco medio transparente con desenfoque (backdrop-filter),
+     así la aurora se ve difuminada a través. El borde blanco y la sombra lila le dan relieve.
+     Va en @layer components para que una clase de Tailwind (por ejemplo bg-white/80)
+     pueda cambiarlo en un sitio concreto */
+  .glass {
+    background-color: rgb(255 255 255 / 0.55);
+    backdrop-filter: blur(16px) saturate(1.4);
+    border: 1px solid rgb(255 255 255 / 0.9);
+    box-shadow:
+      0 20px 45px -15px rgb(79 70 229 / 0.25),
+      inset 0 1px 0 rgb(255 255 255 / 0.8);
   }
 }
