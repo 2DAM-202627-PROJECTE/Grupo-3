@@ -32,6 +32,7 @@ import { renderHero } from './components/Hero.js';
 import { renderNavbar, initActiveNavLink } from './components/Navbar.js';
 import { renderFeatures } from './components/Features.js';
 import { renderPricing } from './components/Pricing.js';
+import { renderFaq } from './components/Faq.js';
 import { renderHowItWorks } from './components/HowItWorks.js';
 import { renderNewsletter } from './components/Newsletter.js';
 import { renderFooter } from './components/Footer.js';
@@ -58,7 +59,7 @@ const sections = [
   { id: 'como-funciona', render: renderHowItWorks }, // HowItWorks.js
   { id: 'precios', render: renderPricing },
   { id: 'testimonios', render: null }, // Testimonials.js
-  { id: 'faq', render: null }, // Faq.js
+  { id: 'faq', render: renderFaq }, // Faq.js
   { id: 'cta', render: null }, // Cta.js
 ];
 
