@@ -1,0 +1,794 @@
+/* =============================================================
+   intro.css — Estilos de la intro "Un día con Reservo" (Intro.js)
+   Solo se usan la primera vez que se entra en la página.
+   Partes:
+     1. Medidas            → tamaño de las páginas según la pantalla
+     2. Escenario          → la zona que se queda fija mientras se baja
+     3. Libro en 3D        → tapa, hoja y páginas con sus dos caras
+     4. Papel ("antes")    → libreta con letra a mano, tachones y mancha de café
+     5. Digital ("después")→ agenda de Reservo con la semana y las reservas
+     6. Tarjeta del Hero, textos y móviles
+     7. Recordatorios, final y aviso de cookies
+   ============================================================= */
+
+/* Letra a mano para la agenda de papel (se descarga con npm, no de Google) */
+@import "@fontsource/caveat/500.css";
+@import "@fontsource/caveat/700.css";
+/* Estilos que recomienda Lenis (el scroll suave) */
+@import "lenis/dist/lenis.css";
+
+/* ========================================
+   1. Medidas
+   ======================================== */
+
+:root {
+  /* Ancho de UNA página: el más pequeño entre el 40% del ancho de la pantalla,
+     400px y el 52% del alto (así la página, que es 1.3 veces más alta, siempre cabe) */
+  --pw: min(40vw, 400px, 52vh);
+  --ph: calc(var(--pw) * 1.3);
+}
+
+/* En móvil el libro abierto ocupa casi todo el ancho */
+@media (max-width: 767px) {
+  :root {
+    --pw: min(47vw, 52vh);
+  }
+}
+
+/* ========================================
+   2. Escenario
+   ======================================== */
+
+.story {
+  position: relative;
+}
+
+/* Ocupa toda la pantalla. ScrollTrigger la deja fija (pin) mientras dura la animación.
+   El fondo es el mismo que el de la landing: encima va la aurora y, cuando se apaga
+   al final, la intro y la landing quedan del mismo color, sin salto */
+.stage {
+  position: relative;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  background: var(--bg);
+}
+
+/* --- Aurora ---
+   Cuatro manchas de color grandes y difuminadas que se mueven muy despacio.
+   No se usa filter: blur() (es muy pesado de animar): cada mancha es un degradado
+   circular que ya se desvanece hacia los bordes, y solo se anima transform,
+   que el navegador mueve con la tarjeta gráfica sin esfuerzo */
+.aurora {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.aurora-blob {
+  position: absolute;
+  width: 70vmax;
+  height: 70vmax;
+  border-radius: 50%;
+  will-change: transform;
+}
+
+/* Cada mancha: su color, su sitio y su propio movimiento (duraciones distintas para que
+   nunca se repita igual). alternate: va y vuelve en vez de saltar al principio */
+.blob-1 {
+  left: -25vmax;
+  top: -30vmax;
+  background: radial-gradient(circle, rgb(79 53 245 / 0.45), transparent 62%);
+  animation: aurora-1 22s ease-in-out infinite alternate;
+}
+
+.blob-2 {
+  right: -30vmax;
+  bottom: -35vmax;
+  background: radial-gradient(circle, rgb(6 182 212 / 0.32), transparent 62%);
+  animation: aurora-2 26s ease-in-out infinite alternate;
+}
+
+.blob-3 {
+  right: -10vmax;
+  top: -35vmax;
+  background: radial-gradient(circle, rgb(139 92 246 / 0.3), transparent 62%);
+  animation: aurora-3 30s ease-in-out infinite alternate;
+}
+
+.blob-4 {
+  left: -20vmax;
+  bottom: -40vmax;
+  background: radial-gradient(circle, rgb(59 130 246 / 0.25), transparent 62%);
+  animation: aurora-4 24s ease-in-out infinite alternate;
+}
+
+@keyframes aurora-1 {
+  to { transform: translate(30vw, 25vh) scale(1.25); }
+}
+
+@keyframes aurora-2 {
+  to { transform: translate(-35vw, -20vh) scale(1.15); }
+}
+
+@keyframes aurora-3 {
+  to { transform: translate(-30vw, 30vh) scale(0.85); }
+}
+
+@keyframes aurora-4 {
+  to { transform: translate(25vw, -25vh) scale(1.2); }
+}
+
+/* Contenedor de la escena 3D. perspective: cuanto menor, más exagerado el 3D */
+.scene {
+  position: relative;
+  width: calc(var(--pw) * 2);
+  height: var(--ph);
+  margin-top: 4rem;
+  perspective: 2200px;
+}
+
+/* Lenis hace el scroll suave por su cuenta: el scroll-behavior: smooth de la landing
+   (style.css y la clase scroll-smooth del <html>) se pelearía con él, así que se desactiva
+   mientras Lenis está activo (Lenis le pone la clase .lenis al <html>) */
+html.lenis {
+  scroll-behavior: auto !important;
+}
+
+/* ========================================
+   3. Libro en 3D
+   ======================================== */
+
+/* El libro mide dos páginas de ancho. preserve-3d: sus hijos se giran en el mismo espacio 3D.
+   El tamaño de letra depende del ancho de página, así todo el contenido escala junto */
+.book {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  font-size: calc(var(--pw) / 26);
+}
+
+/* Página derecha fija (la agenda digital, debajo de todo) */
+.page-right {
+  position: absolute;
+  left: 50%;
+  width: 50%;
+  height: 100%;
+  border-radius: 0 1em 1em 0;
+}
+
+/* Hojas que giran (la tapa y la hoja de papel).
+   Están en la mitad derecha y giran sobre su borde izquierdo (el lomo del libro) */
+.leaf {
+  position: absolute;
+  left: 50%;
+  width: 50%;
+  height: 100%;
+  transform-origin: left center;
+  transform-style: preserve-3d;
+}
+
+/* Las dos caras de cada hoja. backface-visibility: hidden oculta la cara que mira hacia atrás.
+   translateZ separa un poco cada hoja: la tapa (2px) va por encima de la hoja de papel (1px)
+   cuando están a la derecha, y al girar 180° el orden se invierte solo, así la hoja de papel
+   queda por encima de la tapa en la izquierda (sin parpadeos entre las dos) */
+.face {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  backface-visibility: hidden;
+  border-radius: 0 1em 1em 0;
+}
+
+.leaf-page .front { transform: translateZ(1px); }
+.leaf-page .back { transform: translateZ(1px) rotateY(180deg); border-radius: 1em 0 0 1em; }
+.leaf-cover .front { transform: translateZ(2px); }
+.leaf-cover .back { transform: translateZ(2px) rotateY(180deg); border-radius: 1em 0 0 1em; }
+
+/* Portada: "piel" índigo con una costura discontinua y sombra del lomo */
+.cover {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background:
+    linear-gradient(90deg, rgb(0 0 0 / 0.35), transparent 8%),
+    linear-gradient(135deg, #3730a3, #1e1b4b 70%);
+  box-shadow: 0 2em 4em rgb(0 0 0 / 0.5);
+}
+
+.cover::after {
+  content: "";
+  position: absolute;
+  inset: 1.2em;
+  border: 2px dashed rgb(165 180 252 / 0.3);
+  border-radius: 0.6em;
+}
+
+/* ========================================
+   4. Papel ("antes")
+   ======================================== */
+
+/* Libreta: fondo crema con renglones azules y la línea roja del margen */
+.paper {
+  padding: 2.4em 1.6em 1.6em 3.4em;
+  background:
+    linear-gradient(90deg, transparent 2.6em, rgb(239 68 68 / 0.45) 2.6em 2.7em, transparent 2.7em),
+    repeating-linear-gradient(transparent 0 1.85em, rgb(147 197 253 / 0.55) 1.85em 1.9em),
+    #f5eedc;
+  color: #1e3a8a;
+  font-family: "Caveat", cursive;
+  font-weight: 500;
+  font-size: 1.45em;
+  line-height: 1.31;
+  /* Sombra del lomo (inset) y sombra de la libreta sobre el fondo claro */
+  box-shadow:
+    inset 0.6em 0 1.2em -0.6em rgb(0 0 0 / 0.35),
+    0 1.5em 3em rgb(15 23 42 / 0.18);
+}
+
+.paper-date {
+  font-weight: 700;
+  font-size: 1.3em;
+  margin-bottom: 0.4em;
+}
+
+.paper-list li {
+  margin: 0;
+}
+
+.paper-list s {
+  text-decoration-color: #dc2626;
+  text-decoration-thickness: 2px;
+}
+
+.paper-list em {
+  color: #dc2626;
+}
+
+.paper-list .faint {
+  opacity: 0.4;
+}
+
+/* Llamadas perdidas, en rojo, con el teléfono vibrando */
+.missed {
+  display: flex;
+  align-items: center;
+  gap: 0.4em;
+  margin-top: 0.8em;
+  color: #dc2626;
+  font-weight: 700;
+}
+
+/* Se llama .phone-ring y no .ring porque ring es una clase de Tailwind */
+.phone-ring {
+  width: 1.1em;
+  height: 1.1em;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .phone-ring {
+    animation: ring 1.2s ease-in-out infinite;
+  }
+
+  @keyframes ring {
+    0%, 50%, 100% { transform: rotate(0); }
+    10%, 30% { transform: rotate(-14deg); }
+    20%, 40% { transform: rotate(14deg); }
+  }
+}
+
+/* Post-it amarillo, un poco torcido.
+   Se llama .postit y no .sticky porque sticky es una clase de Tailwind (la usa la navbar) */
+.postit {
+  margin: 0.4em 0 0.8em;
+  padding: 0.6em 0.8em;
+  width: 80%;
+  background: #fde68a;
+  color: #78350f;
+  transform: rotate(-3deg);
+  box-shadow: 0 0.4em 0.8em rgb(0 0 0 / 0.2);
+}
+
+/* Mancha de café: un aro marrón difuminado */
+.stain {
+  position: absolute;
+  right: 1.2em;
+  bottom: 1.4em;
+  width: 5em;
+  height: 5em;
+  border-radius: 50%;
+  background: radial-gradient(circle, transparent 55%, rgb(146 64 14 / 0.25) 60%, rgb(146 64 14 / 0.12) 68%, transparent 72%);
+}
+
+/* ========================================
+   5. Digital ("después")
+   ======================================== */
+
+/* Fondo oscuro con un borde índigo suave, como las tarjetas de la landing */
+.digital {
+  padding: 1.6em;
+  background: linear-gradient(160deg, #1e1b4b, #0f172a 60%);
+  border: 1px solid rgb(99 102 241 / 0.35);
+  box-shadow: 0 2em 4em rgb(0 0 0 / 0.5);
+  color: var(--text);
+}
+
+.digital-left .stat {
+  margin-top: 1.4em;
+  padding: 1em;
+  border-radius: 0.8em;
+  background: rgb(30 41 59 / 0.6);
+  border: 1px solid rgb(51 65 85 / 0.6);
+}
+
+.digital-left .stat span {
+  display: block;
+  font-size: 0.85em;
+  color: var(--text-muted);
+}
+
+.digital-left .stat b {
+  display: block;
+  font-size: 2em;
+  line-height: 1.2;
+  color: white;
+}
+
+.digital-left .stat small {
+  font-size: 0.75em;
+  color: #34d399;
+}
+
+/* Textos de la cabecera digital (en em para que escalen con el libro) */
+.d-kicker {
+  font-size: 0.75em;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  color: #a5b4fc;
+}
+
+.d-title {
+  margin-top: 0.2em;
+  font-size: 1.4em;
+  font-weight: 700;
+  color: white;
+}
+
+.d-week {
+  font-weight: 600;
+  color: white;
+}
+
+.digital-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.95em;
+  margin-bottom: 1em;
+}
+
+/* "En directo" con un punto verde que late */
+.live {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  font-size: 0.8em;
+  color: #34d399;
+}
+
+.live i {
+  width: 0.55em;
+  height: 0.55em;
+  border-radius: 50%;
+  background: #34d399;
+  box-shadow: 0 0 0 0 rgb(52 211 153 / 0.6);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .live i {
+    animation: pulse 1.6s infinite;
+  }
+
+  @keyframes pulse {
+    to { box-shadow: 0 0 0 0.6em rgb(52 211 153 / 0); }
+  }
+}
+
+/* La semana: una columna para las horas y cinco para los días */
+.week {
+  position: relative;
+  display: grid;
+  grid-template-columns: 2.6em repeat(5, 1fr);
+  grid-template-rows: 1.8em repeat(6, 1fr);
+  height: calc(100% - 2.6em);
+  font-size: 0.8em;
+}
+
+.week .day-head {
+  text-align: center;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.week .hour {
+  color: var(--text-muted);
+  font-size: 0.85em;
+  transform: translateY(-0.6em);
+}
+
+/* Cada hueco de la agenda. relative: la reserva se coloca dentro con absolute */
+.week .cell {
+  position: relative;
+}
+
+/* Línea de cada hora. Crece de izquierda a derecha (scaleX de 0 a 1 en agenda.js) */
+.week .hline {
+  grid-column: 2 / -1;
+  align-self: start;
+  height: 1px;
+  background: rgb(71 85 105 / 0.6);
+  transform-origin: left center;
+  pointer-events: none;
+}
+
+/* Una reserva: tarjetita de color con el nombre y la clase */
+.chip {
+  position: absolute;
+  inset: 0.2em;
+  padding: 0.3em 0.4em;
+  border-radius: 0.4em;
+  font-size: 0.85em;
+  line-height: 1.15;
+  font-weight: 600;
+  color: white;
+  overflow: hidden;
+  box-shadow: 0 0.4em 1em rgb(0 0 0 / 0.35);
+}
+
+.chip small {
+  display: block;
+  font-weight: 400;
+  opacity: 0.8;
+}
+
+/* ========================================
+   6. Tarjeta del Hero, textos y móviles
+   ======================================== */
+
+/* Texto de entrada (escena 1): a la izquierda en escritorio, arriba en móvil */
+.intro {
+  position: absolute;
+  z-index: 2;
+  left: max(1.5rem, calc((100vw - 80rem) / 2 + 2rem));
+  top: 50%;
+  max-width: min(36rem, 44vw);
+  transform: translateY(-50%);
+}
+
+@media (max-width: 1023px) {
+  .intro {
+    left: 1.5rem;
+    right: 1.5rem;
+    top: 12vh;
+    max-width: none;
+    text-align: center;
+    transform: none;
+  }
+}
+
+/* Cada palabra del título: inline-block para poder moverla y girarla al aparecer */
+.intro-title .word {
+  display: inline-block;
+}
+
+/* "tu negocio?" lleva el degradado recortado a las letras (bg-clip-text), y el degradado
+   solo se pinta dentro de la caja de la palabra. Con el interlineado tan justo del título,
+   la caja acaba justo en la línea de las letras y la parte de abajo de la "g" se cortaba.
+   padding-bottom alarga la caja para que quepa, y el margin-bottom negativo lo compensa
+   para que el texto de debajo no se mueva */
+.intro-title .gradient-word {
+  padding-bottom: 0.15em;
+  margin-bottom: -0.15em;
+}
+
+/* Logo arriba a la izquierda: misma posición y tamaño que el logo de la navbar */
+.intro-brand {
+  position: absolute;
+  z-index: 2;
+  top: 0.75rem;
+  left: max(1rem, calc((100vw - 80rem) / 2 + 2rem));
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: white;
+}
+
+/* Indicador de scroll, abajo en el centro: un ratón con la ruedecita bajando */
+.scroll-hint {
+  position: absolute;
+  z-index: 2;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.scroll-hint-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  color: #a5b4fc;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+/* El cuerpo del ratón: un rectángulo con las esquinas muy redondeadas */
+.mouse {
+  position: relative;
+  width: 1.5rem;
+  height: 2.4rem;
+  border: 2px solid currentColor;
+  border-radius: 1rem;
+}
+
+/* La ruedecita: un punto que baja y se desvanece, una y otra vez */
+.wheel {
+  position: absolute;
+  left: 50%;
+  top: 0.4rem;
+  width: 0.25rem;
+  height: 0.5rem;
+  margin-left: -0.125rem;
+  border-radius: 1rem;
+  background: currentColor;
+  animation: wheel 1.6s ease-in-out infinite;
+}
+
+@keyframes wheel {
+  0% { transform: translateY(0); opacity: 1; }
+  70% { transform: translateY(0.7rem); opacity: 0; }
+  100% { transform: translateY(0); opacity: 0; }
+}
+
+/* Tarjeta de reserva (copia simplificada de la del Hero). Empieza centrada en la escena
+   y Intro.js la mueve a la derecha al cargar.
+   .hero-card solo se mueve con el scroll; perspective: da profundidad a la inclinación
+   de la capa de dentro (.card-inner) cuando sigue al ratón */
+.hero-card {
+  position: absolute;
+  z-index: 3;
+  left: 50%;
+  top: 50%;
+  width: 340px;
+  perspective: 1000px;
+}
+
+/* La tarjeta que se ve. Efecto cristal: fondo oscuro un poco transparente y backdrop-filter,
+   que difumina la aurora que hay detrás. El brillo índigo de la sombra la separa del fondo.
+   relative: el cursor de mentira se coloca dentro de ella */
+.card-inner {
+  position: relative;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  border: 1px solid rgb(148 163 184 / 0.2);
+  background: rgb(15 23 42 / 0.75);
+  backdrop-filter: blur(16px);
+  box-shadow:
+    0 2rem 4rem rgb(0 0 0 / 0.45),
+    0 0 4rem rgb(79 53 245 / 0.25);
+}
+
+.hero-card .day {
+  display: flex;
+  flex-direction: column;
+  padding: 0.4rem 0;
+  border-radius: 0.5rem;
+  border: 1px solid rgb(51 65 85);
+  color: var(--text-muted);
+  transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.hero-card .day b {
+  color: white;
+  font-size: 0.95rem;
+}
+
+.hero-card .day.is-active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+}
+
+.hero-card .slot {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.6rem 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid transparent;
+  background: rgb(30 41 59);
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.hero-card .slot small {
+  color: var(--text-muted);
+}
+
+/* Clase elegida por el cursor de la tarjeta viva */
+.hero-card .slot.is-selected {
+  border-color: #818cf8;
+  background: rgb(79 53 245 / 0.2);
+}
+
+/* Botón de confirmar. Cuando se "reserva" se pone verde (is-done) */
+.card-button {
+  padding: 0.5rem 0;
+  border-radius: 0.5rem;
+  background: var(--primary);
+  text-align: center;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: background-color 0.25s;
+}
+
+.card-button.is-done {
+  background: #059669;
+}
+
+/* Cursor de mentira de la tarjeta viva. Empieza invisible; Intro.js lo mueve.
+   pointer-events: none → no molesta al ratón de verdad */
+.fake-cursor {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1.4rem;
+  height: 1.4rem;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  filter: drop-shadow(0 2px 3px rgb(0 0 0 / 0.5));
+}
+
+/* Frases de cada escena, centradas encima del libro y una encima de otra */
+.captions {
+  position: absolute;
+  z-index: 2;
+  top: calc(50% - var(--ph) / 2 - 2.5rem);
+  left: 0;
+  right: 0;
+  height: 3rem;
+  text-align: center;
+}
+
+.caption {
+  position: absolute;
+  inset: 0;
+  font-size: clamp(1.25rem, 2.6vw, 2rem);
+  font-weight: 700;
+  color: white;
+  visibility: hidden;
+}
+
+/* Móviles de los clientes, a los lados del libro. En pantallas estrechas no caben y se ocultan */
+.phones {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.phone {
+  position: absolute;
+  width: 4.5rem;
+  height: 8.5rem;
+  border-radius: 1rem;
+  border: 3px solid #334155;
+  background: linear-gradient(180deg, #1e293b, #0f172a);
+  box-shadow: 0 1rem 2rem rgb(0 0 0 / 0.4);
+  display: grid;
+  place-items: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  visibility: hidden;
+}
+
+/* La "isla" de arriba del móvil */
+.phone::before {
+  content: "";
+  position: absolute;
+  top: 0.4rem;
+  width: 1.4rem;
+  height: 0.3rem;
+  border-radius: 1rem;
+  background: #334155;
+}
+
+/* Botón de "Reservar" dibujado en la pantalla */
+.phone::after {
+  content: "Reservar";
+  position: absolute;
+  bottom: 0.8rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.4rem;
+  background: var(--primary);
+  color: white;
+  font-size: 0.6rem;
+}
+
+.phone[data-phone="0"] { left: 5vw; top: 18vh; }
+.phone[data-phone="1"] { left: 8vw; bottom: 10vh; }
+.phone[data-phone="2"] { right: 5vw; top: 22vh; }
+.phone[data-phone="3"] { right: 8vw; bottom: 12vh; }
+
+@media (max-width: 1199px) {
+  .phones {
+    display: none;
+  }
+}
+
+/* ========================================
+   7. Recordatorios, final y aviso de cookies
+   ======================================== */
+
+/* "-70 %" junto a las citas sin aparecer: empieza oculto y aparece en la escena 5 */
+.digital-left .stat .badge {
+  margin-left: 0.4em;
+  font-size: 0.5em;
+  color: #34d399;
+  vertical-align: middle;
+}
+
+/* Burbuja de recordatorio: sale de una reserva y vuela hasta el móvil del cliente.
+   .bubble solo se coloca y se mueve; el aspecto va en .bubble-body, que es la que aparece y desaparece */
+.bubble {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 4;
+}
+
+.bubble-body {
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.9rem 0.9rem 0.9rem 0.2rem;
+  background: #10b981;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: 0 0.75rem 1.5rem rgb(0 0 0 / 0.35);
+}
+
+/* Nombre del sector en la frase de la escena 6. inline-block: así se puede encoger al cambiar */
+[data-sector-name] {
+  display: inline-block;
+}
+
+/* Final: el logo y el nombre en el centro, antes de pasar a la landing */
+.outro {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  visibility: hidden;
+}
+
+/* Mientras se ve la intro, el aviso de cookies se esconde para no tapar la agenda.
+   Aparece en cuanto se llega a la landing (Intro.js quita la clase intro-playing).
+   No pasa nada legalmente: hasta que se acepta no se usa ninguna cookie de análisis */
+#preferences-bar {
+  transition: opacity 0.4s, visibility 0.4s;
+}
+
+html.intro-playing #preferences-bar {
+  opacity: 0;
+  visibility: hidden;
+}
