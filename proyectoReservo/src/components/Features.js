@@ -75,10 +75,11 @@ const features = [
 function featureCard({ icon, title, text }) {
   return /*html*/ `
     <!-- Tarjeta: borde, esquinas redondeadas y fondo algo más claro que la página.
-         Al pasar el ratón el borde se vuelve índigo.
+         Al pasar el ratón el borde se vuelve índigo y la tarjeta sube 4px con una sombra suave
+         (motion-safe: lo de subir solo si no se han pedido animaciones reducidas).
          En móvil hay 2 tarjetas por fila, así que el relleno, el icono y el título
          son más pequeños y crecen a partir de sm: -->
-    <article class="rounded-xl border border-slate-800 bg-slate-800/30 p-4 transition hover:border-indigo-500/50 sm:p-6">
+    <article class="rounded-xl border border-slate-800 bg-slate-800/30 p-4 transition duration-200 hover:border-indigo-500/50 hover:shadow-lg hover:shadow-indigo-500/10 motion-safe:hover:-translate-y-1 sm:p-6">
       <!-- Icono: es decorativo (el título ya dice lo que es), así que aria-hidden -->
       <div class="text-indigo-400" aria-hidden="true">
         <i data-lucide="${icon}" class="h-6 w-6 sm:h-7 sm:w-7"></i>

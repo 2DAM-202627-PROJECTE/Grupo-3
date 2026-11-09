@@ -130,9 +130,15 @@ function planCard({ id, name, description, price, features, cta, featured = fals
   // Estilos de la tarjeta según si es el plan destacado o no:
   // el destacado lleva borde índigo, fondo índigo oscuro y una sombra suave.
   // "relative" hace falta para colocar el badge "Más popular" encima de la tarjeta.
+  // Al pasar el ratón, el destacado refuerza su sombra índigo y el resto aclara el borde
   const cardClasses = featured
-    ? 'relative border-indigo-500 bg-indigo-950/40 shadow-lg shadow-indigo-500/10'
-    : 'border-slate-800 bg-slate-800/30';
+    ? 'relative border-indigo-500 bg-indigo-950/40 shadow-lg shadow-indigo-500/10 hover:shadow-indigo-500/25'
+    : 'border-slate-800 bg-slate-800/30 hover:border-slate-600';
+
+  // Todas las tarjetas suben 4px al pasar el ratón (-translate-y-1).
+  // motion-safe: solo si la persona no ha pedido reducir las animaciones.
+  // transition + duration-200: el cambio es suave y no de golpe
+  const hoverLift = 'transition duration-200 motion-safe:hover:-translate-y-1';
 
   // El badge solo existe en el plan destacado. Si no lo es, se deja un string vacío.
   // absolute + -top-3 + left-1/2 + -translate-x-1/2: centrado sobre el borde superior.
@@ -150,7 +156,7 @@ function planCard({ id, name, description, price, features, cta, featured = fals
          y que los botones de las 3 tarjetas queden alineados.
          role="tabpanel" + aria-labelledby: en móvil es el panel de su pestaña,
          y el lector de pantalla lo anuncia con el nombre de la pestaña ("Pro") -->
-    <article id="plan-${id}" role="tabpanel" aria-labelledby="tab-${id}" class="flex flex-col rounded-xl border p-8 ${cardClasses} ${hiddenOnMobile}">
+    <article id="plan-${id}" role="tabpanel" aria-labelledby="tab-${id}" class="flex flex-col rounded-xl border p-8 ${cardClasses} ${hoverLift} ${hiddenOnMobile}">
       ${badge}
 
       <!-- Nombre y descripción del plan -->
