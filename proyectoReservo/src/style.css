@@ -131,3 +131,50 @@
     }
   }
 }
+
+/* ========================================
+   5. Animación al hacer scroll
+   ======================================== */
+
+/* Cómo funciona:
+   - El JavaScript (scrollReveal.js) pone la clase .reveal a lo que se tiene que animar:
+     el elemento empieza invisible.
+   - Cuando entra en pantalla, le añade .is-visible: se reproduce la animación
+     y el elemento sube un poco mientras aparece.
+
+   Todo va dentro de prefers-reduced-motion: no-preference, que se cumple solo si la persona
+   NO ha pedido en su sistema reducir las animaciones (WCAG 2.1, issue #25).
+   Si lo ha pedido, nada de esto se aplica y el contenido se ve directamente, sin moverse */
+@media (prefers-reduced-motion: no-preference) {
+  /* Animación: de invisible y 24px más abajo, a su sitio normal */
+  @keyframes reveal-up {
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @layer components {
+    /* Esperando a entrar en pantalla: invisible.
+       Solo cambia la opacidad, así el elemento sigue ocupando su sitio y la página no salta */
+    .reveal:not(.is-visible) {
+      opacity: 0;
+    }
+
+    /* Ya está en pantalla: se reproduce la animación una vez.
+       Se usa animation y no transition para no pisar las transition que ya tienen
+       algunos elementos (por ejemplo el hover de las tarjetas).
+       --reveal-delay es un retraso opcional para que varias tarjetas aparezcan
+       una detrás de otra; si no se pone, vale 0ms.
+       backwards hace que, durante ese retraso, el elemento se quede como en el from
+       (invisible) en vez de verse un momento antes de empezar */
+    .reveal.is-visible {
+      animation: reveal-up 0.6s ease-out backwards;
+      animation-delay: var(--reveal-delay, 0ms);
+    }
+  }
+}
