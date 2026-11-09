@@ -32,6 +32,7 @@ import { renderSectors } from './components/Sectors.js';
 import { renderNavbar } from './components/Navbar.js';
 import { renderFeatures } from './components/Features.js';
 import { renderPricing } from './components/Pricing.js';
+import { renderCta } from './components/Cta.js';
 import { renderNewsletter } from './components/Newsletter.js';
 import { renderFooter } from './components/Footer.js';
 import { renderPreferencesBar } from './components/PreferencesBar.js';
@@ -55,7 +56,7 @@ const sections = [
   { id: 'precios', render: renderPricing },
   { id: 'testimonios', render: null }, // Testimonials.js
   { id: 'faq', render: null }, // Faq.js
-  { id: 'cta', render: null }, // Cta.js
+  { id: 'cta', render: renderCta },
 ];
 
 // -------------------------------------------------------------
