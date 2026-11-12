@@ -8,7 +8,7 @@
 // Partes del archivo:
 //   1. Configuración          → constantes que usa el resto del archivo
 //   2. HTML del formulario    → renderNewsletter (lo llama main.js)
-//   3. Envío a Mailchimp      → subscribeToMailchimp y los mensajes de su respuesta
+//   3. Envío a Mailchimp      → subscribeToMailchimp (con reintentos) y los mensajes de su respuesta
 //   4. Validación y envío     → setupNewsletter (errores y confirmación)
 // =============================================================
 
@@ -37,8 +37,19 @@ const MAILCHIMP_URL =
 // que rellena todos los campos sí lo rellena, y Mailchimp descarta esa suscripción
 const MAILCHIMP_HONEYPOT = 'b_77fed9aaaae99e17a417d82ca_5545d6efa4';
 
-// Tiempo máximo esperando la respuesta de Mailchimp (10 segundos, en milisegundos)
-const MAILCHIMP_TIMEOUT = 10000;
+// Tiempo máximo esperando la respuesta de Mailchimp (8 segundos, en milisegundos).
+// Normalmente responde en menos de 1 segundo
+const MAILCHIMP_TIMEOUT = 8000;
+
+// Intentos en total si falla la conexión. Las redes del instituto a veces cortan una
+// conexión suelta (net::ERR_CONNECTION_CLOSED) y al volver a intentarlo funciona.
+// No se ponen más: si Mailchimp no responde, cada intento espera hasta MAILCHIMP_TIMEOUT
+// y la persona se quedaría demasiado rato viendo "Enviando…"
+const MAILCHIMP_ATTEMPTS = 3;
+
+// Espera antes de cada reintento, y cada vez el doble: 1 s antes del 2.º y 2 s antes del 3.º.
+// Así, si la red está dando un corte de unos segundos, tiene más tiempo para recuperarse
+const MAILCHIMP_RETRY_DELAY = 1000;
 
 // -------------------------------------------------------------
 // 2. HTML del formulario
@@ -194,7 +205,26 @@ function subscribeToMailchimp(email) {
   });
 }
 
-// Mailchimp responde en inglés. Esta función pasa su respuesta al mensaje que ve la persona.
+// Igual que subscribeToMailchimp, pero si falla la conexión lo vuelve a intentar,
+// hasta MAILCHIMP_ATTEMPTS veces en total. Si fallan todas, el error llega a
+// setupNewsletter, que muestra el mensaje
+async function subscribeWithRetry(email) {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      return await subscribeToMailchimp(email);
+    } catch (error) {
+      // Era el último intento: se pasa el error a quien ha llamado a esta función
+      if (attempt === MAILCHIMP_ATTEMPTS) throw error;
+
+      // Espera antes de reintentar: 1 s, 2 s... (2 ** 0 = 1, 2 ** 1 = 2).
+      // Es una promesa que se cumple cuando acaba el setTimeout
+      const delay = MAILCHIMP_RETRY_DELAY * 2 ** (attempt - 1);
+      await new Promise((resolve) => setTimeout(resolve, delay));
+    }
+  }
+}
+
+// Esta función pasa la respuesta de Mailchimp al mensaje en español que ve la persona.
 // Devuelve { ok: true/false, text: 'mensaje en español' } y, si Mailchimp pide un captcha,
 // también captchaUrl (ver más abajo)
 function mailchimpMessage({ result, msg = '' }, email) {
@@ -307,7 +337,7 @@ function setupNewsletter(container) {
     message.className = 'mt-3 min-h-5 text-sm text-slate-600';
 
     try {
-      const response = mailchimpMessage(await subscribeToMailchimp(email), email);
+      const response = mailchimpMessage(await subscribeWithRetry(email), email);
 
       if (response.ok) {
         // Confirmación en verde y formulario vacío.
