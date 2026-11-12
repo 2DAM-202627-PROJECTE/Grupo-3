@@ -54,9 +54,9 @@ function testimonialCard({ quote, author, sector, rating }) {
           ${renderStars(rating)}
         </div>
 
-        <!-- Cita del cliente -->
+        <!-- Cita del cliente, con comillas tipográficas (“ ”) en vez de las rectas (" ") -->
         <blockquote class="mt-4 text-sm leading-relaxed text-slate-700 sm:text-base">
-          "${quote}"
+          “${quote}”
         </blockquote>
       </div>
 
