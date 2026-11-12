@@ -40,23 +40,30 @@ export function renderNewsletter(container) {
   container.className = 'border-t border-slate-200/70 bg-(--bg-dark)/80';
 
   container.innerHTML = /*html*/ `
-    <!-- Contenedor con márgenes laterales, como el resto de secciones -->
-    <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-      <!-- Bloque centrado: mx-auto lo centra en la página y text-center centra los textos.
-           max-w-xl: ancho máximo para que el campo de email no quede demasiado largo -->
-      <div class="mx-auto max-w-xl text-center">
-        <!-- id del título: el formulario lo usa como nombre (aria-labelledby) -->
-        <h2 id="newsletter-title" class="text-2xl font-bold tracking-tight text-slate-900">Suscríbete a la newsletter</h2>
-        <p class="mt-2 text-sm text-slate-600">
-          Novedades de Reservo y consejos para tu negocio, una vez al mes.
-        </p>
+    <!-- Contenedor con márgenes laterales, como el resto de secciones.
+         py-10 / sm:py-12: menos espacio que una sección normal (py-20), para que se vea
+         como parte del pie de página y no como otra sección después del CTA -->
+    <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-12 lg:px-8">
+      <!-- En móvil y tablet: texto y formulario apilados y centrados (max-w-xl + mx-auto).
+           En escritorio (lg): una sola fila con dos columnas, el texto a la izquierda y el
+           formulario a la derecha, centrados en vertical (items-center) -->
+      <div class="mx-auto grid max-w-xl gap-6 lg:max-w-5xl lg:grid-cols-2 lg:items-center lg:gap-12">
+        <!-- Texto: centrado en móvil, alineado a la izquierda en escritorio -->
+        <div class="text-center lg:text-left">
+          <!-- id del título: el formulario lo usa como nombre (aria-labelledby).
+               text-xl: más pequeño que el título del CTA (text-3xl), que es el importante -->
+          <h2 id="newsletter-title" class="text-xl font-bold tracking-tight text-slate-900">Suscríbete a la newsletter</h2>
+          <p class="mt-2 text-sm text-slate-600">
+            Novedades de Reservo y consejos para tu negocio, una vez al mes.
+          </p>
+        </div>
 
         <!-- aria-labelledby: el lector de pantalla anuncia el formulario con el texto del título.
              novalidate: desactiva los avisos del navegador para usar los nuestros (setupNewsletter),
              que salen como texto debajo del formulario y son iguales en todos los navegadores -->
-        <!-- text-left: el título y la frase van centrados, pero dentro del formulario la
-             etiqueta, la casilla y el mensaje se alinean a la izquierda con el campo de email -->
-        <form id="newsletter-form" class="mt-6 text-left" aria-labelledby="newsletter-title" novalidate>
+        <!-- text-left: en móvil el título y la frase van centrados, pero dentro del formulario
+             la etiqueta, la casilla y el mensaje se alinean a la izquierda con el campo de email -->
+        <form id="newsletter-form" class="text-left" aria-labelledby="newsletter-title" novalidate>
           <!-- Etiqueta visible del campo: el documento pide que cada campo tenga la suya (apartado 3.2).
                for="newsletter-email" la une al input, así al pulsarla se pone el cursor en el campo -->
           <label for="newsletter-email" class="text-sm font-medium text-slate-700">Tu email:</label>
