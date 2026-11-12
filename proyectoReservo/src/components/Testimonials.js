@@ -47,8 +47,10 @@ function testimonialCard({ quote, author, sector, rating }) {
   return /*html*/ `
     <article class="glass flex flex-col justify-between rounded-xl border border-slate-200/80 p-6 shadow-sm transition hover:border-indigo-300 sm:p-8">
       <div>
-        <!-- Estrellas de valoración -->
-        <div class="flex items-center gap-1" aria-label="Valoración: ${rating} de 5 estrellas">
+        <!-- Estrellas de valoración.
+             role="img" + aria-label: el lector de pantalla lee "Valoración: 5 de 5 estrellas"
+             en vez de nada. Sin role, un <div> no tiene rol y su aria-label no se lee -->
+        <div class="flex items-center gap-1" role="img" aria-label="Valoración: ${rating} de 5 estrellas">
           ${renderStars(rating)}
         </div>
 
