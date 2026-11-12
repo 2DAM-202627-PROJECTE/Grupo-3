@@ -50,20 +50,23 @@ export function renderNewsletter(container) {
       <div class="mx-auto grid max-w-xl gap-6 lg:max-w-5xl lg:grid-cols-2 lg:items-center lg:gap-12">
         <!-- Texto: centrado en móvil, alineado a la izquierda en escritorio -->
         <div class="text-center lg:text-left">
-          <!-- id del título: el formulario lo usa como nombre (aria-labelledby).
+          <!-- Texto pensado para quien todavía no quiere la prueba gratuita del CTA de encima:
+               la newsletter es la opción para seguir en contacto sin registrarse
+               (tabla 2.3 del documento: "recibir novedades sin registrarse todavía").
                text-xl: más pequeño que el título del CTA (text-3xl), que es el importante -->
-          <h2 id="newsletter-title" class="text-xl font-bold tracking-tight text-slate-900">Suscríbete a la newsletter</h2>
+          <h2 class="text-xl font-bold tracking-tight text-slate-900">¿Aún no te decides?</h2>
           <p class="mt-2 text-sm text-slate-600">
-            Novedades de Reservo y consejos para tu negocio, una vez al mes.
+            Recibe consejos para tu negocio y novedades de Reservo, una vez al mes.
           </p>
         </div>
 
-        <!-- aria-labelledby: el lector de pantalla anuncia el formulario con el texto del título.
+        <!-- aria-label: nombre del formulario para el lector de pantalla. No se usa el título
+             (aria-labelledby) porque "¿Aún no te decides?" no dice para qué es el formulario.
              novalidate: desactiva los avisos del navegador para usar los nuestros (setupNewsletter),
              que salen como texto debajo del formulario y son iguales en todos los navegadores -->
         <!-- text-left: en móvil el título y la frase van centrados, pero dentro del formulario
              la etiqueta, la casilla y el mensaje se alinean a la izquierda con el campo de email -->
-        <form id="newsletter-form" class="text-left" aria-labelledby="newsletter-title" novalidate>
+        <form id="newsletter-form" class="text-left" aria-label="Suscripción a la newsletter" novalidate>
           <!-- Etiqueta visible del campo: el documento pide que cada campo tenga la suya (apartado 3.2).
                for="newsletter-email" la une al input, así al pulsarla se pone el cursor en el campo -->
           <label for="newsletter-email" class="text-sm font-medium text-slate-700">Tu email:</label>
