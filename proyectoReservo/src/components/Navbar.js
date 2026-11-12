@@ -25,7 +25,7 @@ const links = [
 ];
 
 // Clases comunes para el foco visible al navegar con el teclado (accesibilidad)
-const focusRing = 'focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400';
+const focusRing = 'focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500';
 
 // -------------------------------------------------------------
 // 2. Un enlace
@@ -37,7 +37,7 @@ const focusRing = 'focus:outline-none focus-visible:ring-2 focus-visible:ring-in
 //   - en escritorio, una raya índigo debajo (el pseudo-elemento after:) que crece desde el centro:
 //     normalmente tiene scale-x-0 (ancho 0) y con el enlace activo pasa a scale-x-100
 const activeLink =
-  'aria-[current=location]:text-white aria-[current=location]:bg-slate-800 md:aria-[current=location]:bg-transparent ' +
+  'aria-[current=location]:text-indigo-600 aria-[current=location]:bg-indigo-50 md:aria-[current=location]:bg-transparent ' +
   'md:relative md:after:absolute md:after:inset-x-0 md:after:-bottom-0.5 md:after:h-0.5 md:after:rounded-full md:after:bg-indigo-500 ' +
   'md:after:scale-x-0 md:after:transition-transform md:after:duration-300 md:aria-[current=location]:after:scale-x-100';
 
@@ -46,7 +46,7 @@ const activeLink =
 function navLink({ label, href }) {
   return /*html*/ `
     <li>
-      <a href="${href}" class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-300 transition hover:bg-slate-800 hover:text-white md:px-0 md:py-1 md:hover:bg-transparent ${activeLink} ${focusRing}">${label}</a>
+      <a href="${href}" class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900 md:px-0 md:py-1 md:hover:bg-transparent ${activeLink} ${focusRing}">${label}</a>
     </li>
   `;
 }
@@ -72,19 +72,23 @@ export function renderNavbar(container) {
              El icono es decorativo (alt=""): el texto "Reservo" ya dice qué es.
              La ruta empieza por import.meta.env.BASE_URL ("/" en local y "/Grupo-3/" en
              GitHub Pages): Vite no corrige las rutas que van dentro de textos de JavaScript -->
-        <a href="#hero" class="flex shrink-0 items-center gap-2 rounded-lg text-lg font-bold text-white ${focusRing}" aria-label="Reservo, ir al inicio">
+        <a href="#hero" class="flex shrink-0 items-center gap-2 rounded-lg text-lg font-bold text-slate-900 ${focusRing}" aria-label="Reservo, ir al inicio">
           <img src="${import.meta.env.BASE_URL}favicon.svg" alt="" class="h-8 w-8" />
           Reservo
         </a>
 
         <!-- Enlaces. En móvil es un desplegable oculto (hidden) debajo de la barra;
              en escritorio (md:) se ve siempre, en fila y centrado (md:flex-1 + md:justify-center) -->
-        <div id="primary-navigation" class="absolute inset-x-0 top-full hidden border-b border-slate-800 bg-slate-900 px-4 py-4 shadow-xl md:static md:flex md:flex-1 md:justify-center md:border-0 md:bg-transparent md:p-0 md:shadow-none">
+        <div id="primary-navigation" class="absolute inset-x-0 top-full hidden border-b border-slate-200 bg-white px-4 py-4 shadow-xl md:static md:flex md:flex-1 md:justify-center md:border-0 md:bg-transparent md:p-0 md:shadow-none">
           <ul class="flex flex-col gap-1 md:flex-row md:items-center md:gap-5 lg:gap-8">
             ${links.map(navLink).join('')}
             <!-- "Iniciar sesión" dentro del desplegable, solo en móvil (en escritorio va a la derecha) -->
             <li class="md:hidden">
+<<<<<<< HEAD
               <span class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-500" aria-disabled="true">Iniciar sesión</span>
+=======
+              <a href="#login" class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900 ${focusRing}">Iniciar sesión</a>
+>>>>>>> main
             </li>
           </ul>
         </div>
@@ -92,7 +96,11 @@ export function renderNavbar(container) {
         <!-- Acciones de la derecha: "Iniciar sesión" (solo escritorio), "Prueba gratis" y el botón del menú (solo móvil).
              "Prueba gratis" se ve también en móvil, junto al botón del menú, como en el mockup -->
         <div class="flex shrink-0 items-center gap-3">
+<<<<<<< HEAD
           <span class="hidden rounded-lg text-sm font-medium text-slate-500 md:inline" aria-disabled="true">Iniciar sesión</span>
+=======
+          <a href="#login" class="hidden rounded-lg text-sm font-medium text-slate-600 transition hover:text-slate-900 md:inline ${focusRing}">Iniciar sesión</a>
+>>>>>>> main
           <!-- Botón pequeño (px-4 py-2 text-sm), como en el mockup -->
           <a href="#cta" class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-500 ${focusRing}">Prueba gratis</a>
 
@@ -104,7 +112,7 @@ export function renderNavbar(container) {
           <button
             id="mobile-menu-toggle"
             type="button"
-            class="inline-flex items-center justify-center rounded-lg p-2.5 text-slate-200 transition hover:bg-slate-800 md:hidden ${focusRing}"
+            class="inline-flex items-center justify-center rounded-lg p-2.5 text-slate-700 transition hover:bg-slate-100 md:hidden ${focusRing}"
             aria-expanded="false"
             aria-controls="primary-navigation"
             aria-label="Menú de navegación"
@@ -180,8 +188,8 @@ export function renderNavbar(container) {
 
   const bar = container.querySelector('#navbar-bar');
 
-  // Clases que se ponen al bajar: fondo casi opaco, borde de abajo y sombra
-  const scrolledClasses = ['bg-slate-900/90', 'border-slate-800', 'shadow-lg', 'shadow-black/20'];
+  // Clases que se ponen al bajar: fondo blanco translúcido (cristal), borde de abajo y sombra suave
+  const scrolledClasses = ['bg-white/70', 'border-slate-200/70', 'shadow-lg', 'shadow-indigo-500/5'];
 
   // Se comprueba si la página está arriba del todo (scrollY es lo que se ha bajado, en px).
   // classList.toggle(clase, condición) pone la clase si la condición es true y la quita si es false

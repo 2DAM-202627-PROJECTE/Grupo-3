@@ -44,8 +44,8 @@
 }
 
 /* Ocupa toda la pantalla. ScrollTrigger la deja fija (pin) mientras dura la animación.
-   El fondo es el mismo que el de la landing: encima va la aurora y, cuando se apaga
-   al final, la intro y la landing quedan del mismo color, sin salto */
+   No tiene fondo propio (transparent): se ve la aurora pastel de toda la página
+   (.page-aurora de style.css), así la intro y la landing tienen el mismo fondo, sin saltos */
 .stage {
   position: relative;
   height: 100vh;
@@ -53,73 +53,20 @@
   overflow: hidden;
   display: grid;
   place-items: center;
-  background: var(--bg);
+  background: transparent;
+  /* Cuánto se suben el texto de entrada y las frases por encima del centro de la pantalla.
+     Centrado del todo se veía demasiado abajo */
+  --lift: 5vh;
+  /* Cuánto se suben la tarjeta y la agenda. En escritorio más que las frases, para que
+     no quede tanto espacio entre la frase y la agenda. En móvil igual que --lift
+     (no hay sitio de sobra: la frase se montaría encima de la agenda) */
+  --scene-lift: var(--lift);
 }
 
-/* --- Aurora ---
-   Cuatro manchas de color grandes y difuminadas que se mueven muy despacio.
-   No se usa filter: blur() (es muy pesado de animar): cada mancha es un degradado
-   circular que ya se desvanece hacia los bordes, y solo se anima transform,
-   que el navegador mueve con la tarjeta gráfica sin esfuerzo */
-.aurora {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-.aurora-blob {
-  position: absolute;
-  width: 70vmax;
-  height: 70vmax;
-  border-radius: 50%;
-  will-change: transform;
-}
-
-/* Cada mancha: su color, su sitio y su propio movimiento (duraciones distintas para que
-   nunca se repita igual). alternate: va y vuelve en vez de saltar al principio */
-.blob-1 {
-  left: -25vmax;
-  top: -30vmax;
-  background: radial-gradient(circle, rgb(79 53 245 / 0.45), transparent 62%);
-  animation: aurora-1 22s ease-in-out infinite alternate;
-}
-
-.blob-2 {
-  right: -30vmax;
-  bottom: -35vmax;
-  background: radial-gradient(circle, rgb(6 182 212 / 0.32), transparent 62%);
-  animation: aurora-2 26s ease-in-out infinite alternate;
-}
-
-.blob-3 {
-  right: -10vmax;
-  top: -35vmax;
-  background: radial-gradient(circle, rgb(139 92 246 / 0.3), transparent 62%);
-  animation: aurora-3 30s ease-in-out infinite alternate;
-}
-
-.blob-4 {
-  left: -20vmax;
-  bottom: -40vmax;
-  background: radial-gradient(circle, rgb(59 130 246 / 0.25), transparent 62%);
-  animation: aurora-4 24s ease-in-out infinite alternate;
-}
-
-@keyframes aurora-1 {
-  to { transform: translate(30vw, 25vh) scale(1.25); }
-}
-
-@keyframes aurora-2 {
-  to { transform: translate(-35vw, -20vh) scale(1.15); }
-}
-
-@keyframes aurora-3 {
-  to { transform: translate(-30vw, 30vh) scale(0.85); }
-}
-
-@keyframes aurora-4 {
-  to { transform: translate(25vw, -25vh) scale(1.2); }
+@media (min-width: 1024px) {
+  .stage {
+    --scene-lift: 9vh;
+  }
 }
 
 /* Contenedor de la escena 3D. perspective: cuanto menor, más exagerado el 3D */
@@ -127,7 +74,9 @@
   position: relative;
   width: calc(var(--pw) * 2);
   height: var(--ph);
-  margin-top: 4rem;
+  /* El margen de arriba deja sitio a las frases encima de la agenda. Como la escena
+     está centrada, restarle 2 veces --scene-lift la sube exactamente --scene-lift */
+  margin-top: calc(4rem - 2 * var(--scene-lift));
   perspective: 2200px;
 }
 
@@ -197,7 +146,7 @@ html.lenis {
   background:
     linear-gradient(90deg, rgb(0 0 0 / 0.35), transparent 8%),
     linear-gradient(135deg, #3730a3, #1e1b4b 70%);
-  box-shadow: 0 2em 4em rgb(0 0 0 / 0.5);
+  box-shadow: 0 2em 4em rgb(49 46 129 / 0.3);
 }
 
 .cover::after {
@@ -308,12 +257,12 @@ html.lenis {
    5. Digital ("después")
    ======================================== */
 
-/* Fondo oscuro con un borde índigo suave, como las tarjetas de la landing */
+/* Fondo blanco con un toque lila y borde índigo claro, como las tarjetas de la landing */
 .digital {
   padding: 1.6em;
-  background: linear-gradient(160deg, #1e1b4b, #0f172a 60%);
-  border: 1px solid rgb(99 102 241 / 0.35);
-  box-shadow: 0 2em 4em rgb(0 0 0 / 0.5);
+  background: linear-gradient(160deg, #ffffff, #f5f3ff 60%);
+  border: 1px solid #c7d2fe;
+  box-shadow: 0 2em 4em rgb(79 70 229 / 0.18);
   color: var(--text);
 }
 
@@ -321,8 +270,8 @@ html.lenis {
   margin-top: 1.4em;
   padding: 1em;
   border-radius: 0.8em;
-  background: rgb(30 41 59 / 0.6);
-  border: 1px solid rgb(51 65 85 / 0.6);
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
 }
 
 .digital-left .stat span {
@@ -335,12 +284,12 @@ html.lenis {
   display: block;
   font-size: 2em;
   line-height: 1.2;
-  color: white;
+  color: #0f172a;
 }
 
 .digital-left .stat small {
   font-size: 0.75em;
-  color: #34d399;
+  color: #059669;
 }
 
 /* Textos de la cabecera digital (en em para que escalen con el libro) */
@@ -348,19 +297,19 @@ html.lenis {
   font-size: 0.75em;
   font-weight: 600;
   letter-spacing: 0.15em;
-  color: #a5b4fc;
+  color: #4f46e5;
 }
 
 .d-title {
   margin-top: 0.2em;
   font-size: 1.4em;
   font-weight: 700;
-  color: white;
+  color: #0f172a;
 }
 
 .d-week {
   font-weight: 600;
-  color: white;
+  color: #0f172a;
 }
 
 .digital-head {
@@ -377,7 +326,7 @@ html.lenis {
   align-items: center;
   gap: 0.4em;
   font-size: 0.8em;
-  color: #34d399;
+  color: #059669;
 }
 
 .live i {
@@ -430,7 +379,7 @@ html.lenis {
   grid-column: 2 / -1;
   align-self: start;
   height: 1px;
-  background: rgb(71 85 105 / 0.6);
+  background: #e2e8f0;
   transform-origin: left center;
   pointer-events: none;
 }
@@ -446,7 +395,7 @@ html.lenis {
   font-weight: 600;
   color: white;
   overflow: hidden;
-  box-shadow: 0 0.4em 1em rgb(0 0 0 / 0.35);
+  box-shadow: 0 0.4em 1em rgb(15 23 42 / 0.2);
 }
 
 .chip small {
@@ -464,7 +413,7 @@ html.lenis {
   position: absolute;
   z-index: 2;
   left: max(1.5rem, calc((100vw - 80rem) / 2 + 2rem));
-  top: 50%;
+  top: calc(50% - var(--lift));
   max-width: min(36rem, 44vw);
   transform: translateY(-50%);
 }
@@ -506,7 +455,7 @@ html.lenis {
   gap: 0.5rem;
   font-size: 1.125rem;
   font-weight: 700;
-  color: white;
+  color: #0f172a;
 }
 
 /* Indicador de scroll, abajo en el centro: un ratón con la ruedecita bajando */
@@ -523,7 +472,7 @@ html.lenis {
   flex-direction: column;
   align-items: center;
   gap: 0.4rem;
-  color: #a5b4fc;
+  color: #4f46e5;
   font-size: 0.75rem;
   font-weight: 500;
 }
@@ -569,19 +518,19 @@ html.lenis {
   perspective: 1000px;
 }
 
-/* La tarjeta que se ve. Efecto cristal: fondo oscuro un poco transparente y backdrop-filter,
+/* La tarjeta que se ve. Efecto cristal: fondo blanco medio transparente y backdrop-filter,
    que difumina la aurora que hay detrás. El brillo índigo de la sombra la separa del fondo.
    relative: el cursor de mentira se coloca dentro de ella */
 .card-inner {
   position: relative;
   padding: 1.5rem;
   border-radius: 1rem;
-  border: 1px solid rgb(148 163 184 / 0.2);
-  background: rgb(15 23 42 / 0.75);
-  backdrop-filter: blur(16px);
+  border: 1px solid rgb(255 255 255 / 0.9);
+  background: rgb(255 255 255 / 0.6);
+  backdrop-filter: blur(16px) saturate(1.4);
   box-shadow:
-    0 2rem 4rem rgb(0 0 0 / 0.45),
-    0 0 4rem rgb(79 53 245 / 0.25);
+    0 2rem 4rem rgb(79 70 229 / 0.2),
+    inset 0 1px 0 rgb(255 255 255 / 0.8);
 }
 
 .hero-card .day {
@@ -589,13 +538,13 @@ html.lenis {
   flex-direction: column;
   padding: 0.4rem 0;
   border-radius: 0.5rem;
-  border: 1px solid rgb(51 65 85);
+  border: 1px solid #e2e8f0;
   color: var(--text-muted);
   transition: background-color 0.2s, border-color 0.2s, color 0.2s;
 }
 
 .hero-card .day b {
-  color: white;
+  color: #0f172a;
   font-size: 0.95rem;
 }
 
@@ -610,8 +559,8 @@ html.lenis {
   justify-content: space-between;
   padding: 0.6rem 0.75rem;
   border-radius: 0.5rem;
-  border: 1px solid transparent;
-  background: rgb(30 41 59);
+  border: 1px solid #e2e8f0;
+  background: rgb(255 255 255 / 0.7);
   transition: border-color 0.2s, background-color 0.2s;
 }
 
@@ -622,7 +571,7 @@ html.lenis {
 /* Clase elegida por el cursor de la tarjeta viva */
 .hero-card .slot.is-selected {
   border-color: #818cf8;
-  background: rgb(79 53 245 / 0.2);
+  background: #eef2ff;
 }
 
 /* Botón de confirmar. Cuando se "reserva" se pone verde (is-done) */
@@ -638,6 +587,35 @@ html.lenis {
 
 .card-button.is-done {
   background: #059669;
+}
+
+/* Aviso que sale al confirmar la reserva, como una notificación del móvil.
+   Sobresale por la esquina de arriba a la derecha de la tarjeta.
+   Empieza invisible; Intro.js lo enseña y lo esconde en cada reserva */
+.card-toast {
+  position: absolute;
+  top: -1.4rem;
+  right: -1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  padding: 0.6rem 0.9rem;
+  border-radius: 0.8rem;
+  border: 1px solid rgb(52 211 153 / 0.5);
+  background: rgb(6 78 59 / 0.95);
+  box-shadow: 0 1rem 2rem rgb(0 0 0 / 0.4);
+  font-size: 0.75rem;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.card-toast b {
+  color: white;
+}
+
+.card-toast span {
+  color: #a7f3d0;
 }
 
 /* Cursor de mentira de la tarjeta viva. Empieza invisible; Intro.js lo mueve.
@@ -658,7 +636,7 @@ html.lenis {
 .captions {
   position: absolute;
   z-index: 2;
-  top: calc(50% - var(--ph) / 2 - 2.5rem);
+  top: calc(50% - var(--ph) / 2 - 2.5rem - var(--lift));
   left: 0;
   right: 0;
   height: 3rem;
@@ -670,7 +648,7 @@ html.lenis {
   inset: 0;
   font-size: clamp(1.25rem, 2.6vw, 2rem);
   font-weight: 700;
-  color: white;
+  color: #0f172a;
   visibility: hidden;
 }
 
@@ -693,7 +671,7 @@ html.lenis {
   place-items: center;
   font-size: 0.75rem;
   font-weight: 600;
-  color: var(--text-muted);
+  color: #94a3b8;
   visibility: hidden;
 }
 
@@ -739,7 +717,7 @@ html.lenis {
 .digital-left .stat .badge {
   margin-left: 0.4em;
   font-size: 0.5em;
-  color: #34d399;
+  color: #059669;
   vertical-align: middle;
 }
 

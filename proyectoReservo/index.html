@@ -16,7 +16,10 @@
     <meta name="description" content="Reservo: sistema de reservas online para gimnasios, restaurantes, peluquerías y clínicas." />
     <title>Reservo · Reservas online para tu negocio</title>
   </head>
-  <body class="bg-slate-900 text-slate-100 antialiased">
+  <body class="bg-(--bg) text-slate-900 antialiased">
+    <!-- Fondo aurora de toda la página (manchas de color pastel, ver style.css apartado 6).
+         Es decorativo: aria-hidden para que los lectores de pantalla lo ignoren -->
+    <div class="page-aurora" aria-hidden="true"></div>
     <div id="app"></div>
     <script type="module" src="/src/main.js"></script>
   </body>

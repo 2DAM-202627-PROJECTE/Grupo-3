@@ -71,9 +71,9 @@ function logoSvg() {
 // Pinta el footer dentro del contenedor que le pasa main.js
 // (el <div id="footer-content">).
 export function renderFooter(container) {
-  // Borde superior sutil para separar de la newsletter. Mismo fondo oscuro que la
+  // Borde superior sutil para separar de la newsletter. Mismo fondo lila muy claro que la
   // newsletter (--bg-dark de style.css), así el pie se ve como un solo bloque, como en el mockup
-  container.className = 'border-t border-slate-800 bg-(--bg-dark)';
+  container.className = 'border-t border-slate-200/70 bg-(--bg-dark)/80';
 
   // Año dinámico con JS: si la página se abre en 2027, pondrá "© 2027"
   const year = new Date().getFullYear();
@@ -90,7 +90,7 @@ export function renderFooter(container) {
         <!-- Logo + nombre + copyright -->
         <div class="flex items-center gap-3">
           ${logoSvg()}
-          <span class="text-sm text-slate-400">
+          <span class="text-sm text-slate-600">
             © ${year} Reservo. Todos los derechos reservados.
           </span>
         </div>
@@ -99,8 +99,14 @@ export function renderFooter(container) {
         <div class="flex items-center gap-4" role="group" aria-label="Redes sociales">
           ${socialLinks
             .map(
+<<<<<<< HEAD
               ({ svg, label }) => /*html*/ `
               <span class="text-slate-500" role="img" aria-label="${label}">
+=======
+              ({ svg, label, href }) => /*html*/ `
+              <a href="${href}" class="text-slate-600 transition hover:text-indigo-600"
+                 aria-label="${label}" target="_blank" rel="noopener noreferrer">
+>>>>>>> main
                 ${svg}
               </span>
             `,
@@ -110,16 +116,23 @@ export function renderFooter(container) {
       </div>
 
       <!-- Separador -->
-      <hr class="my-8 border-slate-800" />
+      <hr class="my-8 border-slate-200" />
 
       <!-- Enlaces legales: centrados en móvil, en fila en escritorio -->
       <nav class="flex flex-wrap justify-center gap-x-6 gap-y-2" aria-label="Enlaces legales">
         ${legalLinks
           .map(
             ({ label, href }) => /*html*/ `
+<<<<<<< HEAD
           ${href
             ? `<a href="${href}" class="text-sm text-slate-400 transition hover:text-slate-200">${label}</a>`
             : `<span class="text-sm text-slate-500" aria-disabled="true">${label}</span>`}
+=======
+          <a href="${href}"
+             class="text-sm text-slate-600 transition hover:text-slate-900">
+            ${label}
+          </a>
+>>>>>>> main
         `,
           )
           .join('')}

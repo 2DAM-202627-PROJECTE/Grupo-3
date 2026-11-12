@@ -56,12 +56,12 @@ function stepItem({ number, title, text }) {
       </div>
 
       <!-- Título del paso -->
-      <h3 class="mt-6 text-xl font-semibold text-white">
+      <h3 class="mt-6 text-xl font-semibold text-slate-900">
         ${title}
       </h3>
 
       <!-- Descripción desarrollada -->
-      <p class="mt-3 max-w-sm text-sm leading-relaxed text-slate-400">
+      <p class="mt-3 max-w-sm text-sm leading-relaxed text-slate-600">
         ${text}
       </p>
     </article>
@@ -74,18 +74,18 @@ function stepItem({ number, title, text }) {
 
 // Pinta la sección dentro del contenedor que le pasa main.js (el <section id="como-funciona">)
 export function renderHowItWorks(container) {
-  // Fondo más oscuro (bg-slate-950/60) y bordes sutiles para alternar y destacar la sección
-  container.className = 'border-y border-slate-800/60 bg-slate-950/60 py-20 lg:py-28';
+  // Franja de cristal (bg-white/40, deja ver la aurora) y bordes sutiles para alternar y destacar la sección
+  container.className = 'border-y border-white/60 bg-white/40 py-20 lg:py-28';
 
   container.innerHTML = /*html*/ `
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
       <!-- Cabecera de la sección -->
       <div class="mx-auto max-w-2xl text-center">
-        <h2 class="text-3xl font-bold tracking-tight text-white sm:text-4xl">
+        <h2 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
           Empieza en 3 pasos
         </h2>
-        <p class="mt-4 text-lg text-slate-400">
+        <p class="mt-4 text-lg text-slate-600">
           En menos de 10 minutos tendrás tu agenda online.
         </p>
       </div>

@@ -97,8 +97,8 @@ function priceBlock(price, annual = false) {
     // La nota vacía (h-5) ocupa el mismo alto que en los otros planes,
     // así las listas de las 3 tarjetas empiezan a la misma altura
     return /*html*/ `
-      <p class="text-4xl font-extrabold text-white">A medida</p>
-      <p class="mt-1 h-5 text-xs text-slate-400"></p>
+      <p class="text-4xl font-extrabold text-slate-900">A medida</p>
+      <p class="mt-1 h-5 text-xs text-slate-600"></p>
     `;
   }
 
@@ -106,10 +106,10 @@ function priceBlock(price, annual = false) {
   const note = annual ? `Facturado anualmente (${value * 12} €/año)` : 'Facturado mensualmente';
 
   return /*html*/ `
-    <p class="text-4xl font-extrabold text-white">
-      ${value}€<span class="text-base font-normal text-slate-400">/mes</span>
+    <p class="text-4xl font-extrabold text-slate-900">
+      ${value}€<span class="text-base font-normal text-slate-600">/mes</span>
     </p>
-    <p class="mt-1 h-5 text-xs text-slate-400">${note}</p>
+    <p class="mt-1 h-5 text-xs text-slate-600">${note}</p>
   `;
 }
 
@@ -120,20 +120,21 @@ function priceBlock(price, annual = false) {
 // Clases de los dos estilos de botón: el principal (relleno índigo) para el plan
 // destacado y el secundario (con borde) para el resto.
 const buttonBase =
-  'mt-8 rounded-lg px-6 py-3 text-center font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400';
+  'mt-8 rounded-lg px-6 py-3 text-center font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500';
 const buttonPrimary = 'bg-indigo-600 text-white hover:bg-indigo-500';
-const buttonSecondary = 'border border-slate-700 bg-slate-800/60 text-slate-200 hover:bg-slate-800';
+const buttonSecondary = 'border border-slate-200 bg-white/70 text-slate-800 hover:bg-white';
 
 // Devuelve el HTML de UNA tarjeta de plan a partir de un objeto del array.
 // featured = false por defecto, así los planes que no lo tienen no se destacan.
 function planCard({ id, name, description, price, features, cta, featured = false }) {
   // Estilos de la tarjeta según si es el plan destacado o no:
-  // el destacado lleva borde índigo, fondo índigo oscuro y una sombra suave.
+  // el destacado lleva un borde con degradado índigo → violeta → cian (gradient-border de style.css)
+  // y una sombra índigo; los demás son de cristal (glass de style.css).
   // "relative" hace falta para colocar el badge "Más popular" encima de la tarjeta.
   // Al pasar el ratón, el destacado refuerza su sombra índigo y el resto aclara el borde
   const cardClasses = featured
-    ? 'relative border-indigo-500 bg-indigo-950/40 shadow-lg shadow-indigo-500/10 hover:shadow-indigo-500/25'
-    : 'border-slate-800 bg-slate-800/30 hover:border-slate-600';
+    ? 'relative gradient-border shadow-xl shadow-indigo-500/20 backdrop-blur-xl hover:shadow-indigo-500/35'
+    : 'glass hover:border-indigo-200';
 
   // Todas las tarjetas suben 4px al pasar el ratón (-translate-y-1).
   // motion-safe: solo si la persona no ha pedido reducir las animaciones.
@@ -160,8 +161,8 @@ function planCard({ id, name, description, price, features, cta, featured = fals
       ${badge}
 
       <!-- Nombre y descripción del plan -->
-      <h3 class="text-lg font-semibold text-white">${name}</h3>
-      <p class="mt-1 text-sm text-slate-400">${description}</p>
+      <h3 class="text-lg font-semibold text-slate-900">${name}</h3>
+      <p class="mt-1 text-sm text-slate-600">${description}</p>
 
       <!-- Precio. Al empezar se muestra el mensual.
            data-price guarda el precio mensual para que el interruptor pueda recalcularlo.
@@ -177,12 +178,12 @@ function planCard({ id, name, description, price, features, cta, featured = fals
            El ✓ es decorativo (aria-hidden): el lector de pantalla ya sabe que es una lista.
            flex-1 hace que la lista ocupe todo el espacio que sobra en la tarjeta, así el botón
            queda siempre abajo aunque un plan tenga menos características que otro -->
-      <ul class="mt-6 flex-1 space-y-3 text-sm text-slate-300">
+      <ul class="mt-6 flex-1 space-y-3 text-sm text-slate-700">
         ${features
           .map(
             (feature) => /*html*/ `
               <li class="flex items-center gap-2">
-                <span class="text-indigo-400" aria-hidden="true">✓</span>
+                <span class="text-indigo-600" aria-hidden="true">✓</span>
                 ${feature}
               </li>
             `
@@ -216,7 +217,7 @@ function planTab({ id, name, featured = false }) {
       aria-selected="${featured}"
       aria-controls="plan-${id}"
       tabindex="${featured ? 0 : -1}"
-      class="flex-1 rounded-lg px-3 py-2.5 text-sm font-semibold text-slate-400 transition hover:text-white aria-selected:bg-indigo-600 aria-selected:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
+      class="flex-1 rounded-lg px-3 py-2.5 text-sm font-semibold text-slate-600 transition hover:text-slate-900 aria-selected:bg-indigo-600 aria-selected:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
     >
       ${name}
     </button>
@@ -239,10 +240,10 @@ export function renderPricing(container) {
 
       <!-- Cabecera de la sección: título y subtítulo centrados -->
       <div class="mx-auto max-w-2xl text-center">
-        <h2 class="text-3xl font-bold tracking-tight text-white sm:text-4xl">
+        <h2 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
           Precios simples y transparentes
         </h2>
-        <p class="mt-4 text-lg text-slate-400">
+        <p class="mt-4 text-lg text-slate-600">
           14 días gratis en cualquier plan. Sin permanencia.
         </p>
       </div>
@@ -254,7 +255,7 @@ export function renderPricing(container) {
            select-none evita que se seleccione el texto al hacer clic rápido, y py-3
            agranda la zona de pulsación hasta 44 px de alto (mínimo para móvil, apartado 8.2.2) -->
       <div class="mt-10 flex items-center justify-center gap-3 text-sm font-medium">
-        <span data-billing-label="monthly" class="cursor-pointer select-none py-3 text-white transition-colors">Mensual</span>
+        <span data-billing-label="monthly" class="cursor-pointer select-none py-3 text-slate-900 transition-colors">Mensual</span>
 
         <!-- El interruptor es un <button> con role="switch": así los lectores de pantalla
              lo anuncian como un interruptor y se puede usar con el teclado (Tab + Espacio).
@@ -266,7 +267,7 @@ export function renderPricing(container) {
              before:absolute before:-inset-2 crea una capa invisible 8 px más grande por cada lado:
              el interruptor se ve igual, pero la zona que se puede pulsar mide 64×44 px.
              Hover (al pasar el ratón) el fondo se aclara un poco para indicar que se puede pulsar:
-               - apagado: hover:bg-slate-600 (gris algo más claro)
+               - apagado: hover:bg-slate-400 (gris algo más oscuro)
                - encendido: aria-checked:hover:bg-indigo-500 (índigo algo más claro) -->
         <button
           type="button"
@@ -274,17 +275,17 @@ export function renderPricing(container) {
           role="switch"
           aria-checked="false"
           aria-label="Pago anual"
-          class="group relative inline-flex h-7 w-12 shrink-0 items-center rounded-full bg-slate-700 transition before:absolute before:-inset-2 hover:bg-slate-600 aria-checked:bg-indigo-600 aria-checked:hover:bg-indigo-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
+          class="group relative inline-flex h-7 w-12 shrink-0 items-center rounded-full bg-slate-300 transition before:absolute before:-inset-2 hover:bg-slate-400 aria-checked:bg-indigo-600 aria-checked:hover:bg-indigo-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
         >
           <!-- Bolita del interruptor: empieza a la izquierda (translate-x-1) -->
           <span class="inline-block h-5 w-5 translate-x-1 rounded-full bg-white transition group-aria-checked:translate-x-6"></span>
         </button>
 
-        <span data-billing-label="annual" class="cursor-pointer select-none py-3 text-slate-400 transition-colors">Anual</span>
+        <span data-billing-label="annual" class="cursor-pointer select-none py-3 text-slate-600 transition-colors">Anual</span>
         <!-- Etiqueta con el descuento del pago anual (apartado 2.4 del documento).
              En mensual es suave (fondo cian transparente) y en anual se rellena de cian
              para reforzar que el descuento se está aplicando (lo cambia setBilling) -->
-        <span data-billing-badge class="rounded-full bg-cyan-500/10 px-2 py-0.5 text-xs font-semibold text-cyan-300 transition-colors">-20 %</span>
+        <span data-billing-badge class="rounded-full bg-cyan-50 px-2 py-0.5 text-xs font-semibold text-cyan-700 transition-colors">-20 %</span>
       </div>
 
       <!-- Aviso para lectores de pantalla. No se ve (sr-only = "screen reader only"),
@@ -296,7 +297,7 @@ export function renderPricing(container) {
       <!-- Pestañas de los planes: solo en móvil y tablet (lg:hidden las oculta en escritorio,
            donde se ven las tres tarjetas a la vez). Fondo gris con las pestañas dentro,
            como un control segmentado. role="tablist" agrupa las pestañas para el lector de pantalla -->
-      <div role="tablist" aria-label="Planes" class="mx-auto mt-8 flex max-w-md gap-1 rounded-xl border border-slate-800 bg-slate-800/40 p-1 lg:hidden">
+      <div role="tablist" aria-label="Planes" class="mx-auto mt-8 flex max-w-md gap-1 rounded-xl border border-white/90 bg-white/55 p-1 backdrop-blur lg:hidden">
         ${plans.map(planTab).join('')}
       </div>
 
@@ -322,8 +323,8 @@ export function renderPricing(container) {
 // El gris es slate-400 y no slate-500 para mantener un contraste mínimo de 4.5:1 (apartado 3.2).
 // classList.toggle(clase, condición) añade la clase si la condición es true y la quita si es false.
 function highlightLabel(label, active) {
-  label.classList.toggle('text-white', active);
-  label.classList.toggle('text-slate-400', !active);
+  label.classList.toggle('text-slate-900', active);
+  label.classList.toggle('text-slate-600', !active);
 }
 
 // Pone la etiqueta "-20 %" rellena (descuento activo) o suave (inactivo).
@@ -332,8 +333,8 @@ function highlightLabel(label, active) {
 function highlightBadge(badge, active) {
   badge.classList.toggle('bg-cyan-500', active);
   badge.classList.toggle('text-slate-950', active);
-  badge.classList.toggle('bg-cyan-500/10', !active);
-  badge.classList.toggle('text-cyan-300', !active);
+  badge.classList.toggle('bg-cyan-50', !active);
+  badge.classList.toggle('text-cyan-700', !active);
 }
 
 // Lógica del interruptor mensual/anual.
