@@ -64,8 +64,10 @@ const sections = [
   { id: 'sectores', render: renderSectors },
   { id: 'funciones', render: renderFeatures },
   { id: 'como-funciona', render: renderHowItWorks }, // HowItWorks.js
-  { id: 'precios', render: renderPricing },
+  // Testimonios antes de Precios: las opiniones de otros clientes dan confianza
+  // antes de ver cuánto cuesta (cambio respecto al orden del documento y del mockup)
   { id: 'testimonios', render: renderTestimonials }, // Testimonials.js
+  { id: 'precios', render: renderPricing },
   { id: 'faq', render: renderFaq }, // Faq.js
   { id: 'cta', render: renderCta }, // Cta.js
 ];
