@@ -86,8 +86,11 @@ export function renderTestimonials(container) {
         </p>
       </div>
 
-      <!-- Grid de 3 tarjetas: 1 columna en móvil, 3 en escritorio -->
-      <div class="mt-14 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <!-- Grid de 3 tarjetas: 1 columna en móvil y tablet, 3 en escritorio (lg).
+           Sin paso de 2 columnas: con 3 tarjetas, la tercera quedaría sola en su fila.
+           max-w-2xl: en tablet las tarjetas no ocupan todo el ancho, para que las líneas
+           de la cita no queden muy largas. lg:max-w-none lo quita en escritorio -->
+      <div class="mx-auto mt-14 grid max-w-2xl grid-cols-1 gap-6 lg:max-w-none lg:grid-cols-3">
         ${testimonials.map(testimonialCard).join('')}
       </div>
 
