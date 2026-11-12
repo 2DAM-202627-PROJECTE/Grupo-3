@@ -41,6 +41,7 @@ import { renderCta } from './components/Cta.js';
 import { renderNewsletter } from './components/Newsletter.js';
 import { renderFooter } from './components/Footer.js';
 import { renderPreferencesBar } from './components/PreferencesBar.js';
+import { initializeLanguage } from './i18n.js';
 
 // Animación de las secciones al hacer scroll (no es un componente, no pinta nada)
 import { initScrollReveal } from './scrollReveal.js';
@@ -143,6 +144,8 @@ const preferencesBar = document.createElement('div');
 preferencesBar.id = 'preferences-bar';
 document.body.appendChild(preferencesBar);
 renderPreferencesBar(preferencesBar);
+
+initializeLanguage(document);
 
 // -------------------------------------------------------------
 // 7. Al hacer scroll
