@@ -31,15 +31,11 @@
 // archivo vacío todavía no exporta daría error.
 import { renderHero } from './components/Hero.js';
 import { renderSectors } from './components/Sectors.js';
-import { renderNavbar } from './components/Navbar.js';
+import { initActiveNavLink, renderNavbar } from './components/Navbar.js';
 import { renderFeatures } from './components/Features.js';
-import { renderPricing } from './components/Pricing.js';
-<<<<<<< HEAD
-import { renderCta } from './components/Cta.js';
-=======
-import { renderFaq } from './components/Faq.js';
 import { renderHowItWorks } from './components/HowItWorks.js';
->>>>>>> c842026a12c49bac9dc07dc7492c986d5b9083d2
+import { renderPricing } from './components/Pricing.js';
+import { renderCta } from './components/Cta.js';
 import { renderNewsletter } from './components/Newsletter.js';
 import { renderFooter } from './components/Footer.js';
 import { renderPreferencesBar } from './components/PreferencesBar.js';
@@ -68,13 +64,8 @@ const sections = [
   { id: 'como-funciona', render: renderHowItWorks }, // HowItWorks.js
   { id: 'precios', render: renderPricing },
   { id: 'testimonios', render: null }, // Testimonials.js
-<<<<<<< HEAD
   { id: 'faq', render: null }, // Faq.js
   { id: 'cta', render: renderCta },
-=======
-  { id: 'faq', render: renderFaq }, // Faq.js
-  { id: 'cta', render: null }, // Cta.js
->>>>>>> c842026a12c49bac9dc07dc7492c986d5b9083d2
 ];
 
 // -------------------------------------------------------------
