@@ -28,7 +28,7 @@
 //   7. Principio "vivo"      → entrada al cargar, tarjeta que se usa sola e inclinación con el ratón
 //   8. Scroll                → Lenis y ScrollTrigger
 //   9. Función principal     → initIntro(), que se llama desde main.js
-//  10. Recargar o volver     → la posición en la landing cuando la intro ya no sale
+//  10. Recargar o volver     → la intro empieza arriba; la landing, donde se estaba
 // =============================================================
 
 import gsap from 'gsap';
@@ -783,6 +783,10 @@ function buildStartScene(section) {
 
 // Crea la intro antes de la landing, si toca enseñarla (ver apartado 1)
 export function initIntro() {
+  // Al salir de la página, el scroll vuelve a 'auto' para que el navegador guarde la
+  // posición; si al cargar hace falta 'manual', se vuelve a poner (apartado 10)
+  window.addEventListener('pagehide', () => setScrollRestoration('auto'));
+
   // Sin intro: si la última vez se salió de la página con la intro delante,
   // se pone el scroll donde estaba la persona en la landing (apartado 10)
   if (!shouldShowIntro()) {
@@ -815,7 +819,7 @@ export function initIntro() {
   const tl = buildTimeline(section);
   const updateStart = buildStartScene(section);
 
-  ScrollTrigger.create({
+  const trigger = ScrollTrigger.create({
     trigger: section,
     start: 'top top',
     // Cada "segundo" de la película son 450px de scroll
@@ -837,6 +841,10 @@ export function initIntro() {
     // En cada movimiento del scroll: el principio "vivo" se para o vuelve a empezar (apartado 7)
     onUpdate: (self) => updateStart(self.progress),
   });
+
+  // La intro siempre empieza desde arriba, aunque el navegador quiera
+  // devolver a la persona a donde estaba (apartado 10)
+  startIntroFromTop(lenis, trigger);
 }
 
 // -------------------------------------------------------------
@@ -849,6 +857,24 @@ export function initIntro() {
 // Firefox, por ejemplo, dejaba a la persona al final de la página (CTA o footer).
 // Para evitarlo se guarda la posición contando desde el principio de la landing (#app),
 // sin la intro, y al volver se pone esa posición.
+
+// Y al revés: si al recargar vuelve a salir la intro (por ejemplo, porque se ha borrado
+// la marca reservo-intro-vista o porque la URL lleva ?intro), la posición de antes no
+// sirve: Chrome dejaba a la persona en la sección donde estaba, por debajo de la intro,
+// y Firefox a mitad de la intro. La intro tiene que verse desde el principio.
+
+// En los dos casos se le dice al navegador que no ponga él la posición, con
+// history.scrollRestoration = 'manual', y la pone este archivo. No basta con corregirla
+// después: Chrome la pone un poco más tarde del evento load y pisaba la corrección.
+// En el resto de casos se deja en 'auto' (lo normal), porque el navegador ya acierta.
+// Al salir de la página siempre se vuelve a poner 'auto' (en initIntro): con 'manual',
+// Firefox ni siquiera guarda la posición, y en la siguiente carga ya no podría restaurarla.
+// Se cambia con ScrollTrigger.clearScrollMemory y no con history.scrollRestoration
+// directamente: ScrollTrigger guarda el valor que había al cargar y lo vuelve a poner
+// cada vez que recalcula las medidas, así que si no se entera, deshace el cambio
+function setScrollRestoration(mode) {
+  ScrollTrigger.clearScrollMemory(mode);
+}
 
 // Nombre del dato en sessionStorage (se borra solo al cerrar la pestaña)
 const SCROLL_KEY = 'reservo-scroll-landing';
@@ -889,18 +915,24 @@ function rememberLandingScroll() {
 
 // Sin intro: si hay una posición guardada, la pone (solo una vez)
 function restoreLandingScroll() {
-  let position;
+  let position = null;
   try {
     position = sessionStorage.getItem(SCROLL_KEY);
     sessionStorage.removeItem(SCROLL_KEY);
   } catch {
+    // Sin sessionStorage no hay nada guardado: se queda en null
+  }
+
+  // Sin posición guardada, el navegador hace lo de siempre
+  if (position === null) {
+    setScrollRestoration('auto');
     return;
   }
-  if (position === null) return;
+  setScrollRestoration('manual');
 
-  // El navegador pone su posición al terminar de cargar (evento load), así que hay que
-  // esperar a que lo haga y corregirla después. requestAnimationFrame: justo antes de
-  // pintar la pantalla, para que no se vea el salto.
+  // Se espera al evento load (cuando ya han cargado las fuentes y las imágenes, que pueden
+  // cambiar la altura de la página). requestAnimationFrame: justo antes de pintar la
+  // pantalla, para que no se vea el salto.
   // behavior: 'instant': sin esto, el scroll-behavior: smooth de style.css haría
   // que la página bajara poco a poco hasta allí
   const goToPosition = () =>
@@ -911,4 +943,16 @@ function restoreLandingScroll() {
   } else {
     window.addEventListener('load', goToPosition, { once: true });
   }
+}
+
+// Con la intro: pone el scroll arriba del todo, en el principio de la intro
+function startIntroFromTop(lenis, trigger) {
+  setScrollRestoration('manual');
+
+  // immediate: sin animación. force: aunque Lenis esté parado
+  lenis.scrollTo(0, { immediate: true, force: true });
+
+  // scrub hace que la película siga al scroll con 1 segundo de retraso. progress(1) acaba
+  // ese seguimiento al momento, y la película se queda en su primer fotograma
+  trigger.getTween()?.progress(1);
 }
