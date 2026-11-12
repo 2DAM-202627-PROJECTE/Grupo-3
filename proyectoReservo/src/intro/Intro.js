@@ -28,6 +28,7 @@
 //   7. Principio "vivo"      → entrada al cargar, tarjeta que se usa sola e inclinación con el ratón
 //   8. Scroll                → Lenis y ScrollTrigger
 //   9. Función principal     → initIntro(), que se llama desde main.js
+//  10. Recargar o volver     → la posición en la landing cuando la intro ya no sale
 // =============================================================
 
 import gsap from 'gsap';
@@ -782,7 +783,15 @@ function buildStartScene(section) {
 
 // Crea la intro antes de la landing, si toca enseñarla (ver apartado 1)
 export function initIntro() {
-  if (!shouldShowIntro()) return;
+  // Sin intro: si la última vez se salió de la página con la intro delante,
+  // se pone el scroll donde estaba la persona en la landing (apartado 10)
+  if (!shouldShowIntro()) {
+    restoreLandingScroll();
+    return;
+  }
+
+  // Con intro: al salir de la página se guarda dónde se estaba (apartado 10)
+  rememberLandingScroll();
 
   // La sección va al principio del <body>, antes de la landing (#app)
   const section = document.createElement('section');
@@ -828,4 +837,78 @@ export function initIntro() {
     // En cada movimiento del scroll: el principio "vivo" se para o vuelve a empezar (apartado 7)
     onUpdate: (self) => updateStart(self.progress),
   });
+}
+
+// -------------------------------------------------------------
+// 10. Recargar o volver atrás
+// -------------------------------------------------------------
+
+// Al recargar (F5) o volver atrás desde otra página, el navegador pone el scroll en
+// el mismo número de píxeles que había. Pero si al salir la intro estaba delante y ya
+// se había visto, al volver ya no sale y la página mide unos 10.000 px menos:
+// Firefox, por ejemplo, dejaba a la persona al final de la página (CTA o footer).
+// Para evitarlo se guarda la posición contando desde el principio de la landing (#app),
+// sin la intro, y al volver se pone esa posición.
+
+// Nombre del dato en sessionStorage (se borra solo al cerrar la pestaña)
+const SCROLL_KEY = 'reservo-scroll-landing';
+
+// Con la intro en pantalla: guarda la posición al salir de la página
+function rememberLandingScroll() {
+  // pagehide: salta al recargar, al ir a otra página y al cerrar la pestaña
+  window.addEventListener('pagehide', () => {
+    // Si la intro no se ha visto entera, volverá a salir y el navegador ya acierta
+    if (!hasSeenIntro()) return;
+
+    // Dónde empieza la landing dentro de la página (debajo de toda la intro)
+    const landingTop = document.getElementById('app').getBoundingClientRect().top + window.scrollY;
+
+    // Posición dentro de la landing. Math.max(0, ...): si se había vuelto a subir
+    // a la intro, al volver se entra arriba de la landing
+    const position = Math.max(0, Math.round(window.scrollY - landingTop));
+
+    try {
+      sessionStorage.setItem(SCROLL_KEY, String(position));
+    } catch {
+      // Si no se puede guardar, el navegador hace lo de siempre: no pasa nada
+    }
+  });
+
+  // pageshow con persisted = true: el navegador ha devuelto la página tal cual estaba
+  // (caché de atrás/adelante), con la intro y el scroll en su sitio. No hay que hacer nada,
+  // así que se borra el dato para que no se use en otra carga
+  window.addEventListener('pageshow', (event) => {
+    if (!event.persisted) return;
+    try {
+      sessionStorage.removeItem(SCROLL_KEY);
+    } catch {
+      // Sin sessionStorage tampoco se habrá guardado nada
+    }
+  });
+}
+
+// Sin intro: si hay una posición guardada, la pone (solo una vez)
+function restoreLandingScroll() {
+  let position;
+  try {
+    position = sessionStorage.getItem(SCROLL_KEY);
+    sessionStorage.removeItem(SCROLL_KEY);
+  } catch {
+    return;
+  }
+  if (position === null) return;
+
+  // El navegador pone su posición al terminar de cargar (evento load), así que hay que
+  // esperar a que lo haga y corregirla después. requestAnimationFrame: justo antes de
+  // pintar la pantalla, para que no se vea el salto.
+  // behavior: 'instant': sin esto, el scroll-behavior: smooth de style.css haría
+  // que la página bajara poco a poco hasta allí
+  const goToPosition = () =>
+    requestAnimationFrame(() => window.scrollTo({ top: Number(position), behavior: 'instant' }));
+
+  if (document.readyState === 'complete') {
+    goToPosition();
+  } else {
+    window.addEventListener('load', goToPosition, { once: true });
+  }
 }
