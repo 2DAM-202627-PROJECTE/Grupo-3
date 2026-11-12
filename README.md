@@ -10,20 +10,28 @@ Proyecto hecho con **Vite**, **JavaScript vanilla** y **Tailwind CSS v4**, organ
 
 | Herramienta | Versión | Uso |
 |---|---|---|
-| [Vite](https://vite.dev/) | 8 | Servidor de desarrollo y build |
+| [Vite](https://vite.dev/) | 8 | Servidor de desarrollo y build (multipágina) |
 | [Tailwind CSS](https://tailwindcss.com/) | 4 | Estilos con clases de utilidad (vía `@tailwindcss/vite`) |
 | JavaScript | ES Modules | Componentes e interactividad, sin frameworks |
+| [GSAP](https://gsap.com/) + ScrollTrigger | 3 | Animaciones de la intro que avanzan con el scroll |
+| [Lenis](https://lenis.darkroom.engineering/) | 1 | Scroll suave, con inercia, en la intro |
+| [Lucide](https://lucide.dev/) | 1 | Iconos SVG de las funcionalidades |
+| [@fontsource/caveat](https://fontsource.org/fonts/caveat) | 5 | Letra manuscrita de la agenda de papel de la intro |
 
 ## Instalación y uso
 
-Necesitas tener instalado [Node.js](https://nodejs.org/).
+Necesitas tener instalado [Node.js](https://nodejs.org/). Los comandos se ejecutan dentro de la carpeta `proyectoReservo/`:
 
 ```bash
+cd proyectoReservo
 npm install      # instala las dependencias
 npm run dev      # servidor de desarrollo (http://localhost:5173)
 npm run build    # genera la versión de producción en dist/
 npm run preview  # previsualiza la versión de producción
 ```
+
+Al subir cambios a `main`, el workflow `deploy.yml` publica la web en GitHub Pages:
+<https://2dam-202627-projecte.github.io/Grupo-3/>
 
 ## Estructura del proyecto
 
@@ -68,15 +76,16 @@ Grupo-3/
 
 ## Secciones de la página
 
-1. **Navbar**: logo, enlaces a las secciones y botones "Iniciar sesión" y "Prueba gratis". En móvil se convierte en un menú desplegable.
-2. **Hero**: titular principal, botones de acción y una tarjeta que simula la app reservando una clase de gimnasio.
-3. **Sectors**: los cuatro tipos de negocio a los que se dirige el producto.
+0. **Intro "Un día con Reservo"**: animación que avanza con el scroll y cuenta el antes y el después de usar Reservo. Solo sale en la primera visita; después se entra directamente en la landing.
+1. **Navbar**: logo, enlaces a las secciones y botones "Iniciar sesión" y "Prueba gratis". Se queda fija arriba y marca la sección que se está viendo. En móvil se convierte en un menú desplegable.
+2. **Hero**: titular principal, botones de acción y una tarjeta que simula la app reservando una cita.
+3. **Sectors**: selector de los cuatro tipos de negocio (gimnasio, restaurante, peluquería y clínica). Al elegir uno, cambia la tarjeta del Hero.
 4. **Features**: seis funcionalidades (reservas 24/7, recordatorios, pagos, equipo, estadísticas, app móvil).
 5. **How it works**: los tres pasos para empezar.
-6. **Pricing**: tres planes (Básico 19€, Pro 49€ destacado, Empresa a medida).
-7. **Testimonials**: tres opiniones de clientes.
+6. **Pricing**: tres planes (Básico 19 €, Pro 49 € destacado, Empresa a medida) con interruptor mensual / anual (20 % de descuento). En móvil, los planes se ven de uno en uno con pestañas.
+7. **Testimonials**: tres opiniones de clientes (pendiente).
 8. **FAQ**: preguntas frecuentes, que se abren y cierran sin JavaScript.
-9. **CTA**: formulario para dejar el email y empezar la prueba gratuita.
-10. **Footer**: logo, copyright con el año actual y enlaces.
+9. **CTA**: formulario para dejar el email y empezar la prueba gratuita de 14 días, con validación y mensaje de confirmación.
+10. **Footer**: logo, suscripción a la newsletter, enlaces legales, redes sociales y copyright con el año actual.
 
-
+Además, en la primera visita sale un **aviso de cookies** abajo de la pantalla. La elección se guarda y el aviso ya no vuelve a salir. La política de cookies tiene su propia página (`politica-cookies.html`).
