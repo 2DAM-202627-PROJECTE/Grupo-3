@@ -16,7 +16,8 @@ Proyecto hecho con **Vite**, **JavaScript vanilla** y **Tailwind CSS v4**, organ
 | [GSAP](https://gsap.com/) + ScrollTrigger | 3 | Animaciones de la intro que avanzan con el scroll |
 | [Lenis](https://lenis.darkroom.engineering/) | 1 | Scroll suave, con inercia, en la intro |
 | [Lucide](https://lucide.dev/) | 1 | Iconos SVG de las funcionalidades |
-| [@fontsource/caveat](https://fontsource.org/fonts/caveat) | 5 | Letra manuscrita de la agenda de papel de la intro |
+| [@fontsource-variable/inter](https://fontsource.org/fonts/inter) | 5 | Letra de toda la web, servida desde la propia web (sin Google Fonts) |
+| [@fontsource-variable/caveat](https://fontsource.org/fonts/caveat) | 5 | Letra manuscrita de la agenda de papel de la intro |
 
 ## Instalación y uso
 
