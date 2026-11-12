@@ -82,8 +82,8 @@ Grupo-3/
 3. **Sectors**: selector de los cuatro tipos de negocio (gimnasio, restaurante, peluquería y clínica). Al elegir uno, cambia la tarjeta del Hero.
 4. **Features**: seis funcionalidades (reservas 24/7, recordatorios, pagos, equipo, estadísticas, app móvil).
 5. **How it works**: los tres pasos para empezar.
-6. **Pricing**: tres planes (Básico 19 €, Pro 49 € destacado, Empresa a medida) con interruptor mensual / anual (20 % de descuento). En móvil, los planes se ven de uno en uno con pestañas.
-7. **Testimonials**: tres opiniones de clientes (pendiente).
+6. **Testimonials**: tres opiniones de clientes de sectores distintos. Van antes de los precios para dar confianza antes de ver cuánto cuesta.
+7. **Pricing**: tres planes (Básico 19 €, Pro 49 € destacado, Empresa a medida) con interruptor mensual / anual (20 % de descuento). En móvil, los planes se ven de uno en uno con pestañas.
 8. **FAQ**: preguntas frecuentes, que se abren y cierran sin JavaScript.
 9. **CTA**: formulario para dejar el email y empezar la prueba gratuita de 14 días, con validación y mensaje de confirmación.
 10. **Footer**: logo, suscripción a la newsletter, enlaces legales, redes sociales y copyright con el año actual.
