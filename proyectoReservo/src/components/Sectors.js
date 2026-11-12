@@ -7,7 +7,7 @@
 // Partes del archivo:
 //   1. Iconos y datos       → los iconos de Lucide y el array sectors
 //   2. HTML de la sección   → renderSectors (lo llama main.js)
-//   3. Elegir un sector     → marcar el botón pulsado y avisar al Hero
+//   3. Elegir un sector     → marcar el botón pulsado, avisar al Hero y subir a su tarjeta
 // =============================================================
 
 // -------------------------------------------------------------
@@ -102,8 +102,8 @@ export function renderSectors(container) {
   // 3. Elegir un sector
   // -------------------------------------------------------------
 
-  // Al pulsar un botón: se marca como elegido, se desmarcan los demás
-  // y el Hero cambia su tarjeta de reserva a ese sector
+  // Al pulsar un botón: se marca como elegido, se desmarcan los demás,
+  // el Hero cambia su tarjeta de reserva a ese sector y la página sube hasta ella
   container.querySelectorAll('.sector-option').forEach((button) => {
     button.addEventListener('click', () => {
       container.querySelectorAll('.sector-option').forEach((sectorButton) => {
@@ -118,6 +118,23 @@ export function renderSectors(container) {
       });
       // button.dataset.sector lee el atributo data-sector del botón pulsado ("gimnasio", "clinica"...)
       selectHeroSector(button.dataset.sector);
+      showHeroCard();
     });
   });
+}
+
+// La tarjeta del Hero está encima de esta sección: al elegir un sector cambia, pero
+// fuera de la pantalla (sobre todo en móvil, donde queda muy arriba). Esta función
+// sube hasta ella cada vez que se pulsa un sector, para que se vea el cambio.
+function showHeroCard() {
+  const card = document.getElementById('hero-booking-card');
+  if (!card) return;
+
+  // Si la persona ha pedido reducir las animaciones, se salta sin desplazamiento suave.
+  // 'instant' y no 'auto': con 'auto' se usaría el scroll-behavior: smooth de style.css
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // block: 'center' → la tarjeta queda en el centro de la pantalla.
+  // La navbar fija no la tapa gracias al scroll-padding-top de style.css
+  card.scrollIntoView({ behavior: reduceMotion ? 'instant' : 'smooth', block: 'center' });
 }
