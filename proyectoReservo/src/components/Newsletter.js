@@ -119,6 +119,7 @@ export function renderNewsletter(container) {
           </div>
 
           <!-- Consentimiento para guardar el email (RGPD, apartado 1.5 del documento).
+               Dice dónde se guarda (Mailchimp), porque el email sale de la web hacia otro servicio.
                El <input> va dentro del <label>, así al pulsar el texto también se marca la casilla.
                accent-indigo-500 pinta la casilla con el color de la marca.
                mt-0.5: la línea de texto mide 20 px y la casilla 16 px; bajándola 2 px queda
@@ -130,7 +131,7 @@ export function renderNewsletter(container) {
               required
               class="mt-0.5 h-4 w-4 shrink-0 accent-indigo-500 ${focusRing}"
             />
-            Acepto que Reservo guarde mi email para enviarme la newsletter.
+            Acepto que Reservo guarde mi email en Mailchimp para enviarme la newsletter.
           </label>
 
           <!-- Mensaje del formulario: los errores o la confirmación.
