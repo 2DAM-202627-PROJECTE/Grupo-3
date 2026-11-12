@@ -82,10 +82,13 @@ export function renderNewsletter(container) {
               aria-describedby="newsletter-message"
               class="min-w-0 flex-1 rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder:text-slate-500 transition hover:border-slate-400 aria-invalid:border-red-500 ${focusRing}"
             />
-            <!-- Botón principal, con el mismo estilo que el del Hero -->
+            <!-- Botón secundario: blanco con borde y texto índigo. Justo encima está el formulario
+                 de prueba gratuita (Cta.js) con su botón índigo relleno; así al final de la página
+                 solo destaca una acción principal ("Empezar") y la newsletter queda en segundo plano.
+                 Al pasar el ratón, el fondo se vuelve lila muy claro -->
             <button
               type="submit"
-              class="shrink-0 rounded-lg bg-indigo-600 px-6 py-3 font-semibold text-white transition hover:bg-indigo-500 ${focusRing}"
+              class="shrink-0 rounded-lg border border-indigo-600 bg-white px-6 py-3 font-semibold text-indigo-700 transition hover:bg-indigo-50 ${focusRing}"
             >
               Suscribirme
             </button>
