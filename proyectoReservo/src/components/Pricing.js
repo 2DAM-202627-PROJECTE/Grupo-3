@@ -156,8 +156,10 @@ function planCard({ id, name, description, price, features, cta, featured = fals
     <!-- Tarjeta: flex en columna para poder empujar el botón al fondo
          y que los botones de las 3 tarjetas queden alineados.
          role="tabpanel" + aria-labelledby: en móvil es el panel de su pestaña,
-         y el lector de pantalla lo anuncia con el nombre de la pestaña ("Pro") -->
-    <article id="plan-${id}" role="tabpanel" aria-labelledby="tab-${id}" class="flex flex-col rounded-xl border p-8 ${cardClasses} ${hoverLift} ${hiddenOnMobile}">
+         y el lector de pantalla lo anuncia con el nombre de la pestaña ("Pro").
+         Es un <div> y no un <article> porque el validador de W3C no deja poner
+         role="tabpanel" en un <article> (issue #28) -->
+    <div id="plan-${id}" role="tabpanel" aria-labelledby="tab-${id}" class="flex flex-col rounded-xl border p-8 ${cardClasses} ${hoverLift} ${hiddenOnMobile}">
       ${badge}
 
       <!-- Nombre y descripción del plan -->
@@ -196,7 +198,7 @@ function planCard({ id, name, description, price, features, cta, featured = fals
       <a href="#cta" class="${buttonBase} ${featured ? buttonPrimary : buttonSecondary}">
         ${cta}
       </a>
-    </article>
+    </div>
   `;
 }
 
