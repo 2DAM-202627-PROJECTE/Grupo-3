@@ -68,11 +68,13 @@ function renderStars(rating = 5) {
 // saca sus propiedades directamente
 function testimonialCard({ quote, author, sector, rating }) {
   return /*html*/ `
-    <!-- Cada testimonio es un <article>: un contenido que tiene sentido por sí solo.
+    <!-- Cada testimonio es un <figure>: la etiqueta de HTML para una cita (<blockquote>)
+         con su autor (<figcaption>). Antes era un <article>, pero el validador de W3C
+         avisa de que un <article> debería tener título, y una cita no lo tiene (issue #28).
          Tarjeta de cristal (glass de style.css). flex-col + justify-between: el autor
          queda siempre abajo, aunque las citas tengan largos distintos.
          Al pasar el ratón, el borde se vuelve índigo claro -->
-    <article class="glass flex flex-col justify-between rounded-xl border border-slate-200/80 p-6 shadow-sm transition hover:border-indigo-300 sm:p-8">
+    <figure class="glass flex flex-col justify-between rounded-xl border border-slate-200/80 p-6 shadow-sm transition hover:border-indigo-300 sm:p-8">
       <div>
         <!-- Estrellas de valoración.
              role="img" + aria-label: el lector de pantalla lee "Valoración: 5 de 5 estrellas"
@@ -87,13 +89,13 @@ function testimonialCard({ quote, author, sector, rating }) {
         </blockquote>
       </div>
 
-      <!-- Autor y sector. <footer> dentro de un <article> es el pie de esa tarjeta,
-           no el de la página. Una línea fina lo separa de la cita -->
-      <footer class="mt-6 border-t border-slate-200/60 pt-4">
+      <!-- Autor y sector. <figcaption> dice de quién es la cita del <figure>.
+           Una línea fina lo separa de la cita -->
+      <figcaption class="mt-6 border-t border-slate-200/60 pt-4">
         <p class="text-sm font-semibold text-slate-900">${author}</p>
         <p class="text-xs text-slate-500">${sector}</p>
-      </footer>
-    </article>
+      </figcaption>
+    </figure>
   `;
 }
 
