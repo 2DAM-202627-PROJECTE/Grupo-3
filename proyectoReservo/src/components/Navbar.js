@@ -82,9 +82,11 @@ export function renderNavbar(container) {
         <div id="primary-navigation" class="absolute inset-x-0 top-full hidden border-b border-slate-200 bg-white px-4 py-4 shadow-xl md:static md:flex md:flex-1 md:justify-center md:border-0 md:bg-transparent md:p-0 md:shadow-none">
           <ul class="flex flex-col gap-1 md:flex-row md:items-center md:gap-5 lg:gap-8">
             ${links.map(navLink).join('')}
-            <!-- "Iniciar sesión" dentro del desplegable, solo en móvil (en escritorio va a la derecha) -->
+            <!-- "Iniciar sesión" dentro del desplegable, solo en móvil (en escritorio va a la derecha).
+                 Es texto y no un enlace porque la web todavía no tiene página de login
+                 (issue #28: sin enlaces rotos). text-slate-600: el mismo gris que los enlaces -->
             <li class="md:hidden">
-              <span class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-500" aria-disabled="true">Iniciar sesión</span>
+              <span class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-600">Iniciar sesión</span>
             </li>
           </ul>
         </div>
@@ -92,7 +94,8 @@ export function renderNavbar(container) {
         <!-- Acciones de la derecha: "Iniciar sesión" (solo escritorio), "Prueba gratis" y el botón del menú (solo móvil).
              "Prueba gratis" se ve también en móvil, junto al botón del menú, como en el mockup -->
         <div class="flex shrink-0 items-center gap-3">
-          <span class="hidden rounded-lg text-sm font-medium text-slate-500 md:inline" aria-disabled="true">Iniciar sesión</span>
+          <!-- "Iniciar sesión" en escritorio: también es texto, como en el desplegable de móvil -->
+          <span class="hidden rounded-lg text-sm font-medium text-slate-600 md:inline">Iniciar sesión</span>
           <!-- Botón pequeño (px-4 py-2 text-sm), como en el mockup -->
           <a href="#cta" class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-500 ${focusRing}">Prueba gratis</a>
 
