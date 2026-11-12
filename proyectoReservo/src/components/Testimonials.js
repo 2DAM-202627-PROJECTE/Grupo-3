@@ -1,12 +1,27 @@
 // =============================================================
-// Testimonials.js — Sección de testimonios (issue #15)
+// Testimonials.js — Sección de testimonios (issue #15, Jean)
 // Muestra 3 tarjetas de testimonios con estrellas, cita,
 // nombre del cliente y sector de su negocio.
+//
+// Partes del archivo:
+//   1. Iconos y datos       → la estrella de Lucide y el array testimonials
+//   2. Una tarjeta          → renderStars y testimonialCard
+//   3. HTML de la sección   → renderTestimonials (lo llama main.js)
 // =============================================================
 
+// -------------------------------------------------------------
+// 1. Iconos y datos
+// -------------------------------------------------------------
+
+// createIcons convierte cada <i data-lucide="..."> en su dibujo SVG.
+// Solo se importa la estrella, que es el único icono de la sección
 import { createIcons, Star } from 'lucide';
 
-// Datos de los 3 testimonios guardados en un array
+// Datos de los 3 testimonios. Si se añade o quita alguno, solo hay que tocar este array.
+//   - quote:  lo que dice el cliente
+//   - author: nombre del cliente
+//   - sector: tipo de negocio (uno distinto en cada tarjeta, apartado 2.3 del documento)
+//   - rating: estrellas de la valoración (de 1 a 5)
 const testimonials = [
   {
     quote:
@@ -31,7 +46,13 @@ const testimonials = [
   },
 ];
 
-// Genera las 5 estrellas de valoración con Lucide
+// -------------------------------------------------------------
+// 2. Una tarjeta
+// -------------------------------------------------------------
+
+// Genera tantas estrellas como diga rating (5 si no se indica).
+// Array.from({ length: 5 }) crea un array de 5 huecos; map pone una estrella en cada uno.
+// fill-amber-400: la estrella va rellena de amarillo (los iconos de Lucide solo traen el contorno)
 function renderStars(rating = 5) {
   return Array.from({ length: rating })
     .map(
@@ -42,9 +63,15 @@ function renderStars(rating = 5) {
     .join('');
 }
 
-// Genera el HTML de una tarjeta de testimonio
+// Genera el HTML de una tarjeta de testimonio.
+// Recibe un objeto del array y con desestructuración ({ quote, author, ... })
+// saca sus propiedades directamente
 function testimonialCard({ quote, author, sector, rating }) {
   return /*html*/ `
+    <!-- Cada testimonio es un <article>: un contenido que tiene sentido por sí solo.
+         Tarjeta de cristal (glass de style.css). flex-col + justify-between: el autor
+         queda siempre abajo, aunque las citas tengan largos distintos.
+         Al pasar el ratón, el borde se vuelve índigo claro -->
     <article class="glass flex flex-col justify-between rounded-xl border border-slate-200/80 p-6 shadow-sm transition hover:border-indigo-300 sm:p-8">
       <div>
         <!-- Estrellas de valoración.
@@ -60,7 +87,8 @@ function testimonialCard({ quote, author, sector, rating }) {
         </blockquote>
       </div>
 
-      <!-- Autor y sector -->
+      <!-- Autor y sector. <footer> dentro de un <article> es el pie de esa tarjeta,
+           no el de la página. Una línea fina lo separa de la cita -->
       <footer class="mt-6 border-t border-slate-200/60 pt-4">
         <p class="text-sm font-semibold text-slate-900">${author}</p>
         <p class="text-xs text-slate-500">${sector}</p>
@@ -69,14 +97,19 @@ function testimonialCard({ quote, author, sector, rating }) {
   `;
 }
 
+// -------------------------------------------------------------
+// 3. HTML de la sección
+// -------------------------------------------------------------
+
 // Pinta la sección dentro del contenedor que le pasa main.js (el <section id="testimonios">)
 export function renderTestimonials(container) {
+  // Mismo espacio arriba y abajo que el resto de secciones
   container.className = 'py-20 lg:py-28';
 
   container.innerHTML = /*html*/ `
+    <!-- Contenedor con márgenes laterales, como el resto de secciones -->
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      
-      <!-- Cabecera de la sección -->
+      <!-- Cabecera de la sección: título y subtítulo centrados -->
       <div class="mx-auto max-w-2xl text-center">
         <h2 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
           Lo que dicen nuestros clientes
@@ -93,11 +126,11 @@ export function renderTestimonials(container) {
       <div class="mx-auto mt-14 grid max-w-2xl grid-cols-1 gap-6 lg:max-w-none lg:grid-cols-3">
         ${testimonials.map(testimonialCard).join('')}
       </div>
-
     </div>
   `;
 
-  // Renderizar las estrellas de Lucide
+  // Cambia los <i data-lucide="star"> de esta sección por sus SVG.
+  // root: container → solo busca dentro de Testimonios, no en toda la página
   createIcons({
     root: container,
     icons: {
@@ -105,4 +138,3 @@ export function renderTestimonials(container) {
     },
   });
 }
-
