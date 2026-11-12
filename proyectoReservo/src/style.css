@@ -1,6 +1,13 @@
 
 @import "tailwindcss";
 
+/* Letra Inter, descargada con npm (@fontsource-variable/inter) y servida desde la propia web.
+   Antes venía de Google Fonts: su CSS bloqueaba el pintado de la página unos 850 ms en móvil
+   (había que conectar con dos servidores de Google) y además enviaba la IP del visitante a Google.
+   Es una fuente "variable": un solo archivo con todos los grosores (400, 600, 800...).
+   El navegador solo descarga la parte del alfabeto que usa la página (latin) */
+@import "@fontsource-variable/inter";
+
 /* ========================================
    1. Variables de diseño
    ======================================== */
@@ -37,7 +44,8 @@
 
   body {
     margin: 0;
-    font-family: Inter, Arial, sans-serif;
+    /* "Inter Variable" es el nombre que le da @fontsource-variable/inter */
+    font-family: "Inter Variable", Arial, sans-serif;
     background-color: var(--bg);
     color: var(--text);
     line-height: 1.6;
