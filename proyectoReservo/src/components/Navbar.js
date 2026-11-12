@@ -84,11 +84,7 @@ export function renderNavbar(container) {
             ${links.map(navLink).join('')}
             <!-- "Iniciar sesión" dentro del desplegable, solo en móvil (en escritorio va a la derecha) -->
             <li class="md:hidden">
-<<<<<<< HEAD
               <span class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-500" aria-disabled="true">Iniciar sesión</span>
-=======
-              <a href="#login" class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900 ${focusRing}">Iniciar sesión</a>
->>>>>>> main
             </li>
           </ul>
         </div>
@@ -96,11 +92,7 @@ export function renderNavbar(container) {
         <!-- Acciones de la derecha: "Iniciar sesión" (solo escritorio), "Prueba gratis" y el botón del menú (solo móvil).
              "Prueba gratis" se ve también en móvil, junto al botón del menú, como en el mockup -->
         <div class="flex shrink-0 items-center gap-3">
-<<<<<<< HEAD
           <span class="hidden rounded-lg text-sm font-medium text-slate-500 md:inline" aria-disabled="true">Iniciar sesión</span>
-=======
-          <a href="#login" class="hidden rounded-lg text-sm font-medium text-slate-600 transition hover:text-slate-900 md:inline ${focusRing}">Iniciar sesión</a>
->>>>>>> main
           <!-- Botón pequeño (px-4 py-2 text-sm), como en el mockup -->
           <a href="#cta" class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-500 ${focusRing}">Prueba gratis</a>
 

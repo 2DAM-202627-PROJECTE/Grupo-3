@@ -32,7 +32,6 @@
 import { renderHero } from './components/Hero.js';
 import { renderSectors } from './components/Sectors.js';
 import { initActiveNavLink, renderNavbar } from './components/Navbar.js';
-import { renderNavbar, initActiveNavLink } from './components/Navbar.js';
 import { renderFeatures } from './components/Features.js';
 import { renderHowItWorks } from './components/HowItWorks.js';
 import { renderPricing } from './components/Pricing.js';

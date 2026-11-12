@@ -99,14 +99,8 @@ export function renderFooter(container) {
         <div class="flex items-center gap-4" role="group" aria-label="Redes sociales">
           ${socialLinks
             .map(
-<<<<<<< HEAD
               ({ svg, label }) => /*html*/ `
               <span class="text-slate-500" role="img" aria-label="${label}">
-=======
-              ({ svg, label, href }) => /*html*/ `
-              <a href="${href}" class="text-slate-600 transition hover:text-indigo-600"
-                 aria-label="${label}" target="_blank" rel="noopener noreferrer">
->>>>>>> main
                 ${svg}
               </span>
             `,
@@ -123,16 +117,9 @@ export function renderFooter(container) {
         ${legalLinks
           .map(
             ({ label, href }) => /*html*/ `
-<<<<<<< HEAD
           ${href
             ? `<a href="${href}" class="text-sm text-slate-400 transition hover:text-slate-200">${label}</a>`
             : `<span class="text-sm text-slate-500" aria-disabled="true">${label}</span>`}
-=======
-          <a href="${href}"
-             class="text-sm text-slate-600 transition hover:text-slate-900">
-            ${label}
-          </a>
->>>>>>> main
         `,
           )
           .join('')}
