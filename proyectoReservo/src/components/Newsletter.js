@@ -2,11 +2,13 @@
 // Newsletter.js — Suscripción a la newsletter (issue #24)
 // Formulario con el email y la casilla de consentimiento (RGPD).
 // Va dentro del pie de página; Footer.js es el issue #19 (Jean).
+// El email se envía a Mailchimp, que guarda la lista de suscriptores y manda
+// un email para confirmar la suscripción (doble opt-in).
 //
 // Partes del archivo:
 //   1. Configuración          → constantes que usa el resto del archivo
 //   2. HTML del formulario    → renderNewsletter (lo llama main.js)
-//   3. Lista de suscriptores  → leer y guardar emails en localStorage
+//   3. Envío a Mailchimp      → subscribeToMailchimp y los mensajes de su respuesta
 //   4. Validación y envío     → setupNewsletter (errores y confirmación)
 // =============================================================
 
@@ -22,10 +24,21 @@ const focusRing = 'focus:outline-none focus-visible:ring-2 focus-visible:ring-in
 //   "ana@negocio.com" → true     "ana@negocio" → false     "ana negocio.com" → false
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-// Nombre con el que se guarda la lista de emails en el localStorage del navegador.
-// No hay servidor, así que la "lista de distribución" del documento (apartado 1.4)
-// se guarda aquí. localStorage solo guarda texto: la lista se pasa a JSON y al revés.
-const STORAGE_KEY = 'reservo-newsletter';
+// Dirección del formulario de Mailchimp (la "lista de distribución" del apartado 1.4
+// del documento). Sale del código del formulario que da Mailchimp (Forms → Embedded forms):
+//   - u: la cuenta, id: la lista (audience), f_id: el formulario
+// Mailchimp da la dirección acabada en /post; aquí se usa /post-json, que responde con
+// datos en vez de abrir una página de Mailchimp. No es secreta: va en cualquier web
+// que tenga el formulario
+const MAILCHIMP_URL =
+  'https://github.us11.list-manage.com/subscribe/post-json?u=77fed9aaaae99e17a417d82ca&id=5545d6efa4&f_id=000be6e0f0';
+
+// Campo "trampa" contra bots: tiene que ir vacío. Una persona no lo ve, pero un bot
+// que rellena todos los campos sí lo rellena, y Mailchimp descarta esa suscripción
+const MAILCHIMP_HONEYPOT = 'b_77fed9aaaae99e17a417d82ca_5545d6efa4';
+
+// Tiempo máximo esperando la respuesta de Mailchimp (10 segundos, en milisegundos)
+const MAILCHIMP_TIMEOUT = 10000;
 
 // -------------------------------------------------------------
 // 2. HTML del formulario
@@ -95,10 +108,11 @@ export function renderNewsletter(container) {
             <!-- Botón secundario: blanco con borde y texto índigo. Justo encima está el formulario
                  de prueba gratuita (Cta.js) con su botón índigo relleno; así al final de la página
                  solo destaca una acción principal ("Empezar") y la newsletter queda en segundo plano.
-                 Al pasar el ratón, el fondo se vuelve lila muy claro -->
+                 Al pasar el ratón, el fondo se vuelve lila muy claro.
+                 disabled:: mientras se espera a Mailchimp, el botón se ve apagado -->
             <button
               type="submit"
-              class="shrink-0 rounded-lg border border-indigo-600 bg-white px-6 py-3 font-semibold text-indigo-700 transition hover:bg-indigo-50 ${focusRing}"
+              class="shrink-0 rounded-lg border border-indigo-600 bg-white px-6 py-3 font-semibold text-indigo-700 transition hover:bg-indigo-50 disabled:cursor-wait disabled:opacity-60 ${focusRing}"
             >
               Suscribirme
             </button>
@@ -133,34 +147,78 @@ export function renderNewsletter(container) {
 }
 
 // -------------------------------------------------------------
-// 3. Lista de suscriptores (localStorage)
+// 3. Envío a Mailchimp
 // -------------------------------------------------------------
 
-// Devuelve la lista de emails guardados (un array). Si no hay nada, un array vacío.
-function getSubscribers() {
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY)) ?? [];
-  } catch {
-    // Si el navegador bloquea localStorage (modo privado estricto) o el dato está roto
-    return [];
-  }
+// Envía el email a Mailchimp y devuelve una promesa con su respuesta:
+//   { result: 'success' | 'error', msg: 'texto de Mailchimp, en inglés' }
+//
+// Se hace con JSONP (un <script> que carga la dirección de Mailchimp) y no con fetch,
+// porque el navegador no deja leer con fetch la respuesta de otra web (Mailchimp) si esa
+// web no lo permite (CORS). Con JSONP, Mailchimp responde llamando a una función nuestra:
+//   reservoNewsletter123({ "result": "success", "msg": "..." })
+function subscribeToMailchimp(email) {
+  return new Promise((resolve, reject) => {
+    // Nombre único para la función que llamará Mailchimp (Date.now() = milisegundos actuales)
+    const callbackName = `reservoNewsletter${Date.now()}`;
+    const script = document.createElement('script');
+
+    // Si en 10 segundos no ha respondido, se da por fallido
+    const timer = setTimeout(() => finish(new Error('Mailchimp no responde')), MAILCHIMP_TIMEOUT);
+
+    // Se llama una sola vez, tanto si va bien como si va mal: limpia y termina la promesa
+    function finish(error, data) {
+      clearTimeout(timer);
+      // Si Mailchimp respondiera tarde, encontraría una función vacía en vez de dar error
+      window[callbackName] = () => {};
+      script.remove();
+      if (error) {
+        reject(error);
+      } else {
+        resolve(data);
+      }
+    }
+
+    // La función a la que llamará Mailchimp con su respuesta
+    window[callbackName] = (data) => finish(null, data);
+
+    // Si no se puede cargar (sin conexión, Mailchimp caído...), también se da por fallido
+    script.onerror = () => finish(new Error('No se ha podido conectar con Mailchimp'));
+
+    // Datos que se envían en la dirección. URLSearchParams los codifica (la @ pasa a %40...).
+    //   EMAIL: el email, honeypot: vacío, c: el nombre de nuestra función
+    const params = new URLSearchParams({ EMAIL: email, [MAILCHIMP_HONEYPOT]: '', c: callbackName });
+    script.src = `${MAILCHIMP_URL}&${params}`;
+    document.body.appendChild(script);
+  });
 }
 
-// Añade un email a la lista y la vuelve a guardar.
-// Devuelve false si el email ya estaba, para avisar al usuario en vez de repetirlo.
-function addSubscriber(email) {
-  const subscribers = getSubscribers();
-  if (subscribers.includes(email)) {
-    return false;
+// Mailchimp responde en inglés. Esta función pasa su respuesta al mensaje que ve la persona.
+// Devuelve { ok: true/false, text: 'mensaje en español' }
+function mailchimpMessage({ result, msg = '' }, email) {
+  if (result === 'success') {
+    // Con doble opt-in, Mailchimp dice que hay que confirmar el email ("confirm")
+    if (/confirm/i.test(msg)) {
+      return {
+        ok: true,
+        text: `¡Casi está! Te hemos enviado un email a ${email}. Pulsa el botón que contiene para confirmar la suscripción.`,
+      };
+    }
+    return { ok: true, text: '¡Gracias! Te has suscrito a la newsletter.' };
   }
-  subscribers.push(email);
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(subscribers));
-  } catch {
-    // Si no se puede guardar, la suscripción sigue contando para el usuario:
-    // en la página no hay nada más que hacer
+
+  // Errores más habituales. /.../i: busca el texto sin importar mayúsculas
+  if (/already subscribed/i.test(msg)) {
+    return { ok: false, text: 'Este email ya está suscrito a la newsletter.' };
   }
-  return true;
+  if (/fake or invalid/i.test(msg)) {
+    // Mailchimp comprueba que el dominio del email exista de verdad (example.com no vale)
+    return { ok: false, text: 'Este email no parece real. Revisa que esté bien escrito.' };
+  }
+  if (/too many/i.test(msg)) {
+    return { ok: false, text: 'Has hecho demasiados intentos con este email. Prueba otra vez en unos minutos.' };
+  }
+  return { ok: false, text: 'No hemos podido suscribir este email. Prueba con otro o inténtalo más tarde.' };
 }
 
 // -------------------------------------------------------------
@@ -198,7 +256,10 @@ function setupNewsletter(container) {
   consentInput.addEventListener('change', () => clearError(consentInput));
 
   // --- Envío del formulario ---
-  form.addEventListener('submit', (event) => {
+  const button = form.querySelector('button[type="submit"]');
+
+  // async: dentro se puede usar await para esperar la respuesta de Mailchimp
+  form.addEventListener('submit', async (event) => {
     // Sin esto, el navegador enviaría el formulario y recargaría la página
     event.preventDefault();
 
@@ -219,15 +280,32 @@ function setupNewsletter(container) {
       return;
     }
 
-    // b) Todo correcto: se guarda el email y se muestra la confirmación en verde.
-    // toLowerCase(): "Ana@Negocio.com" y "ana@negocio.com" cuentan como el mismo email
-    const isNew = addSubscriber(email.toLowerCase());
-    message.textContent = isNew
-      ? '¡Gracias! Te has suscrito a la newsletter.'
-      : 'Este email ya estaba suscrito. ¡Gracias!';
-    message.className = 'mt-3 min-h-5 text-sm text-emerald-700';
+    // b) Mientras se espera a Mailchimp: botón desactivado (para no enviar dos veces)
+    //    y un aviso en gris
+    button.disabled = true;
+    message.textContent = 'Enviando…';
+    message.className = 'mt-3 min-h-5 text-sm text-slate-600';
 
-    // Vacía el formulario. reset() no borra el mensaje porque es un <p>, no un campo
-    form.reset();
+    try {
+      const response = mailchimpMessage(await subscribeToMailchimp(email), email);
+
+      if (response.ok) {
+        // Confirmación en verde y formulario vacío.
+        // reset() no borra el mensaje porque es un <p>, no un campo
+        message.textContent = response.text;
+        message.className = 'mt-3 min-h-5 text-sm text-emerald-700';
+        form.reset();
+      } else {
+        // Mailchimp ha rechazado el email (ya suscrito, demasiados intentos...)
+        showError(response.text, emailInput);
+      }
+    } catch {
+      // No se ha podido conectar con Mailchimp o no ha respondido a tiempo
+      // (apartado 3.3 del documento, riesgos: "mensaje de error claro al usuario")
+      showError('No se ha podido conectar con el servicio de la newsletter. Revisa tu conexión e inténtalo de nuevo.', emailInput);
+    } finally {
+      // finally: se hace siempre, haya ido bien o mal
+      button.disabled = false;
+    }
   });
 }
