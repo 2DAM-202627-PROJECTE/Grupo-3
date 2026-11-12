@@ -9,7 +9,9 @@
 // ---------------------------------------------------------------
 
 // Enlaces legales. Si se añade o quita alguno, solo hay que tocar este array.
-// 'Cookies' apunta a su página estática; Privacidad y Aviso legal siguen sin página por ahora.
+// 'Cookies' apunta a su página estática; Privacidad, Aviso legal y Contacto siguen sin página
+// por ahora. Los que no tienen href se pintan como texto y no como enlace, para que no haya
+// enlaces que no llevan a ningún sitio (issue #28: sin enlaces rotos).
 // import.meta.env.BASE_URL es la ruta base de la web ("/" en local y "/Grupo-3/" en GitHub Pages).
 const legalLinks = [
   { label: 'Privacidad' },
@@ -20,7 +22,8 @@ const legalLinks = [
 
 // Redes sociales. Los iconos de marcas (Instagram, X, LinkedIn, YouTube) no están
 // en Lucide porque son marcas registradas, así que se usan SVGs inline.
-// Los destinos se añadirán cuando el equipo confirme las URLs reales.
+// Los destinos se añadirán cuando el equipo confirme las URLs reales. Mientras tanto
+// son solo iconos, no enlaces (issue #28: sin enlaces rotos).
 const socialLinks = [
   {
     label: 'X (Twitter)',
@@ -95,7 +98,9 @@ export function renderFooter(container) {
           </span>
         </div>
 
-        <!-- Redes sociales: role="group" con aria-label para que los lectores de pantalla lo reconozcan -->
+        <!-- Redes sociales: role="group" con aria-label para que los lectores de pantalla lo reconozcan.
+             Cada icono lleva role="img" + aria-label: así el lector de pantalla dice de qué red es.
+             text-slate-500: los iconos necesitan un contraste de 3:1 y este gris da 4,3:1 -->
         <div class="flex items-center gap-4" role="group" aria-label="Redes sociales">
           ${socialLinks
             .map(
@@ -112,14 +117,17 @@ export function renderFooter(container) {
       <!-- Separador -->
       <hr class="my-8 border-slate-200" />
 
-      <!-- Enlaces legales: centrados en móvil, en fila en escritorio -->
+      <!-- Enlaces legales: centrados en móvil, en fila en escritorio.
+           Con href → enlace (subrayado al pasar el ratón); sin href → texto normal.
+           text-slate-600 en los dos: el texto pequeño necesita un contraste de 4,5:1 sobre
+           el fondo del footer, y slate-600 da 6,8:1 (slate-500 daría 4,3:1 y no llega) -->
       <nav class="flex flex-wrap justify-center gap-x-6 gap-y-2" aria-label="Enlaces legales">
         ${legalLinks
           .map(
             ({ label, href }) => /*html*/ `
           ${href
-            ? `<a href="${href}" class="text-sm text-slate-400 transition hover:text-slate-200">${label}</a>`
-            : `<span class="text-sm text-slate-500" aria-disabled="true">${label}</span>`}
+            ? `<a href="${href}" class="text-sm text-slate-600 underline-offset-4 transition hover:text-slate-900 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded">${label}</a>`
+            : `<span class="text-sm text-slate-600">${label}</span>`}
         `,
           )
           .join('')}
