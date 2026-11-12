@@ -51,6 +51,23 @@ function navLink({ label, href }) {
   `;
 }
 
+function languageToggle(className) {
+  return /*html*/ `
+    <button
+      type="button"
+      class="${className} items-center gap-1 rounded-lg text-sm text-slate-600 transition hover:bg-slate-100 ${focusRing}"
+      data-language-toggle
+      role="switch"
+      aria-checked="false"
+      aria-label="Cambiar idioma a inglés"
+    >
+      <span data-language-code="es" class="font-bold text-indigo-700">ES</span>
+      <span aria-hidden="true">/</span>
+      <span data-language-code="en" class="text-slate-400">EN</span>
+    </button>
+  `;
+}
+
 // -------------------------------------------------------------
 // 3. HTML de la barra
 // -------------------------------------------------------------
@@ -82,6 +99,9 @@ export function renderNavbar(container) {
         <div id="primary-navigation" class="absolute inset-x-0 top-full hidden border-b border-slate-200 bg-white px-4 py-4 shadow-xl md:static md:flex md:flex-1 md:justify-center md:border-0 md:bg-transparent md:p-0 md:shadow-none">
           <ul class="flex flex-col gap-1 md:flex-row md:items-center md:gap-5 lg:gap-8">
             ${links.map(navLink).join('')}
+            <li class="md:hidden">
+              ${languageToggle('inline-flex px-3 py-2')}
+            </li>
             <!-- "Iniciar sesión" dentro del desplegable, solo en móvil (en escritorio va a la derecha).
                  Es texto y no un enlace porque la web todavía no tiene página de login
                  (issue #28: sin enlaces rotos). text-slate-600: el mismo gris que los enlaces -->
@@ -94,6 +114,7 @@ export function renderNavbar(container) {
         <!-- Acciones de la derecha: "Iniciar sesión" (solo escritorio), "Prueba gratis" y el botón del menú (solo móvil).
              "Prueba gratis" se ve también en móvil, junto al botón del menú, como en el mockup -->
         <div class="flex shrink-0 items-center gap-3">
+          ${languageToggle('hidden md:inline-flex px-2 py-2')}
           <!-- "Iniciar sesión" en escritorio: también es texto, como en el desplegable de móvil -->
           <span class="hidden rounded-lg text-sm font-medium text-slate-600 md:inline">Iniciar sesión</span>
           <!-- Botón pequeño (px-4 py-2 text-sm), como en el mockup -->
