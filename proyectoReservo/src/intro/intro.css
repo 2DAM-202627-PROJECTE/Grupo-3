@@ -11,9 +11,10 @@
      7. Recordatorios, final y aviso de cookies
    ============================================================= */
 
-/* Letra a mano para la agenda de papel (se descarga con npm, no de Google) */
-@import "@fontsource/caveat/500.css";
-@import "@fontsource/caveat/700.css";
+/* Letra a mano para la agenda de papel (se descarga con npm, no de Google).
+   Versión "variable": un solo archivo con todos los grosores (75 KB), en vez de un
+   archivo para el 500 y otro para el 700 (unos 100 KB entre los dos) */
+@import "@fontsource-variable/caveat";
 /* Estilos que recomienda Lenis (el scroll suave) */
 @import "lenis/dist/lenis.css";
 
@@ -169,7 +170,8 @@ html.lenis {
     repeating-linear-gradient(transparent 0 1.85em, rgb(147 197 253 / 0.55) 1.85em 1.9em),
     #f5eedc;
   color: #1e3a8a;
-  font-family: "Caveat", cursive;
+  /* "Caveat Variable" es el nombre que le da @fontsource-variable/caveat */
+  font-family: "Caveat Variable", cursive;
   font-weight: 500;
   font-size: 1.45em;
   line-height: 1.31;
