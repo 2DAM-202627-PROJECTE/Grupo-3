@@ -211,26 +211,31 @@ function mailchimpMessage({ result, msg = '' }, email) {
     };
   }
 
+  // Mailchimp escribe su respuesta en el idioma del navegador de la persona. Por eso los
+  // textos se buscan en inglés, castellano y catalán. /.../i: sin importar mayúsculas
   if (result === 'success') {
-    // Con doble opt-in, Mailchimp dice que hay que confirmar el email ("confirm")
-    if (/confirm/i.test(msg)) {
-      return {
-        ok: true,
-        text: `¡Casi está! Te hemos enviado un email a ${email}. Pulsa el botón que contiene para confirmar la suscripción.`,
-      };
+    // Si el email ya estaba en la lista, Mailchimp responde "success" pero avisa de que
+    // ya estabas suscrito: "You're already subscribed" · "Ya estás suscrito" · "Ja estàs subscrit"
+    if (/already|ya est|ja est/i.test(msg)) {
+      return { ok: true, text: 'Este email ya estaba suscrito a la newsletter. ¡Gracias!' };
     }
-    return { ok: true, text: '¡Gracias! Te has suscrito a la newsletter.' };
+    // Si no, es una suscripción nueva. Con el doble opt-in activado en Mailchimp,
+    // llega un email para confirmarla
+    return {
+      ok: true,
+      text: `¡Casi está! Te hemos enviado un email a ${email}. Pulsa el botón que contiene para confirmar la suscripción.`,
+    };
   }
 
-  // Errores más habituales. /.../i: busca el texto sin importar mayúsculas
-  if (/already subscribed/i.test(msg)) {
+  // Errores más habituales
+  if (/already|ya est|ja est/i.test(msg)) {
     return { ok: false, text: 'Este email ya está suscrito a la newsletter.' };
   }
-  if (/fake or invalid/i.test(msg)) {
+  if (/fake|fals/i.test(msg)) {
     // Mailchimp comprueba que el dominio del email exista de verdad (example.com no vale)
     return { ok: false, text: 'Este email no parece real. Revisa que esté bien escrito.' };
   }
-  if (/too many/i.test(msg)) {
+  if (/too many|demasiad|massa/i.test(msg)) {
     return { ok: false, text: 'Has hecho demasiados intentos con este email. Prueba otra vez en unos minutos.' };
   }
   return { ok: false, text: 'No hemos podido suscribir este email. Prueba con otro o inténtalo más tarde.' };
