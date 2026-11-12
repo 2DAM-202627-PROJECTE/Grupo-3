@@ -195,8 +195,22 @@ function subscribeToMailchimp(email) {
 }
 
 // Mailchimp responde en inglés. Esta función pasa su respuesta al mensaje que ve la persona.
-// Devuelve { ok: true/false, text: 'mensaje en español' }
+// Devuelve { ok: true/false, text: 'mensaje en español' } y, si Mailchimp pide un captcha,
+// también captchaUrl (ver más abajo)
 function mailchimpMessage({ result, msg = '' }, email) {
+  // Mailchimp a veces pide un captcha ("no soy un robot") antes de aceptar la suscripción:
+  // responde { result: 'redirect', msg: 'captcha' }. Nuestro formulario no puede mostrarlo,
+  // así que se da un enlace a su formulario (la dirección /post, sin -json), que abre
+  // el captcha con el email ya escrito
+  if (result === 'redirect' || /captcha/i.test(msg)) {
+    const params = new URLSearchParams({ EMAIL: email });
+    return {
+      ok: false,
+      text: 'Para terminar, confirma que no eres un robot: ',
+      captchaUrl: `${MAILCHIMP_URL.replace('/post-json', '/post')}&${params}`,
+    };
+  }
+
   if (result === 'success') {
     // Con doble opt-in, Mailchimp dice que hay que confirmar el email ("confirm")
     if (/confirm/i.test(msg)) {
@@ -296,6 +310,19 @@ function setupNewsletter(container) {
         message.textContent = response.text;
         message.className = 'mt-3 min-h-5 text-sm text-emerald-700';
         form.reset();
+      } else if (response.captchaUrl) {
+        // Captcha: el texto y un enlace al formulario de Mailchimp, en una pestaña nueva.
+        // El enlace se crea con createElement (y no con innerHTML) para que el email
+        // que ha escrito la persona nunca se pueda interpretar como HTML
+        const link = document.createElement('a');
+        link.href = response.captchaUrl;
+        link.target = '_blank';
+        // noopener: la pestaña de Mailchimp no puede controlar esta página
+        link.rel = 'noopener';
+        link.className = 'font-semibold text-indigo-700 underline underline-offset-2 hover:text-indigo-900';
+        link.textContent = 'completar la suscripción en Mailchimp (se abre en una pestaña nueva)';
+        message.replaceChildren(response.text, link);
+        message.className = 'mt-3 min-h-5 text-sm text-slate-700';
       } else {
         // Mailchimp ha rechazado el email (ya suscrito, demasiados intentos...)
         showError(response.text, emailInput);
