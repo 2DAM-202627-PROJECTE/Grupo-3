@@ -28,26 +28,41 @@ npm run preview  # previsualiza la versión de producción
 ## Estructura del proyecto
 
 ```
-landing-page-prova/
-├── public/
-│   └── vite.svg              # Favicon
-├── src/
-│   ├── components/
-│   │   ├── Navbar.js         # Barra de navegación + menú móvil
-│   │   ├── Hero.js           # Sección principal con tarjeta de reserva de ejemplo
-│   │   ├── Sectors.js        # Tipos de negocio (gimnasio, restaurante...)
-│   │   ├── Features.js       # Cuadrícula de funcionalidades
-│   │   ├── HowItWorks.js     # Cómo funciona en 3 pasos
-│   │   ├── Pricing.js        # Planes y precios
-│   │   ├── Testimonials.js   # Opiniones de clientes
-│   │   ├── Faq.js            # Preguntas frecuentes (desplegables)
-│   │   ├── Cta.js            # Formulario de registro
-│   │   └── Footer.js         # Pie de página
-│   ├── main.js               # Punto de entrada: crea los contenedores y renderiza los componentes
-│   └── style.css             # Importación de Tailwind v4
-├── index.html                # Estructura HTML base con <div id="app">
-├── package.json              # Dependencias y scripts
-├── vite.config.js            # Configuración de Vite con el plugin de Tailwind
+Grupo-3/
+├── .github/workflows/
+│   └── deploy.yml                # Publica la web en GitHub Pages al subir a main
+├── Docs/
+│   ├── Documentació de planificació i disseny-2.pdf   # Documento de planificación y diseño
+│   ├── kanban/                   # Capturas del tablero Kanban
+│   └── mockups/                  # Wireframes y mockups (escritorio y móvil)
+├── proyectoReservo/              # Proyecto de Vite (aquí se ejecutan los comandos npm)
+│   ├── public/
+│   │   └── favicon.svg           # Icono de la pestaña
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── Navbar.js         # Barra de navegación + menú móvil
+│   │   │   ├── Hero.js           # Sección principal con tarjeta de reserva de ejemplo
+│   │   │   ├── Sectors.js        # Selector de sector que cambia el Hero
+│   │   │   ├── Features.js       # Cuadrícula de funcionalidades
+│   │   │   ├── HowItWorks.js     # Cómo funciona en 3 pasos
+│   │   │   ├── Pricing.js        # Planes y precios (mensual / anual)
+│   │   │   ├── Testimonials.js   # Opiniones de clientes (pendiente)
+│   │   │   ├── Faq.js            # Preguntas frecuentes (desplegables)
+│   │   │   ├── Cta.js            # Formulario de prueba gratuita
+│   │   │   ├── Footer.js         # Pie de página
+│   │   │   ├── Newsletter.js     # Suscripción a la newsletter (dentro del footer)
+│   │   │   └── PreferencesBar.js # Aviso de cookies de la primera visita
+│   │   ├── intro/
+│   │   │   ├── Intro.js          # Intro animada "Un día con Reservo" (solo la primera vez)
+│   │   │   └── intro.css         # Estilos de la intro
+│   │   ├── main.js               # Punto de entrada: crea las secciones y pinta los componentes
+│   │   ├── scrollReveal.js       # Animación de las secciones al hacer scroll
+│   │   └── style.css             # Tailwind v4, variables del tema claro y estilos comunes
+│   ├── index.html                # Landing: HTML base con <div id="app">
+│   ├── LICENSE                   # Licencia del proyecto
+│   ├── politica-cookies.html     # Página legal: política de cookies
+│   ├── package.json              # Dependencias y scripts
+│   └── vite.config.js            # Vite + Tailwind, base /Grupo-3/ y build multipágina
 └── README.md
 ```
 
