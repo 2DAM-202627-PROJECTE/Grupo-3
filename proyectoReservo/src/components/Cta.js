@@ -58,7 +58,7 @@ export function renderCta(container) {
           <form id="free-trial-form" class="mt-8 text-left" aria-labelledby="cta-title" novalidate>
             <!-- Etiqueta visible del campo (apartado 3.2 del documento).
                  for="free-trial-email" la une al input: al pulsarla se pone el cursor en el campo -->
-            <label for="free-trial-email" class="text-sm font-medium text-slate-700">Correo electrónico</label>
+            <label for="free-trial-email" class="text-sm font-medium text-slate-700">Correo electrónico:</label>
 
             <!-- Campo y botón: apilados en móvil (flex-col) y en fila a partir de sm (sm:flex-row) -->
             <div class="mt-2 flex flex-col gap-3 sm:flex-row">
