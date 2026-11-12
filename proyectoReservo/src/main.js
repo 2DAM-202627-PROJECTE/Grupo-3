@@ -34,6 +34,7 @@ import { renderSectors } from './components/Sectors.js';
 import { renderNavbar, initActiveNavLink } from './components/Navbar.js';
 import { renderFeatures } from './components/Features.js';
 import { renderPricing } from './components/Pricing.js';
+import { renderTestimonials } from './components/Testimonials.js';
 import { renderFaq } from './components/Faq.js';
 import { renderHowItWorks } from './components/HowItWorks.js';
 import { renderCta } from './components/Cta.js';
@@ -64,7 +65,7 @@ const sections = [
   { id: 'funciones', render: renderFeatures },
   { id: 'como-funciona', render: renderHowItWorks }, // HowItWorks.js
   { id: 'precios', render: renderPricing },
-  { id: 'testimonios', render: null }, // Testimonials.js
+  { id: 'testimonios', render: renderTestimonials }, // Testimonials.js
   { id: 'faq', render: renderFaq }, // Faq.js
   { id: 'cta', render: renderCta }, // Cta.js
 ];
