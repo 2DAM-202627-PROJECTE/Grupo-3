@@ -80,13 +80,17 @@ export function t(key, values = {}) {
 // 3. Cambiar de idioma
 // -------------------------------------------------------------
 
+// Claves del título de la pestaña y de la descripción para buscadores.
+// Cada página puede poner las suyas con initializeLanguage (la de cookies lo hace)
+let pageKeys = { title: 'document.title', description: 'document.description' };
+
 // Idioma del <html> (lo usan los lectores de pantalla para pronunciar bien),
 // título de la pestaña y descripción para buscadores
 function updateDocumentLanguage() {
   document.documentElement.lang = currentLanguage;
-  document.title = t('document.title');
+  document.title = t(pageKeys.title);
   const description = document.querySelector('meta[name="description"]');
-  if (description) description.content = t('document.description');
+  if (description) description.content = t(pageKeys.description);
 }
 
 // Valores de los huecos {…} guardados en un elemento con data-i18n-*:
@@ -111,9 +115,16 @@ function translationValues(element) {
 //   data-i18n             → el texto del elemento
 //   data-i18n-aria-label  → el aria-label (lo que lee el lector de pantalla)
 //   data-i18n-placeholder → el texto de ejemplo de un campo
+//   data-i18n-html        → el HTML del elemento, para textos con <strong> dentro (página de cookies).
+//                           Solo con textos de src/locales, que escribimos nosotros: nunca con datos
+//                           que escriba la persona (un email, por ejemplo), porque se ejecutaría como HTML
 export function applyTranslations(root) {
   root.querySelectorAll('[data-i18n]').forEach((element) => {
     element.textContent = t(element.dataset.i18n, translationValues(element));
+  });
+
+  root.querySelectorAll('[data-i18n-html]').forEach((element) => {
+    element.innerHTML = t(element.dataset.i18nHtml);
   });
 
   root.querySelectorAll('[data-i18n-aria-label]').forEach((element) => {
@@ -146,8 +157,11 @@ export function setLanguage(language) {
 }
 
 // Al cargar la página (main.js, después de pintar todo): pone el idioma en el <html>
-// y el título, y traduce los textos que se hayan escrito directamente en el HTML
-export function initializeLanguage() {
+// y el título, y traduce los textos que se hayan escrito directamente en el HTML.
+// keys: claves del título y la descripción de otra página, por ejemplo
+//   initializeLanguage({ title: 'cookiePage.title', description: 'cookiePage.metaDescription' })
+export function initializeLanguage(keys = {}) {
+  pageKeys = { ...pageKeys, ...keys };
   updateDocumentLanguage();
   applyTranslations(document);
 }
