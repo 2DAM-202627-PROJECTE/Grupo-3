@@ -56,6 +56,7 @@ export default {
   'hero.crossfit': 'CrossFit',
   'hero.indoorTable': 'Taula interior',
   'hero.terrace': 'Terrassa',
+  'hero.people': '{count} persones',
   'hero.privateRoom': 'Sala privada',
   'hero.haircut': 'Tall',
   'hero.hairColor': 'Color',
