@@ -16,6 +16,7 @@
 // 1. Configuración
 // -------------------------------------------------------------
 
+// t() devuelve cada texto en el idioma elegido (src/i18n.js, issue #23)
 import { t } from '../i18n.js';
 
 // Clases comunes para el foco visible al navegar con el teclado (accesibilidad)
@@ -66,26 +67,34 @@ export function renderNewsletter(container) {
   container.className = 'border-t border-slate-200/70 bg-(--bg-dark)/80';
 
   container.innerHTML = /*html*/ `
-    <!-- Contenedor con márgenes laterales, como el resto de secciones -->
-    <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-      <!-- Bloque centrado: mx-auto lo centra en la página y text-center centra los textos.
-           max-w-xl: ancho máximo para que el campo de email no quede demasiado largo -->
-      <div class="mx-auto max-w-xl text-center">
-        <!-- id del título: el formulario lo usa como nombre (aria-labelledby) -->
-        <h2 id="newsletter-title" data-i18n="newsletter.heading" class="text-2xl font-bold tracking-tight text-slate-900">${t('newsletter.heading')}</h2>
-        <p class="mt-2 text-sm text-slate-600">
-          <span data-i18n="newsletter.description">${t('newsletter.description')}</span>
-        </p>
+    <!-- Contenedor con márgenes laterales, como el resto de secciones.
+         py-10 / sm:py-12: menos espacio que una sección normal (py-20), para que se vea
+         como parte del pie de página y no como otra sección después del CTA -->
+    <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-12 lg:px-8">
+      <!-- En móvil y tablet: texto y formulario apilados y centrados (max-w-xl + mx-auto).
+           En escritorio (lg): una sola fila con dos columnas, el texto a la izquierda y el
+           formulario a la derecha, centrados en vertical (items-center) -->
+      <div class="mx-auto grid max-w-xl gap-6 lg:max-w-5xl lg:grid-cols-2 lg:items-center lg:gap-12">
+        <!-- Texto: centrado en móvil, alineado a la izquierda en escritorio -->
+        <div class="text-center lg:text-left">
+          <!-- Texto pensado para quien todavía no quiere la prueba gratuita del CTA de encima:
+               la newsletter es la opción para seguir en contacto sin registrarse
+               (tabla 2.3 del documento: "recibir novedades sin registrarse todavía").
+               text-xl: más pequeño que el título del CTA (text-3xl), que es el importante -->
+          <h2 data-i18n="newsletter.heading" class="text-xl font-bold tracking-tight text-slate-900">${t('newsletter.heading')}</h2>
+          <p data-i18n="newsletter.description" class="mt-2 text-sm text-slate-600">${t('newsletter.description')}</p>
+        </div>
 
-        <!-- aria-labelledby: el lector de pantalla anuncia el formulario con el texto del título.
+        <!-- aria-label: nombre del formulario para el lector de pantalla. No se usa el título
+             (aria-labelledby) porque "¿Aún no te decides?" no dice para qué es el formulario.
              novalidate: desactiva los avisos del navegador para usar los nuestros (setupNewsletter),
              que salen como texto debajo del formulario y son iguales en todos los navegadores -->
         <!-- text-left: en móvil el título y la frase van centrados, pero dentro del formulario
              la etiqueta, la casilla y el mensaje se alinean a la izquierda con el campo de email -->
-        <form id="newsletter-form" class="text-left" aria-label="Suscripción a la newsletter" novalidate>
+        <form id="newsletter-form" class="text-left" aria-label="${t('newsletter.formLabel')}" data-i18n-aria-label="newsletter.formLabel" novalidate>
           <!-- Etiqueta visible del campo: el documento pide que cada campo tenga la suya (apartado 3.2).
                for="newsletter-email" la une al input, así al pulsarla se pone el cursor en el campo -->
-          <label for="newsletter-email" class="text-sm font-medium text-slate-700"><span data-i18n="newsletter.email">${t('newsletter.email')}</span></label>
+          <label for="newsletter-email" data-i18n="newsletter.email" class="text-sm font-medium text-slate-700">${t('newsletter.email')}</label>
 
           <!-- Campo y botón: apilados en móvil (flex-col) y en fila a partir de sm (sm:flex-row) -->
           <div class="mt-2 flex flex-col gap-3 sm:flex-row">
@@ -217,9 +226,10 @@ async function subscribeWithRetry(email) {
   }
 }
 
-// Esta función pasa la respuesta de Mailchimp al mensaje en español que ve la persona.
-// Devuelve { ok: true/false, text: 'mensaje en español' } y, si Mailchimp pide un captcha,
-// también captchaUrl (ver más abajo)
+// Esta función pasa la respuesta de Mailchimp al mensaje que ve la persona.
+// Devuelve { ok: true/false, key: 'clave del mensaje' } (la clave se traduce con t()
+// en setupNewsletter, así el mensaje sale en el idioma elegido) y, si Mailchimp pide
+// un captcha, también captchaUrl (ver más abajo)
 function mailchimpMessage({ result, msg = '' }, email) {
   // Mailchimp a veces pide un captcha ("no soy un robot") antes de aceptar la suscripción:
   // responde { result: 'redirect', msg: 'captcha' }. Nuestro formulario no puede mostrarlo,
@@ -229,7 +239,7 @@ function mailchimpMessage({ result, msg = '' }, email) {
     const params = new URLSearchParams({ EMAIL: email });
     return {
       ok: false,
-      text: 'Para terminar, confirma que no eres un robot: ',
+      key: 'newsletter.captcha',
       captchaUrl: `${MAILCHIMP_URL.replace('/post-json', '/post')}&${params}`,
     };
   }
@@ -240,28 +250,26 @@ function mailchimpMessage({ result, msg = '' }, email) {
     // Si el email ya estaba en la lista, Mailchimp responde "success" pero avisa de que
     // ya estabas suscrito: "You're already subscribed" · "Ya estás suscrito" · "Ja estàs subscrit"
     if (/already|ya est|ja est/i.test(msg)) {
-      return { ok: true, text: 'Este email ya estaba suscrito a la newsletter. ¡Gracias!' };
+      return { ok: true, key: 'newsletter.alreadySubscribed' };
     }
     // Si no, es una suscripción nueva. Con el doble opt-in activado en Mailchimp,
     // llega un email para confirmarla
-    return {
-      ok: true,
-      text: `¡Casi está! Te hemos enviado un email a ${email}. Pulsa el botón que contiene para confirmar la suscripción.`,
-    };
+    // El mensaje lleva el email dentro ({email} en los textos de src/locales)
+    return { ok: true, key: 'newsletter.success' };
   }
 
   // Errores más habituales
   if (/already|ya est|ja est/i.test(msg)) {
-    return { ok: false, text: 'Este email ya está suscrito a la newsletter.' };
+    return { ok: false, key: 'newsletter.errorAlreadySubscribed' };
   }
   if (/fake|fals/i.test(msg)) {
     // Mailchimp comprueba que el dominio del email exista de verdad (example.com no vale)
-    return { ok: false, text: 'Este email no parece real. Revisa que esté bien escrito.' };
+    return { ok: false, key: 'newsletter.errorFake' };
   }
   if (/too many|demasiad|massa/i.test(msg)) {
-    return { ok: false, text: 'Has hecho demasiados intentos con este email. Prueba otra vez en unos minutos.' };
+    return { ok: false, key: 'newsletter.errorTooMany' };
   }
-  return { ok: false, text: 'No hemos podido suscribir este email. Prueba con otro o inténtalo más tarde.' };
+  return { ok: false, key: 'newsletter.errorGeneric' };
 }
 
 // -------------------------------------------------------------
@@ -277,14 +285,30 @@ function setupNewsletter(container) {
   const consentInput = form.querySelector('input[name="consent"]');
   const message = form.querySelector('#newsletter-message');
 
-  // --- Mensajes de error ---
+  // --- Mensajes ---
+
+  // Pone en el mensaje el texto de una clave, en el idioma elegido.
+  // email: solo hace falta en los textos que lo llevan dentro ({email} en src/locales).
+  // data-i18n guarda la clave y data-i18n-email el email: así, si se cambia de idioma
+  // con el mensaje a la vista, i18n.js lo vuelve a traducir (applyTranslations)
+  function setMessage(key, className, email = '') {
+    message.dataset.i18n = key;
+    message.dataset.i18nEmail = email;
+    message.textContent = t(key, { email });
+    message.className = `mt-3 min-h-5 text-sm ${className}`;
+  }
+
+  // Vacía el mensaje y quita sus claves (si no, al cambiar de idioma volvería a salir)
+  function clearMessage() {
+    message.textContent = '';
+    delete message.dataset.i18n;
+    delete message.dataset.i18nEmail;
+  }
 
   // Muestra un error: texto en rojo debajo del formulario (no solo color: el documento
   // pide que los errores se lean como texto, apartado 3.2) y el foco en el campo que falla.
   function showError(key, input) {
-    message.dataset.i18n = key;
-    message.textContent = t(key);
-    message.className = 'mt-3 min-h-5 text-sm text-red-600';
+    setMessage(key, 'text-red-600');
     input.setAttribute('aria-invalid', 'true');
     input.focus();
   }
@@ -292,8 +316,7 @@ function setupNewsletter(container) {
   // Quita el error de un campo cuando el usuario lo corrige
   function clearError(input) {
     input.removeAttribute('aria-invalid');
-    message.textContent = '';
-    delete message.dataset.i18n;
+    clearMessage();
   }
 
   // El error se quita en cuanto el usuario escribe en el campo o marca la casilla
@@ -325,40 +348,47 @@ function setupNewsletter(container) {
       return;
     }
 
-    // b) Todo correcto: se guarda el email y se muestra la confirmación en verde.
-    // toLowerCase(): "Ana@Negocio.com" y "ana@negocio.com" cuentan como el mismo email
-    const isNew = addSubscriber(email.toLowerCase());
-    message.dataset.i18n = isNew ? 'newsletter.success' : 'newsletter.alreadySubscribed';
-    message.textContent = t(message.dataset.i18n);
-    message.className = 'mt-3 min-h-5 text-sm text-emerald-700';
+    // b) Mientras se espera a Mailchimp: botón desactivado (para no enviar dos veces)
+    //    y un aviso en gris
+    button.disabled = true;
+    setMessage('newsletter.sending', 'text-slate-600');
+
+    try {
+      const response = mailchimpMessage(await subscribeWithRetry(email), email);
 
       if (response.ok) {
         // Confirmación en verde y formulario vacío.
         // reset() no borra el mensaje porque es un <p>, no un campo
-        message.textContent = response.text;
-        message.className = 'mt-3 min-h-5 text-sm text-emerald-700';
+        setMessage(response.key, 'text-emerald-700', email);
         form.reset();
       } else if (response.captchaUrl) {
         // Captcha: el texto y un enlace al formulario de Mailchimp, en una pestaña nueva.
         // El enlace se crea con createElement (y no con innerHTML) para que el email
-        // que ha escrito la persona nunca se pueda interpretar como HTML
+        // que ha escrito la persona nunca se pueda interpretar como HTML.
+        // El texto y el enlace llevan cada uno su data-i18n: el mensaje entero no puede
+        // llevarlo, porque al traducirlo con textContent se borraría el enlace
+        clearMessage();
+        const text = document.createElement('span');
+        text.dataset.i18n = response.key;
+        text.textContent = t(response.key);
         const link = document.createElement('a');
         link.href = response.captchaUrl;
         link.target = '_blank';
         // noopener: la pestaña de Mailchimp no puede controlar esta página
         link.rel = 'noopener';
         link.className = 'font-semibold text-indigo-700 underline underline-offset-2 hover:text-indigo-900';
-        link.textContent = 'completar la suscripción en Mailchimp (se abre en una pestaña nueva)';
-        message.replaceChildren(response.text, link);
+        link.dataset.i18n = 'newsletter.captchaLink';
+        link.textContent = t('newsletter.captchaLink');
+        message.replaceChildren(text, link);
         message.className = 'mt-3 min-h-5 text-sm text-slate-700';
       } else {
         // Mailchimp ha rechazado el email (ya suscrito, demasiados intentos...)
-        showError(response.text, emailInput);
+        showError(response.key, emailInput);
       }
     } catch {
       // No se ha podido conectar con Mailchimp o no ha respondido a tiempo
       // (apartado 3.3 del documento, riesgos: "mensaje de error claro al usuario")
-      showError('No se ha podido conectar con el servicio de la newsletter. Revisa tu conexión e inténtalo de nuevo.', emailInput);
+      showError('newsletter.errorConnection', emailInput);
     } finally {
       // finally: se hace siempre, haya ido bien o mal
       button.disabled = false;
