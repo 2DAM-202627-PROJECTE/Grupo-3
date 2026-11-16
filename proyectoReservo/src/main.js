@@ -35,11 +35,15 @@ import { initActiveNavLink, renderNavbar } from './components/Navbar.js';
 import { renderFeatures } from './components/Features.js';
 import { renderHowItWorks } from './components/HowItWorks.js';
 import { renderPricing } from './components/Pricing.js';
+import { renderTestimonials } from './components/Testimonials.js';
+import { renderFaq } from './components/Faq.js';
 import { renderCta } from './components/Cta.js';
 import { renderNewsletter } from './components/Newsletter.js';
 import { renderFooter } from './components/Footer.js';
 import { renderPreferencesBar } from './components/PreferencesBar.js';
-import { initializeLanguage } from './i18n.js';
+
+// Idioma de la página (issue #23): el elegido en el menú o, si no, el del navegador
+import { initializeLanguage, t } from './i18n.js';
 
 // Animación de las secciones al hacer scroll (no es un componente, no pinta nada)
 import { initScrollReveal } from './scrollReveal.js';
@@ -63,10 +67,12 @@ const sections = [
   { id: 'sectores', render: renderSectors },
   { id: 'funciones', render: renderFeatures },
   { id: 'como-funciona', render: renderHowItWorks }, // HowItWorks.js
+  // Testimonios antes de Precios: las opiniones de otros clientes dan confianza
+  // antes de ver cuánto cuesta (cambio respecto al orden del documento y del mockup)
+  { id: 'testimonios', render: renderTestimonials }, // Testimonials.js
   { id: 'precios', render: renderPricing },
-  { id: 'testimonios', render: null }, // Testimonials.js
-  { id: 'faq', render: null }, // Faq.js
-  { id: 'cta', render: renderCta },
+  { id: 'faq', render: renderFaq }, // Faq.js
+  { id: 'cta', render: renderCta }, // Cta.js
 ];
 
 // -------------------------------------------------------------
@@ -81,7 +87,9 @@ const app = document.querySelector('#app');
 // Su contenido lo pintará Navbar.js cuando esté hecho.
 const nav = document.createElement('nav');
 nav.id = 'navbar';
-nav.setAttribute('aria-label', 'Navegación principal');
+nav.setAttribute('aria-label', t('nav.primaryLabel'));
+// data-i18n-aria-label: al cambiar de idioma, i18n.js vuelve a traducir el aria-label
+nav.dataset.i18nAriaLabel = 'nav.primaryLabel';
 app.appendChild(nav);
 renderNavbar(nav);
 
@@ -141,7 +149,9 @@ preferencesBar.id = 'preferences-bar';
 document.body.appendChild(preferencesBar);
 renderPreferencesBar(preferencesBar);
 
-initializeLanguage(document);
+// Traducción (issue #23). Va después de pintar todo (secciones, footer y aviso de cookies):
+// pone el idioma en el <html> y el título de la pestaña. El selector de idioma está en Navbar.js
+initializeLanguage();
 
 // -------------------------------------------------------------
 // 7. Al hacer scroll

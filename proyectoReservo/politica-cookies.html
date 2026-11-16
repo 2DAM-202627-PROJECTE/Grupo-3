@@ -3,7 +3,12 @@
      politica-cookies.html — Política de cookies (issue #24)
      Página legal separada de la landing (apartado 3 del documento:
      configuración multipágina de Vite, ver vite.config.js).
-     Se enlaza desde el aviso de cookies y, más adelante, desde el footer.
+     Se enlaza desde el aviso de cookies y desde el footer.
+
+     Traducción (issue #23): los textos están escritos en castellano y cada uno lleva su clave
+     (data-i18n, data-i18n-html o data-i18n-aria-label). src/cookiesPage.js los cambia al idioma
+     de la persona; las traducciones están en src/locales, con las claves "cookiePage.…".
+     data-i18n-html se usa en los párrafos que llevan <strong> dentro.
 
      Partes de la página:
        1. Cabecera  → logo y enlace para volver a la landing
@@ -16,10 +21,12 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- Mismos estilos que la landing. Vite procesa este CSS (con Tailwind) igual que
-         cuando main.js lo importa, así no hace falta JavaScript en esta página -->
+         cuando main.js lo importa -->
     <link rel="stylesheet" href="/src/style.css" />
     <meta name="description" content="Política de cookies de Reservo: qué cookies usa la web, para qué sirven y cómo cambiar tu elección." />
     <title>Política de cookies · Reservo</title>
+    <!-- Traducción de la página. type="module": se ejecuta cuando el HTML ya está leído -->
+    <script type="module" src="/src/cookiesPage.js"></script>
   </head>
   <body class="bg-(--bg) text-slate-900 antialiased">
     <!-- Fondo aurora (manchas de color pastel), igual que en la landing. Es decorativo -->
@@ -27,7 +34,7 @@
 
     <!-- ===== 1. Cabecera ===== -->
     <header class="border-b border-slate-200/70">
-      <nav aria-label="Navegación principal" class="mx-auto flex max-w-3xl items-center justify-between px-4 py-5 sm:px-6">
+      <nav aria-label="Navegación principal" data-i18n-aria-label="nav.primaryLabel" class="mx-auto flex max-w-3xl items-center justify-between px-4 py-5 sm:px-6">
         <!-- Logo: enlace a la landing. El logo es decorativo (alt=""): el texto "Reservo" ya dice qué es.
              href="./" (y no "/"): ruta relativa a esta página, así funciona igual en local (/)
              y en GitHub Pages (/Grupo-3/). Vite no corrige los href de los enlaces -->
@@ -35,36 +42,36 @@
           <img src="/favicon.svg" alt="" class="h-8 w-8" />
           Reservo
         </a>
-        <a href="./" class="rounded-lg text-sm font-medium text-slate-700 hover:text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500">
-          ← Volver al inicio
-        </a>
+        <a href="./" data-i18n="cookiePage.back" class="rounded-lg text-sm font-medium text-slate-700 hover:text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500">← Volver al inicio</a>
       </nav>
     </header>
 
     <!-- ===== 2. Contenido ===== -->
     <!-- max-w-3xl: líneas de texto no demasiado largas para que se lea cómodo.
-         Cada apartado es un <section> con su <h2>; el <h1> es el título de la página -->
-    <main class="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:py-16">
-      <h1 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">Política de cookies</h1>
-      <p class="mt-2 text-sm text-slate-600">Última actualización: 9 de noviembre de 2026</p>
+         Cada apartado es un <section> con su <h2>; el <h1> es el título de la página.
+         [&_strong]:text-slate-900: las palabras en negrita de los textos traducidos (que no
+         pueden llevar clases) salen más oscuras que el resto del párrafo -->
+    <main class="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:py-16 [&_strong]:text-slate-900">
+      <h1 data-i18n="cookiePage.heading" class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">Política de cookies</h1>
+      <p data-i18n="cookiePage.updated" class="mt-2 text-sm text-slate-600">Última actualización: 16 de noviembre de 2026</p>
 
       <!-- Clases comunes de los apartados: separación arriba y texto gris claro -->
       <section class="mt-10 space-y-4 leading-relaxed text-slate-700">
-        <h2 class="text-xl font-semibold text-slate-900">¿Qué son las cookies?</h2>
-        <p>
+        <h2 data-i18n="cookiePage.whatHeading" class="text-xl font-semibold text-slate-900">¿Qué son las cookies?</h2>
+        <p data-i18n="cookiePage.whatText">
           Las cookies son pequeños archivos que una web guarda en tu navegador para recordar
           información entre visitas. Algunas son necesarias para que la web funcione y otras
           sirven, por ejemplo, para saber cómo se usa y mejorarla.
         </p>
-        <p>
-          Reservo también usa el <strong class="text-slate-900">almacenamiento local</strong>
+        <p data-i18n-html="cookiePage.localStorage">
+          Reservo también usa el <strong>almacenamiento local</strong>
           (localStorage) del navegador, que funciona de forma parecida: los datos se guardan
           solo en tu dispositivo y no se envían a ningún servidor.
         </p>
       </section>
 
       <section class="mt-10 space-y-4 leading-relaxed text-slate-700">
-        <h2 class="text-xl font-semibold text-slate-900">¿Qué cookies usa Reservo?</h2>
+        <h2 data-i18n="cookiePage.whichHeading" class="text-xl font-semibold text-slate-900">¿Qué cookies usa Reservo?</h2>
 
         <!-- Tabla con los datos que guarda la web. overflow-x-auto: en móvil, si la tabla
              no cabe, se puede desplazar de lado sin romper el resto de la página.
@@ -72,58 +79,66 @@
         <div class="glass overflow-x-auto rounded-xl">
           <table class="w-full min-w-xl text-left text-sm">
             <!-- <caption> da nombre a la tabla para los lectores de pantalla (sr-only: no se ve) -->
-            <caption class="sr-only">Cookies y datos que guarda Reservo en tu navegador</caption>
+            <caption data-i18n="cookiePage.tableCaption" class="sr-only">Cookies y datos que guarda Reservo en tu navegador</caption>
             <thead class="bg-white/70 text-slate-900">
               <tr>
                 <!-- scope="col": indica que la celda es el título de su columna -->
-                <th scope="col" class="px-4 py-3 font-semibold">Nombre</th>
-                <th scope="col" class="px-4 py-3 font-semibold">Tipo</th>
-                <th scope="col" class="px-4 py-3 font-semibold">Para qué sirve</th>
-                <th scope="col" class="px-4 py-3 font-semibold">Duración</th>
+                <th scope="col" data-i18n="cookiePage.colName" class="px-4 py-3 font-semibold">Nombre</th>
+                <th scope="col" data-i18n="cookiePage.colType" class="px-4 py-3 font-semibold">Tipo</th>
+                <th scope="col" data-i18n="cookiePage.colPurpose" class="px-4 py-3 font-semibold">Para qué sirve</th>
+                <th scope="col" data-i18n="cookiePage.colDuration" class="px-4 py-3 font-semibold">Duración</th>
               </tr>
             </thead>
+            <!-- Los nombres (reservo-cookies...) no se traducen: son las claves reales que guarda la web -->
             <tbody class="divide-y divide-slate-200">
               <tr>
                 <td class="px-4 py-3 font-mono text-xs whitespace-nowrap text-indigo-700">reservo-cookies</td>
-                <td class="px-4 py-3">Técnica (necesaria)</td>
-                <td class="px-4 py-3">Recuerda si has aceptado o rechazado las cookies, para no volver a preguntarte.</td>
-                <td class="px-4 py-3">Hasta que borres los datos del navegador</td>
+                <td data-i18n="cookiePage.typeTechnical" class="px-4 py-3">Técnica (necesaria)</td>
+                <td data-i18n="cookiePage.purposeCookies" class="px-4 py-3">Recuerda si has aceptado o rechazado las cookies, para no volver a preguntarte.</td>
+                <td data-i18n="cookiePage.untilCleared" class="px-4 py-3">Hasta que borres los datos del navegador</td>
               </tr>
               <!-- Marca que guarda la intro animada (src/intro/Intro.js) al terminarla -->
               <tr>
                 <td class="px-4 py-3 font-mono text-xs whitespace-nowrap text-indigo-700">reservo-intro-vista</td>
-                <td class="px-4 py-3">Técnica (necesaria)</td>
-                <td class="px-4 py-3">Recuerda que ya has visto la intro animada, para que las siguientes veces entres directamente en la página.</td>
-                <td class="px-4 py-3">Hasta que borres los datos del navegador</td>
+                <td data-i18n="cookiePage.typeTechnical" class="px-4 py-3">Técnica (necesaria)</td>
+                <td data-i18n="cookiePage.purposeIntro" class="px-4 py-3">Recuerda que ya has visto la intro animada, para que las siguientes veces entres directamente en la página.</td>
+                <td data-i18n="cookiePage.untilCleared" class="px-4 py-3">Hasta que borres los datos del navegador</td>
+              </tr>
+              <!-- Idioma elegido en el menú (src/i18n.js, issue #23) -->
+              <tr>
+                <td class="px-4 py-3 font-mono text-xs whitespace-nowrap text-indigo-700">reservo-language</td>
+                <td data-i18n="cookiePage.typeTechnical" class="px-4 py-3">Técnica (necesaria)</td>
+                <td data-i18n="cookiePage.purposeLanguage" class="px-4 py-3">Recuerda el idioma que has elegido en el menú, para mostrarte la web en ese idioma. Si no eliges ninguno, se usa el de tu navegador y no se guarda nada.</td>
+                <td data-i18n="cookiePage.untilCleared" class="px-4 py-3">Hasta que borres los datos del navegador</td>
               </tr>
               <tr>
                 <td class="px-4 py-3 text-slate-600">—</td>
-                <td class="px-4 py-3">De análisis</td>
-                <td class="px-4 py-3">Saber cómo se usa la web para mejorarla. Solo se activarían si las aceptas; ahora mismo Reservo no instala ninguna.</td>
+                <td data-i18n="cookiePage.typeAnalytics" class="px-4 py-3">De análisis</td>
+                <td data-i18n="cookiePage.purposeAnalytics" class="px-4 py-3">Saber cómo se usa la web para mejorarla. Solo se activarían si las aceptas; ahora mismo Reservo no instala ninguna.</td>
                 <td class="px-4 py-3">—</td>
               </tr>
             </tbody>
           </table>
         </div>
 
-        <p>
+        <p data-i18n-html="cookiePage.consentText">
           Las cookies técnicas no necesitan tu permiso porque sin ellas la web no podría
           recordar tus elecciones. Las de análisis solo se usan si pulsas
-          <strong class="text-slate-900">Aceptar</strong> en el aviso de cookies.
+          <strong>Aceptar</strong> en el aviso de cookies.
         </p>
       </section>
 
       <!-- La newsletter ya no guarda el email en el navegador: lo envía a Mailchimp
            (src/components/Newsletter.js). Se explica aquí porque es el único dato que sale de la web -->
       <section class="mt-10 space-y-4 leading-relaxed text-slate-700">
-        <h2 class="text-xl font-semibold text-slate-900">Newsletter</h2>
-        <p>
+        <h2 data-i18n="cookiePage.newsletterHeading" class="text-xl font-semibold text-slate-900">Newsletter</h2>
+        <p data-i18n-html="cookiePage.newsletterText1">
           Si te suscribes a la newsletter, tu email se envía a
-          <strong class="text-slate-900">Mailchimp</strong>, el servicio que guarda la lista de
+          <strong>Mailchimp</strong>, el servicio que guarda la lista de
           suscriptores y envía los correos. Antes de darte de alta, recibirás un email para
           confirmar la suscripción.
         </p>
-        <p>
+        <p data-i18n="cookiePage.newsletterText2">
           Mailchimp es una empresa de Estados Unidos, así que tu email puede guardarse fuera de
           la Unión Europea. Puedes darte de baja cuando quieras con el enlace que aparece al
           final de cada email.
@@ -131,25 +146,25 @@
       </section>
 
       <section class="mt-10 space-y-4 leading-relaxed text-slate-700">
-        <h2 class="text-xl font-semibold text-slate-900">¿Cómo cambiar tu elección?</h2>
-        <p>
+        <h2 data-i18n="cookiePage.changeHeading" class="text-xl font-semibold text-slate-900">¿Cómo cambiar tu elección?</h2>
+        <p data-i18n="cookiePage.changeText">
           Puedes cambiar de opinión en cualquier momento borrando los datos de este sitio
           en tu navegador. La próxima vez que entres a Reservo volverá a salir el aviso
           de cookies para que elijas de nuevo.
         </p>
-        <!-- Lista con los pasos en los navegadores más usados -->
+        <!-- Lista con los pasos en los navegadores más usados. El nombre del navegador no se traduce -->
         <ul class="list-disc space-y-2 pl-6">
-          <li><strong class="text-slate-900">Chrome:</strong> Configuración → Privacidad y seguridad → Cookies y otros datos de sitios.</li>
-          <li><strong class="text-slate-900">Firefox:</strong> Ajustes → Privacidad &amp; Seguridad → Cookies y datos del sitio.</li>
-          <li><strong class="text-slate-900">Safari:</strong> Ajustes → Privacidad → Gestionar datos de sitios web.</li>
-          <li><strong class="text-slate-900">Edge:</strong> Configuración → Cookies y permisos del sitio.</li>
+          <li><strong>Chrome:</strong> <span data-i18n="cookiePage.chrome">Configuración → Privacidad y seguridad → Cookies y otros datos de sitios.</span></li>
+          <li><strong>Firefox:</strong> <span data-i18n="cookiePage.firefox">Ajustes → Privacidad &amp; Seguridad → Cookies y datos del sitio.</span></li>
+          <li><strong>Safari:</strong> <span data-i18n="cookiePage.safari">Ajustes → Privacidad → Gestionar datos de sitios web.</span></li>
+          <li><strong>Edge:</strong> <span data-i18n="cookiePage.edge">Configuración → Cookies y permisos del sitio.</span></li>
         </ul>
       </section>
 
       <section class="mt-10 space-y-4 leading-relaxed text-slate-700">
-        <h2 class="text-xl font-semibold text-slate-900">Contacto</h2>
+        <h2 data-i18n="cookiePage.contactHeading" class="text-xl font-semibold text-slate-900">Contacto</h2>
         <p>
-          Si tienes cualquier duda sobre esta política, escríbenos a
+          <span data-i18n="cookiePage.contactText">Si tienes cualquier duda sobre esta política, escríbenos a</span>
           <!-- mailto: al pulsarlo se abre el programa de correo con la dirección puesta -->
           <a href="mailto:hola@reservo.es" class="rounded text-indigo-700 underline hover:text-indigo-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500">hola@reservo.es</a>.
         </p>

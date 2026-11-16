@@ -30,9 +30,10 @@ const sectorDemos = {
     titleHighlight: 'hero.restaurant.highlight',
     description: 'hero.restaurant.description',
     heading: 'hero.availableTables', items: [
-      ['hero.indoorTable', '13:00 · 2 personas', 'hero.fourTables', 'emerald', true],
-      ['hero.terrace', '14:00 · 2 personas', 'hero.oneTable', 'amber', true],
-      ['hero.privateRoom', '21:00 · 8 personas', 'hero.full', 'rose', false],
+      // El 6.º dato es el número de personas: se traduce con la clave hero.people (renderSectorDemo)
+      ['hero.indoorTable', '13:00', 'hero.fourTables', 'emerald', true, 2],
+      ['hero.terrace', '14:00', 'hero.oneTable', 'amber', true, 2],
+      ['hero.privateRoom', '21:00', 'hero.full', 'rose', false, 8],
     ],
   },
   peluqueria: {
@@ -83,8 +84,13 @@ function renderSectorDemo(sectorId) {
   heading.textContent = t(demo.heading);
   const list = heroContainer.querySelector('#hero-classes');
   const firstAvailableIndex = demo.items.findIndex((item) => item[4]);
-  list.innerHTML = demo.items.map(([nameKey, time, availabilityKey, color, available], index) => {
+  list.innerHTML = demo.items.map(([nameKey, time, availabilityKey, color, available, people], index) => {
     const active = available && index === firstAvailableIndex;
+    // Solo las mesas del restaurante llevan personas: "13:00 · 2 personas".
+    // data-i18n-count guarda el número para volver a traducirlo si se cambia de idioma
+    const timeText = people
+      ? /*html*/ `${time} · <span data-i18n="hero.people" data-i18n-count="${people}">${t('hero.people', { count: people })}</span>`
+      : time;
     const badgeColors = {
       emerald: 'bg-emerald-50 text-emerald-700',
       amber: 'bg-amber-50 text-amber-700',
@@ -93,7 +99,7 @@ function renderSectorDemo(sectorId) {
     return /*html*/ `
       <li>
         <button type="button" class="hero-class flex w-full items-center justify-between rounded-lg border ${active ? 'border-indigo-400 bg-indigo-50' : 'border-slate-200 bg-white/70'} px-3 py-2.5 text-left transition hover:border-slate-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${available ? '' : 'opacity-60'}" aria-pressed="${active}" data-class="${nameKey}" ${available ? '' : 'disabled'}>
-          <span><span data-i18n="${nameKey}" class="class-name block text-sm font-medium text-slate-800">${t(nameKey)}</span><span class="block text-xs text-slate-600">${time}</span></span>
+          <span><span data-i18n="${nameKey}" class="class-name block text-sm font-medium text-slate-800">${t(nameKey)}</span><span class="block text-xs text-slate-600">${timeText}</span></span>
           <span data-i18n="${availabilityKey}" class="rounded-full ${badgeColors[color]} px-2.5 py-1 text-xs font-semibold">${t(availabilityKey)}</span>
         </button>
       </li>
@@ -163,7 +169,7 @@ export function renderHero(container) {
 
         <!-- Texto pequeño bajo los botones. slate-600 y no slate-400 para mantener
              un contraste mínimo de 4.5:1 con el fondo (apartado 3.2) -->
-        <p data-i18n="hero.noCard" class="mt-4 text-sm text-slate-600">Sin tarjeta de crédito · Cancela cuando quieras</p>
+        <p data-i18n="hero.noCard" class="mt-4 text-sm text-slate-600">${t('hero.noCard')}</p>
 
         <!-- Enlace para volver a ver la intro animada (src/intro/Intro.js), que solo sale sola
              la primera vez. Carga la página con ?intro, que hace que la intro salga siempre.
