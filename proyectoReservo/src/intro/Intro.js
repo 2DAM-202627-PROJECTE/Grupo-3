@@ -647,9 +647,9 @@ function buildStartScene(section) {
   const toast = $('.card-toast');
   const toastText = $('[data-toast-text]');
 
-  // Texto de un día ("Jue 25") y de una clase ("Yoga"), sacados de la propia tarjeta
-  const dayLabel = (day) => `${day.querySelector('[data-i18n]').textContent} ${day.querySelector('b').textContent}`;
-  const dayKey = (day) => day.querySelector('[data-i18n]').dataset.i18n;
+  // Clave de traducción de una clase ("intro.yoga"), sacada de la propia tarjeta.
+  // Para el día se usa DAYS (día con número, "Jue 25"), no la tarjeta: allí el nombre
+  // corto ("Jue") y el número van separados, y al traducir el aviso se perdería el número
   const slotKey = (slot) => slot.querySelector('[data-i18n]').dataset.i18n;
 
   // --- Tarjeta viva: estados de la tarjeta ---
@@ -703,12 +703,13 @@ function buildStartScene(section) {
       .call(() => {
         toastText.dataset.i18n = 'intro.toast';
         toastText.dataset.i18nName = name;
-        toastText.dataset.i18nDayKey = dayKey(days[dayIndex]);
+        // Las claves se guardan en el aviso para que i18n.js lo traduzca si se cambia de idioma
+        toastText.dataset.i18nDayKey = DAYS[dayIndex];
         toastText.dataset.i18nServiceKey = slotKey(slots[slotIndex]);
         toastText.textContent = t('intro.toast', {
           name,
-          day: dayLabel(days[dayIndex]),
-          service: slots[slotIndex].querySelector('[data-i18n]').textContent,
+          day: t(DAYS[dayIndex]),
+          service: t(slotKey(slots[slotIndex])),
         });
       }, [], '-=0.3')
       .fromTo(toast, { autoAlpha: 0, y: 12, scale: 0.9 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.4, ease: 'back.out(2)' }, '<')
