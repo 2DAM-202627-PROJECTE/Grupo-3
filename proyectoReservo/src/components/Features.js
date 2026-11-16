@@ -24,6 +24,7 @@ import {
   ChartColumn,
   Smartphone,
 } from 'lucide';
+import { t } from '../i18n.js';
 
 // -------------------------------------------------------------
 // 2. Datos de las tarjetas
@@ -36,33 +37,33 @@ import {
 const features = [
   {
     icon: 'calendar',
-    title: 'Reservas online 24/7',
-    text: 'Tu propia página de reservas lista en minutos, integrable en tu web o Instagram.',
+    title: 'features.onlineBookings',
+    text: 'features.onlineBookingsDescription',
   },
   {
     icon: 'bell',
-    title: 'Recordatorios automáticos',
-    text: 'Email, SMS y WhatsApp antes de cada cita. Reduce los "no-shows" hasta un 70%.',
+    title: 'features.reminders',
+    text: 'features.remindersDescription',
   },
   {
     icon: 'credit-card',
-    title: 'Pagos y señales',
-    text: 'Cobra por adelantado, pide una señal o vende bonos y membresías.',
+    title: 'features.payments',
+    text: 'features.paymentsDescription',
   },
   {
     icon: 'users',
-    title: 'Gestión de equipo',
-    text: 'Horarios por empleado, salas o mesas. Cada uno ve solo su agenda.',
+    title: 'features.team',
+    text: 'features.teamDescription',
   },
   {
     icon: 'chart-column',
-    title: 'Estadísticas',
-    text: 'Ocupación, ingresos y clientes recurrentes en un panel claro.',
+    title: 'features.analytics',
+    text: 'features.analyticsDescription',
   },
   {
     icon: 'smartphone',
-    title: 'App móvil',
-    text: 'Gestiona tu negocio desde el móvil, estés donde estés.',
+    title: 'features.mobileApp',
+    text: 'features.mobileAppDescription',
   },
 ];
 
@@ -84,8 +85,8 @@ function featureCard({ icon, title, text }) {
       <div class="text-indigo-600" aria-hidden="true">
         <i data-lucide="${icon}" class="h-6 w-6 sm:h-7 sm:w-7"></i>
       </div>
-      <h3 class="mt-3 text-base font-semibold text-slate-900 sm:mt-4 sm:text-lg">${title}</h3>
-      <p class="mt-2 text-sm leading-relaxed text-slate-600">${text}</p>
+      <h3 data-i18n="${title}" class="mt-3 text-base font-semibold text-slate-900 sm:mt-4 sm:text-lg">${t(title)}</h3>
+      <p data-i18n="${text}" class="mt-2 text-sm leading-relaxed text-slate-600">${t(text)}</p>
     </article>
   `;
 }
@@ -108,10 +109,10 @@ export function renderFeatures(container) {
       <div class="mx-auto max-w-2xl text-center">
         <!-- h2 porque el h1 ya es el título del Hero (solo puede haber uno) -->
         <h2 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-          Todo lo que necesitas para gestionar reservas
+          <span data-i18n="features.heading">${t('features.heading')}</span>
         </h2>
         <p class="mt-4 text-lg text-slate-600">
-          Una sola herramienta para tu agenda, tus clientes y tus cobros.
+          <span data-i18n="features.description">${t('features.description')}</span>
         </p>
       </div>
 

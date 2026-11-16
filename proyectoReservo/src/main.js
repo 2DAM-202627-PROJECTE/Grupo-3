@@ -35,8 +35,6 @@ import { initActiveNavLink, renderNavbar } from './components/Navbar.js';
 import { renderFeatures } from './components/Features.js';
 import { renderHowItWorks } from './components/HowItWorks.js';
 import { renderPricing } from './components/Pricing.js';
-import { renderTestimonials } from './components/Testimonials.js';
-import { renderFaq } from './components/Faq.js';
 import { renderCta } from './components/Cta.js';
 import { renderNewsletter } from './components/Newsletter.js';
 import { renderFooter } from './components/Footer.js';
@@ -65,12 +63,10 @@ const sections = [
   { id: 'sectores', render: renderSectors },
   { id: 'funciones', render: renderFeatures },
   { id: 'como-funciona', render: renderHowItWorks }, // HowItWorks.js
-  // Testimonios antes de Precios: las opiniones de otros clientes dan confianza
-  // antes de ver cuánto cuesta (cambio respecto al orden del documento y del mockup)
-  { id: 'testimonios', render: renderTestimonials }, // Testimonials.js
   { id: 'precios', render: renderPricing },
-  { id: 'faq', render: renderFaq }, // Faq.js
-  { id: 'cta', render: renderCta }, // Cta.js
+  { id: 'testimonios', render: null }, // Testimonials.js
+  { id: 'faq', render: null }, // Faq.js
+  { id: 'cta', render: renderCta },
 ];
 
 // -------------------------------------------------------------

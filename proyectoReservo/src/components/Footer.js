@@ -14,10 +14,10 @@
 // enlaces que no llevan a ningún sitio (issue #28: sin enlaces rotos).
 // import.meta.env.BASE_URL es la ruta base de la web ("/" en local y "/Grupo-3/" en GitHub Pages).
 const legalLinks = [
-  { label: 'Privacidad' },
-  { label: 'Aviso legal' },
-  { label: 'Cookies', href: `${import.meta.env.BASE_URL}politica-cookies.html` },
-  { label: 'Contacto' },
+  { label: 'footer.privacy' },
+  { label: 'footer.legal' },
+  { label: 'footer.cookies', href: `${import.meta.env.BASE_URL}politica-cookies.html` },
+  { label: 'footer.contact' },
 ];
 
 // Redes sociales. Los iconos de marcas (Instagram, X, LinkedIn, YouTube) no están
@@ -46,6 +46,8 @@ const socialLinks = [
 // ---------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------
+
+import { t } from '../i18n.js';
 
 // Logo SVG inline (la "R" con degradado). Mismo diseño que el favicon.
 // Se usa inline para poder controlarlo con Tailwind (tamaño, margen…).
@@ -94,14 +96,14 @@ export function renderFooter(container) {
         <div class="flex items-center gap-3">
           ${logoSvg()}
           <span class="text-sm text-slate-600">
-            © ${year} Reservo. Todos los derechos reservados.
+            <span data-i18n="footer.copyright" data-i18n-year="${year}">${t('footer.copyright', { year })}</span>
           </span>
         </div>
 
         <!-- Redes sociales: role="group" con aria-label para que los lectores de pantalla lo reconozcan.
              Cada icono lleva role="img" + aria-label: así el lector de pantalla dice de qué red es.
              text-slate-500: los iconos necesitan un contraste de 3:1 y este gris da 4,3:1 -->
-        <div class="flex items-center gap-4" role="group" aria-label="Redes sociales">
+        <div class="flex items-center gap-4" role="group" aria-label="${t('footer.social')}" data-i18n-aria-label="footer.social">
           ${socialLinks
             .map(
               ({ svg, label }) => /*html*/ `
@@ -121,13 +123,13 @@ export function renderFooter(container) {
            Con href → enlace (subrayado al pasar el ratón); sin href → texto normal.
            text-slate-600 en los dos: el texto pequeño necesita un contraste de 4,5:1 sobre
            el fondo del footer, y slate-600 da 6,8:1 (slate-500 daría 4,3:1 y no llega) -->
-      <nav class="flex flex-wrap justify-center gap-x-6 gap-y-2" aria-label="Enlaces legales">
+      <nav class="flex flex-wrap justify-center gap-x-6 gap-y-2" aria-label="${t('footer.legalLinks')}" data-i18n-aria-label="footer.legalLinks">
         ${legalLinks
           .map(
             ({ label, href }) => /*html*/ `
           ${href
-            ? `<a href="${href}" class="text-sm text-slate-600 underline-offset-4 transition hover:text-slate-900 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded">${label}</a>`
-            : `<span class="text-sm text-slate-600">${label}</span>`}
+            ? `<a href="${href}" data-i18n="${label}" class="text-sm text-slate-600 underline-offset-4 transition hover:text-slate-900 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded">${t(label)}</a>`
+            : `<span data-i18n="${label}" class="text-sm text-slate-600">${t(label)}</span>`}
         `,
           )
           .join('')}

@@ -13,6 +13,8 @@
 // 1. Datos de los pasos
 // -------------------------------------------------------------
 
+import { t } from '../i18n.js';
+
 // Datos de los 3 pasos.
 // El profesor pidió desarrollarlos con más detalle (issue #12).
 // Cada objeto contiene:
@@ -22,18 +24,18 @@
 const steps = [
   {
     number: 1,
-    title: 'Crea tu cuenta',
-    text: 'Regístrate gratis en menos de dos minutos. Selecciona tu sector (peluquería, clínica, restaurante o gimnasio) y personaliza el nombre y la marca de tu negocio.',
+    title: 'steps.account',
+    text: 'steps.accountDescription',
   },
   {
     number: 2,
-    title: 'Configura tus servicios',
-    text: 'Define tus horarios, disponibilidad y duración de cada cita. Añade tu catálogo de servicios, precios, empleados asignados o mesas y salas según tu actividad.',
+    title: 'steps.services',
+    text: 'steps.servicesDescription',
   },
   {
     number: 3,
-    title: 'Comparte tu enlace',
-    text: 'Publica tu enlace de reservas en tu web, perfil de Instagram, WhatsApp o Google Business. Tus clientes reservarán y pagarán online de forma autónoma 24/7.',
+    title: 'steps.share',
+    text: 'steps.shareDescription',
   },
 ];
 
@@ -57,12 +59,12 @@ function stepItem({ number, title, text }) {
 
       <!-- Título del paso -->
       <h3 class="mt-6 text-xl font-semibold text-slate-900">
-        ${title}
+        <span data-i18n="${title}">${t(title)}</span>
       </h3>
 
       <!-- Descripción desarrollada -->
       <p class="mt-3 max-w-sm text-sm leading-relaxed text-slate-600">
-        ${text}
+        <span data-i18n="${text}">${t(text)}</span>
       </p>
     </article>
   `;
@@ -83,10 +85,10 @@ export function renderHowItWorks(container) {
       <!-- Cabecera de la sección -->
       <div class="mx-auto max-w-2xl text-center">
         <h2 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-          Empieza en 3 pasos
+          <span data-i18n="steps.heading">${t('steps.heading')}</span>
         </h2>
         <p class="mt-4 text-lg text-slate-600">
-          En menos de 10 minutos tendrás tu agenda online.
+          <span data-i18n="steps.description">${t('steps.description')}</span>
         </p>
       </div>
 

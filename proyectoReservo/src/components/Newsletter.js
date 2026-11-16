@@ -14,6 +14,8 @@
 // 1. Configuración
 // -------------------------------------------------------------
 
+import { t } from '../i18n.js';
+
 // Clases comunes para el foco visible al navegar con el teclado (accesibilidad)
 const focusRing = 'focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500';
 
@@ -46,9 +48,9 @@ export function renderNewsletter(container) {
            max-w-xl: ancho máximo para que el campo de email no quede demasiado largo -->
       <div class="mx-auto max-w-xl text-center">
         <!-- id del título: el formulario lo usa como nombre (aria-labelledby) -->
-        <h2 id="newsletter-title" class="text-2xl font-bold tracking-tight text-slate-900">Suscríbete a la newsletter</h2>
+        <h2 id="newsletter-title" data-i18n="newsletter.heading" class="text-2xl font-bold tracking-tight text-slate-900">${t('newsletter.heading')}</h2>
         <p class="mt-2 text-sm text-slate-600">
-          Novedades de Reservo y consejos para tu negocio, una vez al mes.
+          <span data-i18n="newsletter.description">${t('newsletter.description')}</span>
         </p>
 
         <!-- aria-labelledby: el lector de pantalla anuncia el formulario con el texto del título.
@@ -59,7 +61,7 @@ export function renderNewsletter(container) {
         <form id="newsletter-form" class="mt-6 text-left" aria-labelledby="newsletter-title" novalidate>
           <!-- Etiqueta visible del campo: el documento pide que cada campo tenga la suya (apartado 3.2).
                for="newsletter-email" la une al input, así al pulsarla se pone el cursor en el campo -->
-          <label for="newsletter-email" class="text-sm font-medium text-slate-700">Tu email:</label>
+          <label for="newsletter-email" class="text-sm font-medium text-slate-700"><span data-i18n="newsletter.email">${t('newsletter.email')}</span></label>
 
           <!-- Campo y botón: apilados en móvil (flex-col) y en fila a partir de sm (sm:flex-row) -->
           <div class="mt-2 flex flex-col gap-3 sm:flex-row">
@@ -77,7 +79,8 @@ export function renderNewsletter(container) {
               name="email"
               type="email"
               autocomplete="email"
-              placeholder="tu@email.com"
+              placeholder="${t('newsletter.emailPlaceholder')}"
+              data-i18n-placeholder="newsletter.emailPlaceholder"
               required
               aria-describedby="newsletter-message"
               class="min-w-0 flex-1 rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder:text-slate-500 transition hover:border-slate-400 aria-invalid:border-red-500 ${focusRing}"
@@ -87,7 +90,7 @@ export function renderNewsletter(container) {
               type="submit"
               class="shrink-0 rounded-lg bg-indigo-600 px-6 py-3 font-semibold text-white transition hover:bg-indigo-500 ${focusRing}"
             >
-              Suscribirme
+              <span data-i18n="newsletter.submit">${t('newsletter.submit')}</span>
             </button>
           </div>
 
@@ -103,7 +106,7 @@ export function renderNewsletter(container) {
               required
               class="mt-0.5 h-4 w-4 shrink-0 accent-indigo-500 ${focusRing}"
             />
-            Acepto que Reservo guarde mi email para enviarme la newsletter.
+            <span data-i18n="newsletter.consent">${t('newsletter.consent')}</span>
           </label>
 
           <!-- Mensaje del formulario: los errores o la confirmación.
@@ -167,8 +170,9 @@ function setupNewsletter(container) {
 
   // Muestra un error: texto en rojo debajo del formulario (no solo color: el documento
   // pide que los errores se lean como texto, apartado 3.2) y el foco en el campo que falla.
-  function showError(text, input) {
-    message.textContent = text;
+  function showError(key, input) {
+    message.dataset.i18n = key;
+    message.textContent = t(key);
     message.className = 'mt-3 min-h-5 text-sm text-red-600';
     input.setAttribute('aria-invalid', 'true');
     input.focus();
@@ -178,6 +182,7 @@ function setupNewsletter(container) {
   function clearError(input) {
     input.removeAttribute('aria-invalid');
     message.textContent = '';
+    delete message.dataset.i18n;
   }
 
   // El error se quita en cuanto el usuario escribe en el campo o marca la casilla
@@ -194,24 +199,23 @@ function setupNewsletter(container) {
 
     // a) Validación: se comprueba en orden y se para en el primer error
     if (email === '') {
-      showError('Escribe tu email.', emailInput);
+      showError('newsletter.emptyEmail', emailInput);
       return;
     }
     if (!EMAIL_PATTERN.test(email)) {
-      showError('El email no es válido. Ejemplo: nombre@negocio.com', emailInput);
+      showError('newsletter.invalidEmail', emailInput);
       return;
     }
     if (!consentInput.checked) {
-      showError('Marca la casilla para que podamos guardar tu email.', consentInput);
+      showError('newsletter.consentRequired', consentInput);
       return;
     }
 
     // b) Todo correcto: se guarda el email y se muestra la confirmación en verde.
     // toLowerCase(): "Ana@Negocio.com" y "ana@negocio.com" cuentan como el mismo email
     const isNew = addSubscriber(email.toLowerCase());
-    message.textContent = isNew
-      ? '¡Gracias! Te has suscrito a la newsletter.'
-      : 'Este email ya estaba suscrito. ¡Gracias!';
+    message.dataset.i18n = isNew ? 'newsletter.success' : 'newsletter.alreadySubscribed';
+    message.textContent = t(message.dataset.i18n);
     message.className = 'mt-3 min-h-5 text-sm text-emerald-700';
 
     // Vacía el formulario. reset() no borra el mensaje porque es un <p>, no un campo

@@ -16,6 +16,8 @@
 // 1. Datos de los planes
 // -------------------------------------------------------------
 
+import { t } from '../i18n.js';
+
 // Datos de los planes.
 // Cada objeto es un plan con:
 //   - id:          identificador sin acentos ni espacios, para los id del HTML
@@ -32,46 +34,46 @@
 const plans = [
   {
     id: 'basico',
-    name: 'Básico',
-    description: 'Autónomos y negocios con un profesional',
+    name: 'pricing.basic',
+    description: 'pricing.basicDescription',
     price: 19,
     features: [
-      '1 profesional',
-      'Reservas online 24/7',
-      'Recordatorios por email',
-      'Estadísticas básicas',
-      'Soporte por email',
+      'pricing.oneProfessional',
+      'features.onlineBookings',
+      'pricing.emailReminders',
+      'pricing.basicAnalytics',
+      'pricing.emailSupport',
     ],
-    cta: 'Elegir plan',
+    cta: 'pricing.choosePlan',
   },
   {
     id: 'pro',
-    name: 'Pro',
-    description: 'Negocios con equipo',
+    name: 'pricing.pro',
+    description: 'pricing.proDescription',
     price: 49,
     features: [
-      'Hasta 5 profesionales',
-      'Recordatorios por email y WhatsApp',
-      'Pagos y señales',
-      'Estadísticas completas',
-      'Soporte por email y chat',
+      'pricing.upToFive',
+      'pricing.emailWhatsappReminders',
+      'features.payments',
+      'pricing.fullAnalytics',
+      'pricing.chatSupport',
     ],
-    cta: 'Empezar prueba',
+    cta: 'pricing.startTrial',
     featured: true,
   },
   {
     id: 'empresa',
-    name: 'Empresa',
-    description: 'Cadenas y negocios con varios locales',
+    name: 'pricing.enterprise',
+    description: 'pricing.enterpriseDescription',
     price: null,
     features: [
-      'Profesionales ilimitados',
-      'Locales ilimitados',
-      'Recordatorios por email y WhatsApp',
-      'Pagos y señales',
-      'Gestor dedicado',
+      'pricing.unlimitedProfessionals',
+      'pricing.unlimitedLocations',
+      'pricing.emailWhatsappReminders',
+      'features.payments',
+      'pricing.dedicatedManager',
     ],
-    cta: 'Contactar',
+    cta: 'pricing.contact',
   },
 ];
 
@@ -97,19 +99,20 @@ function priceBlock(price, annual = false) {
     // La nota vacía (h-5) ocupa el mismo alto que en los otros planes,
     // así las listas de las 3 tarjetas empiezan a la misma altura
     return /*html*/ `
-      <p class="text-4xl font-extrabold text-slate-900">A medida</p>
+      <p data-i18n="pricing.custom" class="text-4xl font-extrabold text-slate-900">${t('pricing.custom')}</p>
       <p class="mt-1 h-5 text-xs text-slate-600"></p>
     `;
   }
 
   const value = annual ? annualPrice(price) : price;
-  const note = annual ? `Facturado anualmente (${value * 12} €/año)` : 'Facturado mensualmente';
+  const noteKey = annual ? 'pricing.billedAnnually' : 'pricing.billedMonthly';
+  const note = annual ? t(noteKey, { amount: value * 12 }) : t(noteKey);
 
   return /*html*/ `
     <p class="text-4xl font-extrabold text-slate-900">
-      ${value}€<span class="text-base font-normal text-slate-600">/mes</span>
+      ${value}€<span data-i18n="pricing.month" class="text-base font-normal text-slate-600">${t('pricing.month')}</span>
     </p>
-    <p class="mt-1 h-5 text-xs text-slate-600">${note}</p>
+    <p data-i18n="${noteKey}" ${annual ? `data-i18n-amount="${value * 12}"` : ''} class="mt-1 h-5 text-xs text-slate-600">${note}</p>
   `;
 }
 
@@ -144,7 +147,7 @@ function planCard({ id, name, description, price, features, cta, featured = fals
   // El badge solo existe en el plan destacado. Si no lo es, se deja un string vacío.
   // absolute + -top-3 + left-1/2 + -translate-x-1/2: centrado sobre el borde superior.
   const badge = featured
-    ? /*html*/ `<span class="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-indigo-600 px-3 py-1 text-xs font-semibold text-white">Más popular</span>`
+    ? /*html*/ `<span data-i18n="pricing.mostPopular" class="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-indigo-600 px-3 py-1 text-xs font-semibold text-white">${t('pricing.mostPopular')}</span>`
     : '';
 
   // En móvil solo se ve un plan a la vez (apartado 7.2 del documento: "los planes de precios
@@ -163,8 +166,8 @@ function planCard({ id, name, description, price, features, cta, featured = fals
       ${badge}
 
       <!-- Nombre y descripción del plan -->
-      <h3 class="text-lg font-semibold text-slate-900">${name}</h3>
-      <p class="mt-1 text-sm text-slate-600">${description}</p>
+      <h3 ${name.includes('.') ? `data-i18n="${name}"` : ''} class="text-lg font-semibold text-slate-900">${name.includes('.') ? t(name) : name}</h3>
+      <p data-i18n="${description}" class="mt-1 text-sm text-slate-600">${t(description)}</p>
 
       <!-- Precio. Al empezar se muestra el mensual.
            data-price guarda el precio mensual para que el interruptor pueda recalcularlo.
@@ -186,7 +189,7 @@ function planCard({ id, name, description, price, features, cta, featured = fals
             (feature) => /*html*/ `
               <li class="flex items-center gap-2">
                 <span class="text-indigo-600" aria-hidden="true">✓</span>
-                ${feature}
+                <span data-i18n="${feature}">${t(feature)}</span>
               </li>
             `
           )
@@ -196,7 +199,7 @@ function planCard({ id, name, description, price, features, cta, featured = fals
       <!-- Botón del plan: lleva al formulario de prueba gratuita (#cta).
            Principal en el plan destacado y secundario en los demás -->
       <a href="#cta" class="${buttonBase} ${featured ? buttonPrimary : buttonSecondary}">
-        ${cta}
+        <span data-i18n="${cta}">${t(cta)}</span>
       </a>
     </div>
   `;
@@ -221,7 +224,7 @@ function planTab({ id, name, featured = false }) {
       tabindex="${featured ? 0 : -1}"
       class="flex-1 rounded-lg px-3 py-2.5 text-sm font-semibold text-slate-600 transition hover:text-slate-900 aria-selected:bg-indigo-600 aria-selected:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
     >
-      ${name}
+      ${name.includes('.') ? `<span data-i18n="${name}">${t(name)}</span>` : name}
     </button>
   `;
 }
@@ -243,10 +246,10 @@ export function renderPricing(container) {
       <!-- Cabecera de la sección: título y subtítulo centrados -->
       <div class="mx-auto max-w-2xl text-center">
         <h2 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-          Precios simples y transparentes
+          <span data-i18n="pricing.heading">${t('pricing.heading')}</span>
         </h2>
         <p class="mt-4 text-lg text-slate-600">
-          14 días gratis en cualquier plan. Sin permanencia.
+          <span data-i18n="pricing.description">${t('pricing.description')}</span>
         </p>
       </div>
 
@@ -257,7 +260,7 @@ export function renderPricing(container) {
            select-none evita que se seleccione el texto al hacer clic rápido, y py-3
            agranda la zona de pulsación hasta 44 px de alto (mínimo para móvil, apartado 8.2.2) -->
       <div class="mt-10 flex items-center justify-center gap-3 text-sm font-medium">
-        <span data-billing-label="monthly" class="cursor-pointer select-none py-3 text-slate-900 transition-colors">Mensual</span>
+        <span data-billing-label="monthly" data-i18n="pricing.monthly" class="cursor-pointer select-none py-3 text-slate-900 transition-colors">${t('pricing.monthly')}</span>
 
         <!-- El interruptor es un <button> con role="switch": así los lectores de pantalla
              lo anuncian como un interruptor y se puede usar con el teclado (Tab + Espacio).
@@ -276,14 +279,15 @@ export function renderPricing(container) {
           id="billing-toggle"
           role="switch"
           aria-checked="false"
-          aria-label="Pago anual"
+          aria-label="${t('pricing.annualBilling')}"
+          data-i18n-aria-label="pricing.annualBilling"
           class="group relative inline-flex h-7 w-12 shrink-0 items-center rounded-full bg-slate-300 transition before:absolute before:-inset-2 hover:bg-slate-400 aria-checked:bg-indigo-600 aria-checked:hover:bg-indigo-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
         >
           <!-- Bolita del interruptor: empieza a la izquierda (translate-x-1) -->
           <span class="inline-block h-5 w-5 translate-x-1 rounded-full bg-white transition group-aria-checked:translate-x-6"></span>
         </button>
 
-        <span data-billing-label="annual" class="cursor-pointer select-none py-3 text-slate-600 transition-colors">Anual</span>
+        <span data-billing-label="annual" data-i18n="pricing.annual" class="cursor-pointer select-none py-3 text-slate-600 transition-colors">${t('pricing.annual')}</span>
         <!-- Etiqueta con el descuento del pago anual (apartado 2.4 del documento).
              En mensual es suave (fondo cian transparente) y en anual se rellena de cian
              para reforzar que el descuento se está aplicando (lo cambia setBilling) -->
@@ -299,7 +303,7 @@ export function renderPricing(container) {
       <!-- Pestañas de los planes: solo en móvil y tablet (lg:hidden las oculta en escritorio,
            donde se ven las tres tarjetas a la vez). Fondo gris con las pestañas dentro,
            como un control segmentado. role="tablist" agrupa las pestañas para el lector de pantalla -->
-      <div role="tablist" aria-label="Planes" class="mx-auto mt-8 flex max-w-md gap-1 rounded-xl border border-white/90 bg-white/55 p-1 backdrop-blur lg:hidden">
+      <div role="tablist" aria-label="${t('pricing.plans')}" data-i18n-aria-label="pricing.plans" class="mx-auto mt-8 flex max-w-md gap-1 rounded-xl border border-white/90 bg-white/55 p-1 backdrop-blur lg:hidden">
         ${plans.map(planTab).join('')}
       </div>
 
@@ -373,9 +377,9 @@ function setupBillingToggle(container) {
 
     // Texto que leerá el lector de pantalla (por el aria-live del párrafo).
     // textContent y no innerHTML: es solo texto, sin etiquetas
-    status.textContent = annual
-      ? 'Mostrando precios con pago anual, con un 20 % de descuento'
-      : 'Mostrando precios con pago mensual';
+    const statusKey = annual ? 'pricing.annualDiscount' : 'pricing.monthlyBilling';
+    status.dataset.i18n = statusKey;
+    status.textContent = t(statusKey);
 
     // Recorre los bloques de precio que tienen data-price (Básico y Pro)
     // y los vuelve a generar con el precio mensual o el anual, con un fundido:

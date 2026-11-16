@@ -14,6 +14,8 @@
 // 1. Configuración
 // -------------------------------------------------------------
 
+import { t } from '../i18n.js';
+
 // Clases comunes para el foco visible al navegar con el teclado (accesibilidad)
 const focusRing = 'focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500';
 
@@ -47,9 +49,9 @@ export function renderCta(container) {
         <div class="mx-auto max-w-2xl text-center">
           <!-- id del título: el formulario lo usa como nombre (aria-labelledby) -->
           <h2 id="cta-title" class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-            ¿Listo para llenar tu agenda?
+            <span data-i18n="cta.heading">${t('cta.heading')}</span>
           </h2>
-          <p class="mt-4 text-lg text-slate-600">Empieza tu prueba gratuita de 14 días. Sin compromiso.</p>
+          <p data-i18n="cta.description" class="mt-4 text-lg text-slate-600">${t('cta.description')}</p>
 
           <!-- aria-labelledby: el lector de pantalla anuncia el formulario con el texto del título.
                novalidate: desactiva los avisos del navegador para usar los nuestros (setupCta),
@@ -58,7 +60,7 @@ export function renderCta(container) {
           <form id="free-trial-form" class="mt-8 text-left" aria-labelledby="cta-title" novalidate>
             <!-- Etiqueta visible del campo (apartado 3.2 del documento).
                  for="free-trial-email" la une al input: al pulsarla se pone el cursor en el campo -->
-            <label for="free-trial-email" class="text-sm font-medium text-slate-700">Correo electrónico:</label>
+            <label for="free-trial-email" class="text-sm font-medium text-slate-700"><span data-i18n="form.email">${t('form.email')}</span>:</label>
 
             <!-- Campo y botón: apilados en móvil (flex-col) y en fila a partir de sm (sm:flex-row) -->
             <div class="mt-2 flex flex-col gap-3 sm:flex-row">
@@ -75,7 +77,8 @@ export function renderCta(container) {
                 type="email"
                 required
                 autocomplete="email"
-                placeholder="tu@empresa.com"
+                placeholder="${t('form.trialEmailPlaceholder')}"
+                data-i18n-placeholder="form.trialEmailPlaceholder"
                 aria-describedby="free-trial-message"
                 class="min-w-0 flex-1 rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder:text-slate-500 transition hover:border-slate-400 aria-invalid:border-red-500 ${focusRing}"
               />
@@ -84,7 +87,7 @@ export function renderCta(container) {
                 type="submit"
                 class="shrink-0 rounded-lg bg-indigo-600 px-6 py-3 font-semibold text-white shadow-lg shadow-indigo-500/30 transition hover:bg-indigo-500 ${focusRing}"
               >
-                Empezar
+                <span data-i18n="cta.submit">${t('cta.submit')}</span>
               </button>
             </div>
 
@@ -114,8 +117,9 @@ function setupCta(container) {
 
   // Muestra un error: texto en rojo debajo del campo (no solo color: el documento
   // pide que los errores se lean como texto, apartado 3.2) y el foco en el campo
-  function showError(text) {
-    message.textContent = text;
+  function showError(key) {
+    message.dataset.i18n = key;
+    message.textContent = t(key);
     message.className = `${messageBase} text-red-600`;
     emailInput.setAttribute('aria-invalid', 'true');
     emailInput.focus();
@@ -125,6 +129,7 @@ function setupCta(container) {
   emailInput.addEventListener('input', () => {
     emailInput.removeAttribute('aria-invalid');
     message.textContent = '';
+    delete message.dataset.i18n;
   });
 
   // --- Envío del formulario ---
@@ -137,17 +142,19 @@ function setupCta(container) {
 
     // a) Validación: primero que no esté vacío y después que tenga forma de email
     if (email === '') {
-      showError('Escribe tu email para empezar la prueba.');
+      showError('cta.emptyEmail');
       return;
     }
     if (!EMAIL_PATTERN.test(email)) {
-      showError('Introduce un email válido, por ejemplo: nombre@empresa.com');
+      showError('cta.invalidEmail');
       return;
     }
 
     // b) Todo correcto: no hay servidor, así que la prueba no se crea de verdad.
     //    Se muestra la confirmación en verde y se vacía el campo
-    message.textContent = `¡Listo! Te hemos enviado un email a ${email} para activar tu prueba gratuita de 14 días.`;
+    message.dataset.i18n = 'cta.confirmation';
+    message.dataset.i18nEmail = email;
+    message.textContent = t('cta.confirmation', { email });
     message.className = `${messageBase} text-emerald-700`;
     form.reset();
   });
