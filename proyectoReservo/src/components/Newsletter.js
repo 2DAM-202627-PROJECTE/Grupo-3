@@ -325,12 +325,12 @@ function setupNewsletter(container) {
       return;
     }
 
-    // b) Todo correcto: se guarda el email y se muestra la confirmación en verde.
-    // toLowerCase(): "Ana@Negocio.com" y "ana@negocio.com" cuentan como el mismo email
-    const isNew = addSubscriber(email.toLowerCase());
-    message.dataset.i18n = isNew ? 'newsletter.success' : 'newsletter.alreadySubscribed';
-    message.textContent = t(message.dataset.i18n);
-    message.className = 'mt-3 min-h-5 text-sm text-emerald-700';
+    // b) Envío a Mailchimp. El botón se bloquea mientras esperamos la respuesta.
+    button.disabled = true;
+    message.textContent = '';
+    try {
+      const mailchimpResponse = await subscribeWithRetry(email.toLowerCase());
+      const response = mailchimpMessage(mailchimpResponse, email);
 
       if (response.ok) {
         // Confirmación en verde y formulario vacío.

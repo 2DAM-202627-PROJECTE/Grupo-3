@@ -25,6 +25,14 @@ function updateDocumentLanguage() {
   document.title = t('document.title');
   const description = document.querySelector('meta[name="description"]');
   if (description) description.content = t('document.description');
+  const openGraphTitle = document.querySelector('meta[property="og:title"]');
+  if (openGraphTitle) openGraphTitle.content = t('document.title');
+  const openGraphDescription = document.querySelector('meta[property="og:description"]');
+  if (openGraphDescription) openGraphDescription.content = t('document.description');
+  const openGraphLocale = document.querySelector('meta[property="og:locale"]');
+  if (openGraphLocale) {
+    openGraphLocale.content = { es: 'es_ES', en: 'en_US', ca: 'ca_ES' }[currentLanguage];
+  }
 }
 
 function translationValues(element) {
