@@ -169,7 +169,7 @@ export function renderHero(container) {
 
         <!-- Texto pequeño bajo los botones. slate-600 y no slate-400 para mantener
              un contraste mínimo de 4.5:1 con el fondo (apartado 3.2) -->
-        <p data-i18n="hero.noCard" class="mt-4 text-sm text-slate-600">Sin tarjeta de crédito · Cancela cuando quieras</p>
+        <p data-i18n="hero.noCard" class="mt-4 text-sm text-slate-600">${t('hero.noCard')}</p>
 
         <!-- Enlace para volver a ver la intro animada (src/intro/Intro.js), que solo sale sola
              la primera vez. Carga la página con ?intro, que hace que la intro salga siempre.

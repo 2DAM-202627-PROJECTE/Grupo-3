@@ -1,5 +1,5 @@
 export default {
-  'language.changeTo': 'Canvia l’idioma a {language}',
+  'language.label': 'Idioma',
   'nav.features': 'Funcions',
   'nav.howItWorks': 'Com funciona',
   'nav.pricing': 'Preus',

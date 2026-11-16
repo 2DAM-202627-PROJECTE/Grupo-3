@@ -10,13 +10,14 @@
 //   4. Menú móvil        → abrir y cerrar el desplegable: ☰, enlaces, Escape y clic fuera
 //   5. Barra fija        → se queda arriba al bajar y le aparece fondo, borde y sombra
 //   6. Enlace activo     → initActiveNavLink (lo llama main.js): marca la sección que se ve
+//   7. Idioma            → abrir y cerrar el desplegable de idioma y cambiar de idioma (issue #23)
 // =============================================================
 
 // -------------------------------------------------------------
 // 1. Datos y estilos
 // -------------------------------------------------------------
 
-import { t } from '../i18n.js';
+import { getLanguage, LANGUAGES, setLanguage, t } from '../i18n.js';
 
 // Enlaces a las secciones de la página (RF1). Si se añade o quita alguno, solo hay que tocar este array.
 const links = [
@@ -53,18 +54,67 @@ function navLink({ label, href }) {
   `;
 }
 
-function languageToggle(className) {
+// -------------------------------------------------------------
+// 2b. Selector de idioma (issue #23)
+// -------------------------------------------------------------
+
+// Un botón de idioma. lang="en": el lector de pantalla pronuncia "English" en inglés.
+// aria-pressed marca el idioma actual (lo pone setupLanguageMenu) y los estilos lo usan
+// con aria-pressed: (fondo lila y texto índigo). className: el tamaño de cada sitio.
+// withCheck: la marca ✓ solo va en el desplegable; en móvil no cabe y el borde ya lo marca
+function languageOption(code, className, withCheck = true) {
   return /*html*/ `
-    <button
-      type="button"
-      class="${className} items-center gap-1 rounded-lg text-sm text-slate-600 transition hover:bg-slate-100 ${focusRing}"
-      data-language-toggle
-      aria-label="${t('language.changeTo', { language: 'EN' })}"
-    >
-      <span data-language-code="es" class="font-bold text-indigo-700">ES</span>
-      <span aria-hidden="true">/</span>
-      <span data-language-code="en" class="text-slate-400">EN</span>
+    <button type="button" lang="${code}" data-language-option="${code}" aria-pressed="false"
+      class="group flex items-center gap-3 rounded-lg text-sm font-medium text-slate-700 transition hover:bg-slate-100 aria-pressed:bg-indigo-50 aria-pressed:font-semibold aria-pressed:text-indigo-700 ${className} ${focusRing}">
+      ${LANGUAGES[code]}
+      <!-- Marca ✓ del idioma actual: invisible si no está pulsado (group-aria-pressed:visible) -->
+      ${withCheck ? /*html*/ `<svg class="invisible h-4 w-4 shrink-0 group-aria-pressed:visible" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+        <path d="M5 12.5l4.5 4.5L19 7.5" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>` : ''}
     </button>
+  `;
+}
+
+// Escritorio: botón con el globo y el código del idioma ("ES") que abre un desplegable
+// con los tres idiomas. Solo se ve a partir de md (hidden md:block): en móvil la barra no
+// tiene sitio y los idiomas van dentro del menú ☰ (mobileLanguageOptions)
+function languageMenu() {
+  return /*html*/ `
+    <div class="relative hidden md:block" data-language-menu>
+      <!-- aria-expanded: si el desplegable está abierto; aria-controls: qué desplegable abre.
+           aria-label lo rellena setupLanguageMenu: "Idioma: Español" -->
+      <button id="language-button" type="button" aria-expanded="false" aria-controls="language-options"
+        class="group inline-flex items-center gap-1.5 rounded-lg px-2.5 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900 aria-expanded:bg-slate-100 ${focusRing}">
+        <!-- Globo: el icono que se suele usar para el idioma -->
+        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="12" cy="12" r="9" />
+          <path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z" />
+        </svg>
+        <span data-language-code>${getLanguage().toUpperCase()}</span>
+        <!-- Flecha: gira al abrir (group-aria-expanded:rotate-180) -->
+        <svg class="h-3.5 w-3.5 transition-transform group-aria-expanded:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+          <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </button>
+
+      <!-- Desplegable: debajo del botón y alineado a su derecha (right-0), oculto al empezar -->
+      <div id="language-options" class="absolute right-0 top-full mt-2 hidden w-44 rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl shadow-indigo-500/10">
+        ${Object.keys(LANGUAGES).map((code) => languageOption(code, 'w-full justify-between px-3 py-2 text-left')).join('')}
+      </div>
+    </div>
+  `;
+}
+
+// Móvil: dentro del menú ☰, debajo de los enlaces, los tres idiomas en una fila.
+// role="group" + aria-labelledby: el lector de pantalla los anuncia juntos como "Idioma"
+function mobileLanguageOptions() {
+  return /*html*/ `
+    <li class="mt-2 border-t border-slate-200 px-3 pt-3 md:hidden">
+      <p id="mobile-language-label" data-i18n="language.label" class="text-xs font-semibold uppercase tracking-wider text-slate-500">${t('language.label')}</p>
+      <div class="mt-2 flex gap-2" role="group" aria-labelledby="mobile-language-label">
+        ${Object.keys(LANGUAGES).map((code) => languageOption(code, 'flex-1 justify-center border border-slate-200 px-2 py-2.5 aria-pressed:border-indigo-300', false)).join('')}
+      </div>
+    </li>
   `;
 }
 
@@ -99,22 +149,21 @@ export function renderNavbar(container) {
         <div id="primary-navigation" class="absolute inset-x-0 top-full hidden border-b border-slate-200 bg-white px-4 py-4 shadow-xl md:static md:flex md:flex-1 md:justify-center md:border-0 md:bg-transparent md:p-0 md:shadow-none">
           <ul class="flex flex-col gap-1 md:flex-row md:items-center md:gap-5 lg:gap-8">
             ${links.map(navLink).join('')}
-            <li class="md:hidden">
-              ${languageToggle('inline-flex px-3 py-2')}
-            </li>
             <!-- "Iniciar sesión" dentro del desplegable, solo en móvil (en escritorio va a la derecha).
                  Es texto y no un enlace porque la web todavía no tiene página de login
                  (issue #28: sin enlaces rotos). text-slate-600: el mismo gris que los enlaces -->
             <li class="md:hidden">
               <span data-i18n="nav.login" class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-600">${t('nav.login')}</span>
             </li>
+            <!-- Idiomas, solo en móvil (en escritorio es el desplegable de la derecha) -->
+            ${mobileLanguageOptions()}
           </ul>
         </div>
 
-        <!-- Acciones de la derecha: "Iniciar sesión" (solo escritorio), "Prueba gratis" y el botón del menú (solo móvil).
+        <!-- Acciones de la derecha: idioma e "Iniciar sesión" (solo escritorio), "Prueba gratis" y el botón del menú (solo móvil).
              "Prueba gratis" se ve también en móvil, junto al botón del menú, como en el mockup -->
         <div class="flex shrink-0 items-center gap-3">
-          ${languageToggle('hidden md:inline-flex px-2 py-2')}
+          ${languageMenu()}
           <!-- "Iniciar sesión" en escritorio: también es texto, como en el desplegable de móvil -->
           <span data-i18n="nav.login" class="hidden rounded-lg text-sm font-medium text-slate-600 md:inline">${t('nav.login')}</span>
           <!-- Botón pequeño (px-4 py-2 text-sm), como en el mockup -->
@@ -193,6 +242,9 @@ export function renderNavbar(container) {
     }
   });
 
+  // Selector de idioma (apartado 7)
+  setupLanguageMenu(container);
+
   // -----------------------------------------------------------
   // 5. Barra fija que cambia al hacer scroll
   // -----------------------------------------------------------
@@ -263,4 +315,72 @@ export function initActiveNavLink() {
   );
 
   sections.forEach((section) => observer.observe(section));
+}
+
+// -------------------------------------------------------------
+// 7. Selector de idioma (issue #23)
+// -------------------------------------------------------------
+
+// Abre y cierra el desplegable de idioma (escritorio) y cambia el idioma al pulsar
+// cualquier botón de idioma (los del desplegable y los del menú de móvil)
+function setupLanguageMenu(container) {
+  const menu = container.querySelector('[data-language-menu]');
+  const button = container.querySelector('#language-button');
+  const panel = container.querySelector('#language-options');
+  const options = container.querySelectorAll('[data-language-option]');
+
+  // --- Abrir o cerrar el desplegable (igual que el menú móvil del apartado 4) ---
+  const setOpen = (isOpen) => {
+    button.setAttribute('aria-expanded', String(isOpen));
+    panel.classList.toggle('hidden', !isOpen);
+  };
+  const isOpen = () => button.getAttribute('aria-expanded') === 'true';
+
+  // --- Pone el botón y las opciones como el idioma actual ---
+  //   - el código del botón ("ES") y su aria-label ("Idioma: Español")
+  //   - aria-pressed="true" solo en los botones del idioma actual (los estilos marcan ese)
+  const update = () => {
+    const language = getLanguage();
+    button.querySelector('[data-language-code]').textContent = language.toUpperCase();
+    button.setAttribute('aria-label', `${t('language.label')}: ${LANGUAGES[language]}`);
+    options.forEach((option) => {
+      option.setAttribute('aria-pressed', String(option.dataset.languageOption === language));
+    });
+  };
+
+  // --- Clic en el botón del globo: abre o cierra ---
+  button.addEventListener('click', () => setOpen(!isOpen()));
+
+  // --- Clic en un idioma: se cambia toda la página (i18n.js) y se actualiza el selector.
+  //     Si era el desplegable, se cierra y el foco vuelve al botón del globo ---
+  options.forEach((option) => {
+    option.addEventListener('click', () => {
+      setLanguage(option.dataset.languageOption);
+      update();
+      if (panel.contains(option)) {
+        setOpen(false);
+        button.focus();
+      }
+    });
+  });
+
+  // --- Escape: cierra el desplegable y devuelve el foco al botón ---
+  menu.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && isOpen()) {
+      setOpen(false);
+      button.focus();
+    }
+  });
+
+  // --- Clic fuera, o el foco sale con Tab: se cierra ---
+  // relatedTarget es el elemento que recibe el foco; si no está dentro del selector, se cierra
+  document.addEventListener('click', (event) => {
+    if (isOpen() && !menu.contains(event.target)) setOpen(false);
+  });
+  menu.addEventListener('focusout', (event) => {
+    if (isOpen() && !menu.contains(event.relatedTarget)) setOpen(false);
+  });
+
+  // Al empezar, el selector ya muestra el idioma con el que se ha cargado la página
+  update();
 }

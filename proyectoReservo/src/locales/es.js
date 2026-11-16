@@ -1,5 +1,5 @@
 export default {
-  'language.changeTo': 'Cambiar idioma a {language}',
+  'language.label': 'Idioma',
   'nav.features': 'Funciones',
   'nav.howItWorks': 'Cómo funciona',
   'nav.pricing': 'Precios',

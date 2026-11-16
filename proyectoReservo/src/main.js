@@ -42,7 +42,7 @@ import { renderNewsletter } from './components/Newsletter.js';
 import { renderFooter } from './components/Footer.js';
 import { renderPreferencesBar } from './components/PreferencesBar.js';
 
-// Idioma de la página: lee el guardado y activa el botón ES/EN/CA del menú (issue #23)
+// Idioma de la página (issue #23): el elegido en el menú o, si no, el del navegador
 import { initializeLanguage } from './i18n.js';
 
 // Animación de las secciones al hacer scroll (no es un componente, no pinta nada)
@@ -148,8 +148,8 @@ document.body.appendChild(preferencesBar);
 renderPreferencesBar(preferencesBar);
 
 // Traducción (issue #23). Va después de pintar todo (secciones, footer y aviso de cookies):
-// pone los textos en el idioma guardado y activa el botón de idioma del menú
-initializeLanguage(document);
+// pone el idioma en el <html> y el título de la pestaña. El selector de idioma está en Navbar.js
+initializeLanguage();
 
 // -------------------------------------------------------------
 // 7. Al hacer scroll

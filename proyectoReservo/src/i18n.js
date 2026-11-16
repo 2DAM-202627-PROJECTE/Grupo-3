@@ -1,12 +1,68 @@
+// =============================================================
+// i18n.js — Traducción de la página (RF4, issue #23)
+// Los textos de cada idioma están en src/locales (es.js, en.js y ca.js).
+// Cada texto tiene una clave ("nav.pricing") y t('nav.pricing') lo devuelve en el idioma elegido.
+//
+// Partes del archivo:
+//   1. Idiomas            → los catálogos y el idioma con el que empieza la página
+//   2. Traducir un texto  → t
+//   3. Cambiar de idioma  → applyTranslations, setLanguage e initializeLanguage
+// =============================================================
+
 import en from './locales/en.js';
 import es from './locales/es.js';
 import ca from './locales/ca.js';
 
-const STORAGE_KEY = 'reservo-language';
-// Register locale modules here; the selector cycles through the registered language codes.
-const catalogs = { es, en, ca };
-let currentLanguage = 'es';
+// -------------------------------------------------------------
+// 1. Idiomas
+// -------------------------------------------------------------
 
+// Clave de localStorage donde se guarda el idioma que ha elegido la persona
+const STORAGE_KEY = 'reservo-language';
+
+// Textos de cada idioma. Para añadir uno: crear su archivo en src/locales,
+// importarlo arriba y añadirlo aquí y en LANGUAGES
+const catalogs = { es, en, ca };
+
+// Nombre de cada idioma escrito en ese mismo idioma (así lo reconoce quien lo habla).
+// Lo usa el selector de idioma del menú (Navbar.js)
+export const LANGUAGES = { es: 'Español', en: 'English', ca: 'Català' };
+
+// Idioma con el que empieza la página, por orden:
+//   1. el que la persona eligió en el menú otra vez (guardado en localStorage)
+//   2. el primero de los idiomas del navegador que tengamos ("ca-ES" → "ca", "en-US" → "en")
+//   3. si no hay ninguno, castellano
+function detectLanguage() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (Object.hasOwn(catalogs, saved)) return saved;
+  } catch {
+    // localStorage puede estar bloqueado (modo privado de algunos navegadores): se sigue sin él
+  }
+
+  // navigator.languages: los idiomas del navegador por orden de preferencia (["ca-ES", "es", "en"])
+  for (const tag of navigator.languages ?? [navigator.language]) {
+    const code = tag.toLowerCase().split('-')[0];
+    if (Object.hasOwn(catalogs, code)) return code;
+  }
+  return 'es';
+}
+
+// Se calcula al cargar este archivo, antes de que se pinte nada:
+// así cada componente ya sale en el idioma correcto y no se ve el cambio
+let currentLanguage = detectLanguage();
+
+export function getLanguage() {
+  return currentLanguage;
+}
+
+// -------------------------------------------------------------
+// 2. Traducir un texto
+// -------------------------------------------------------------
+
+// Devuelve el texto de una clave en el idioma actual.
+// values rellena los huecos entre llaves: t('cta.confirmation', { email }) cambia {email} por el email.
+// Si falta una clave o un valor, da error: así se ve enseguida al programar
 export function t(key, values = {}) {
   const message = catalogs[currentLanguage][key];
   if (typeof message !== 'string') {
@@ -20,6 +76,12 @@ export function t(key, values = {}) {
   });
 }
 
+// -------------------------------------------------------------
+// 3. Cambiar de idioma
+// -------------------------------------------------------------
+
+// Idioma del <html> (lo usan los lectores de pantalla para pronunciar bien),
+// título de la pestaña y descripción para buscadores
 function updateDocumentLanguage() {
   document.documentElement.lang = currentLanguage;
   document.title = t('document.title');
@@ -27,6 +89,10 @@ function updateDocumentLanguage() {
   if (description) description.content = t('document.description');
 }
 
+// Valores de los huecos {…} guardados en un elemento con data-i18n-*:
+// data-i18n-email="ana@x.com" → { email: 'ana@x.com' }.
+// Los que acaban en "Key" guardan otra clave, que también se traduce
+// (data-i18n-day-key="intro.dayThursday" → { day: 'Jue 25' })
 function translationValues(element) {
   const values = {};
   for (const [name, value] of Object.entries(element.dataset)) {
@@ -41,6 +107,10 @@ function translationValues(element) {
   return values;
 }
 
+// Vuelve a escribir en el idioma actual todos los textos de root que llevan su clave:
+//   data-i18n             → el texto del elemento
+//   data-i18n-aria-label  → el aria-label (lo que lee el lector de pantalla)
+//   data-i18n-placeholder → el texto de ejemplo de un campo
 export function applyTranslations(root) {
   root.querySelectorAll('[data-i18n]').forEach((element) => {
     element.textContent = t(element.dataset.i18n, translationValues(element));
@@ -55,26 +125,9 @@ export function applyTranslations(root) {
   });
 }
 
-function updateLanguageButtons(container) {
-  const languages = Object.keys(catalogs);
-  const currentIndex = languages.indexOf(currentLanguage);
-  const nextLanguage = languages[(currentIndex + 1) % languages.length];
-
-  container.querySelectorAll('[data-language-toggle]').forEach((button) => {
-    button.setAttribute('aria-label', t('language.changeTo', { language: nextLanguage.toUpperCase() }));
-    const [currentCode, nextCode] = button.querySelectorAll('[data-language-code]');
-    [[currentCode, currentLanguage], [nextCode, nextLanguage]].forEach(([code, language]) => {
-      code.dataset.languageCode = language;
-      code.textContent = language.toUpperCase();
-      const isCurrent = language === currentLanguage;
-      code.classList.toggle('font-bold', isCurrent);
-      code.classList.toggle('text-indigo-700', isCurrent);
-      code.classList.toggle('text-slate-400', !isCurrent);
-    });
-  });
-}
-
-function setLanguage(language, container) {
+// Cambia el idioma de toda la página y lo guarda para la próxima visita.
+// Lo llama el selector de idioma del menú (Navbar.js)
+export function setLanguage(language) {
   if (!Object.hasOwn(catalogs, language)) {
     throw new Error(`Unsupported language "${language}".`);
   }
@@ -82,8 +135,9 @@ function setLanguage(language, container) {
   currentLanguage = language;
   updateDocumentLanguage();
   applyTranslations(document);
-  updateLanguageButtons(container);
 
+  // Solo se guarda cuando la persona lo elige: si no ha elegido nada,
+  // en la próxima visita se vuelve a mirar el idioma del navegador
   try {
     localStorage.setItem(STORAGE_KEY, currentLanguage);
   } catch (error) {
@@ -91,27 +145,9 @@ function setLanguage(language, container) {
   }
 }
 
-export function initializeLanguage(container) {
-  try {
-    const savedLanguage = localStorage.getItem(STORAGE_KEY);
-    if (Object.hasOwn(catalogs, savedLanguage)) currentLanguage = savedLanguage;
-  } catch (error) {
-    console.warn('No se pudo leer el idioma guardado; se usará español.', error);
-  }
-
+// Al cargar la página (main.js, después de pintar todo): pone el idioma en el <html>
+// y el título, y traduce los textos que se hayan escrito directamente en el HTML
+export function initializeLanguage() {
   updateDocumentLanguage();
   applyTranslations(document);
-  updateLanguageButtons(container);
-
-  container.querySelectorAll('[data-language-toggle]').forEach((button) => {
-    button.addEventListener('click', () => {
-      const languages = Object.keys(catalogs);
-      const currentIndex = languages.indexOf(currentLanguage);
-      setLanguage(languages[(currentIndex + 1) % languages.length], container);
-    });
-  });
-}
-
-export function getLanguage() {
-  return currentLanguage;
 }
