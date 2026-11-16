@@ -89,12 +89,6 @@
                 <td class="px-4 py-3">Recuerda si has aceptado o rechazado las cookies, para no volver a preguntarte.</td>
                 <td class="px-4 py-3">Hasta que borres los datos del navegador</td>
               </tr>
-              <tr>
-                <td class="px-4 py-3 font-mono text-xs whitespace-nowrap text-indigo-700">reservo-newsletter</td>
-                <td class="px-4 py-3">Técnica (necesaria)</td>
-                <td class="px-4 py-3">Guarda tu email si te suscribes a la newsletter.</td>
-                <td class="px-4 py-3">Hasta que borres los datos del navegador</td>
-              </tr>
               <!-- Marca que guarda la intro animada (src/intro/Intro.js) al terminarla -->
               <tr>
                 <td class="px-4 py-3 font-mono text-xs whitespace-nowrap text-indigo-700">reservo-intro-vista</td>
@@ -116,6 +110,23 @@
           Las cookies técnicas no necesitan tu permiso porque sin ellas la web no podría
           recordar tus elecciones. Las de análisis solo se usan si pulsas
           <strong class="text-slate-900">Aceptar</strong> en el aviso de cookies.
+        </p>
+      </section>
+
+      <!-- La newsletter ya no guarda el email en el navegador: lo envía a Mailchimp
+           (src/components/Newsletter.js). Se explica aquí porque es el único dato que sale de la web -->
+      <section class="mt-10 space-y-4 leading-relaxed text-slate-700">
+        <h2 class="text-xl font-semibold text-slate-900">Newsletter</h2>
+        <p>
+          Si te suscribes a la newsletter, tu email se envía a
+          <strong class="text-slate-900">Mailchimp</strong>, el servicio que guarda la lista de
+          suscriptores y envía los correos. Antes de darte de alta, recibirás un email para
+          confirmar la suscripción.
+        </p>
+        <p>
+          Mailchimp es una empresa de Estados Unidos, así que tu email puede guardarse fuera de
+          la Unión Europea. Puedes darte de baja cuando quieras con el enlace que aparece al
+          final de cada email.
         </p>
       </section>
 
