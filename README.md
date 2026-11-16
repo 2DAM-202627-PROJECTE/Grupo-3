@@ -55,6 +55,8 @@ Grupo-3/
 │   └── deploy.yml                # Publica la web en GitHub Pages al subir a main
 ├── Docs/
 │   ├── Documentació de planificació i disseny-2.pdf   # Documento de planificación y diseño
+│   ├── Documentación GitHub Project - Grupo 3.pdf    # Seguimiento del proyecto en el tablero Kanban
+│   ├── Documentación técnica - Grupo 3.pdf            # Documentación técnica del sitio
 │   ├── capturas/                 # Capturas de la versión final (las de este README)
 │   ├── kanban/                   # Capturas del tablero Kanban
 │   └── mockups/                  # Wireframes y mockups (escritorio y móvil)
