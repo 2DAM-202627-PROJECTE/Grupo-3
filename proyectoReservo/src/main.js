@@ -43,7 +43,7 @@ import { renderFooter } from './components/Footer.js';
 import { renderPreferencesBar } from './components/PreferencesBar.js';
 
 // Idioma de la página (issue #23): el elegido en el menú o, si no, el del navegador
-import { initializeLanguage } from './i18n.js';
+import { initializeLanguage, t } from './i18n.js';
 
 // Animación de las secciones al hacer scroll (no es un componente, no pinta nada)
 import { initScrollReveal } from './scrollReveal.js';
@@ -87,7 +87,9 @@ const app = document.querySelector('#app');
 // Su contenido lo pintará Navbar.js cuando esté hecho.
 const nav = document.createElement('nav');
 nav.id = 'navbar';
-nav.setAttribute('aria-label', 'Navegación principal');
+nav.setAttribute('aria-label', t('nav.primaryLabel'));
+// data-i18n-aria-label: al cambiar de idioma, i18n.js vuelve a traducir el aria-label
+nav.dataset.i18nAriaLabel = 'nav.primaryLabel';
 app.appendChild(nav);
 renderNavbar(nav);
 
