@@ -16,6 +16,8 @@
 // 1. Configuración
 // -------------------------------------------------------------
 
+import { t } from '../i18n.js';
+
 // Clases comunes para el foco visible al navegar con el teclado (accesibilidad)
 const focusRing = 'focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500';
 
@@ -64,28 +66,18 @@ export function renderNewsletter(container) {
   container.className = 'border-t border-slate-200/70 bg-(--bg-dark)/80';
 
   container.innerHTML = /*html*/ `
-    <!-- Contenedor con márgenes laterales, como el resto de secciones.
-         py-10 / sm:py-12: menos espacio que una sección normal (py-20), para que se vea
-         como parte del pie de página y no como otra sección después del CTA -->
-    <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-12 lg:px-8">
-      <!-- En móvil y tablet: texto y formulario apilados y centrados (max-w-xl + mx-auto).
-           En escritorio (lg): una sola fila con dos columnas, el texto a la izquierda y el
-           formulario a la derecha, centrados en vertical (items-center) -->
-      <div class="mx-auto grid max-w-xl gap-6 lg:max-w-5xl lg:grid-cols-2 lg:items-center lg:gap-12">
-        <!-- Texto: centrado en móvil, alineado a la izquierda en escritorio -->
-        <div class="text-center lg:text-left">
-          <!-- Texto pensado para quien todavía no quiere la prueba gratuita del CTA de encima:
-               la newsletter es la opción para seguir en contacto sin registrarse
-               (tabla 2.3 del documento: "recibir novedades sin registrarse todavía").
-               text-xl: más pequeño que el título del CTA (text-3xl), que es el importante -->
-          <h2 class="text-xl font-bold tracking-tight text-slate-900">¿Aún no te decides?</h2>
-          <p class="mt-2 text-sm text-slate-600">
-            Recibe consejos para tu negocio y novedades de Reservo, una vez al mes.
-          </p>
-        </div>
+    <!-- Contenedor con márgenes laterales, como el resto de secciones -->
+    <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+      <!-- Bloque centrado: mx-auto lo centra en la página y text-center centra los textos.
+           max-w-xl: ancho máximo para que el campo de email no quede demasiado largo -->
+      <div class="mx-auto max-w-xl text-center">
+        <!-- id del título: el formulario lo usa como nombre (aria-labelledby) -->
+        <h2 id="newsletter-title" data-i18n="newsletter.heading" class="text-2xl font-bold tracking-tight text-slate-900">${t('newsletter.heading')}</h2>
+        <p class="mt-2 text-sm text-slate-600">
+          <span data-i18n="newsletter.description">${t('newsletter.description')}</span>
+        </p>
 
-        <!-- aria-label: nombre del formulario para el lector de pantalla. No se usa el título
-             (aria-labelledby) porque "¿Aún no te decides?" no dice para qué es el formulario.
+        <!-- aria-labelledby: el lector de pantalla anuncia el formulario con el texto del título.
              novalidate: desactiva los avisos del navegador para usar los nuestros (setupNewsletter),
              que salen como texto debajo del formulario y son iguales en todos los navegadores -->
         <!-- text-left: en móvil el título y la frase van centrados, pero dentro del formulario
@@ -93,7 +85,7 @@ export function renderNewsletter(container) {
         <form id="newsletter-form" class="text-left" aria-label="Suscripción a la newsletter" novalidate>
           <!-- Etiqueta visible del campo: el documento pide que cada campo tenga la suya (apartado 3.2).
                for="newsletter-email" la une al input, así al pulsarla se pone el cursor en el campo -->
-          <label for="newsletter-email" class="text-sm font-medium text-slate-700">Tu email:</label>
+          <label for="newsletter-email" class="text-sm font-medium text-slate-700"><span data-i18n="newsletter.email">${t('newsletter.email')}</span></label>
 
           <!-- Campo y botón: apilados en móvil (flex-col) y en fila a partir de sm (sm:flex-row) -->
           <div class="mt-2 flex flex-col gap-3 sm:flex-row">
@@ -111,7 +103,8 @@ export function renderNewsletter(container) {
               name="email"
               type="email"
               autocomplete="email"
-              placeholder="tu@email.com"
+              placeholder="${t('newsletter.emailPlaceholder')}"
+              data-i18n-placeholder="newsletter.emailPlaceholder"
               required
               aria-describedby="newsletter-message"
               class="min-w-0 flex-1 rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder:text-slate-500 transition hover:border-slate-400 aria-invalid:border-red-500 ${focusRing}"
@@ -125,7 +118,7 @@ export function renderNewsletter(container) {
               type="submit"
               class="shrink-0 rounded-lg border border-indigo-600 bg-white px-6 py-3 font-semibold text-indigo-700 transition hover:bg-indigo-50 disabled:cursor-wait disabled:opacity-60 ${focusRing}"
             >
-              Suscribirme
+              <span data-i18n="newsletter.submit">${t('newsletter.submit')}</span>
             </button>
           </div>
 
@@ -142,7 +135,7 @@ export function renderNewsletter(container) {
               required
               class="mt-0.5 h-4 w-4 shrink-0 accent-indigo-500 ${focusRing}"
             />
-            Acepto que Reservo guarde mi email en Mailchimp para enviarme la newsletter.
+            <span data-i18n="newsletter.consent">${t('newsletter.consent')}</span>
           </label>
 
           <!-- Mensaje del formulario: los errores o la confirmación.
@@ -288,8 +281,9 @@ function setupNewsletter(container) {
 
   // Muestra un error: texto en rojo debajo del formulario (no solo color: el documento
   // pide que los errores se lean como texto, apartado 3.2) y el foco en el campo que falla.
-  function showError(text, input) {
-    message.textContent = text;
+  function showError(key, input) {
+    message.dataset.i18n = key;
+    message.textContent = t(key);
     message.className = 'mt-3 min-h-5 text-sm text-red-600';
     input.setAttribute('aria-invalid', 'true');
     input.focus();
@@ -299,6 +293,7 @@ function setupNewsletter(container) {
   function clearError(input) {
     input.removeAttribute('aria-invalid');
     message.textContent = '';
+    delete message.dataset.i18n;
   }
 
   // El error se quita en cuanto el usuario escribe en el campo o marca la casilla
@@ -318,26 +313,24 @@ function setupNewsletter(container) {
 
     // a) Validación: se comprueba en orden y se para en el primer error
     if (email === '') {
-      showError('Escribe tu email.', emailInput);
+      showError('newsletter.emptyEmail', emailInput);
       return;
     }
     if (!EMAIL_PATTERN.test(email)) {
-      showError('El email no es válido. Ejemplo: nombre@negocio.com', emailInput);
+      showError('newsletter.invalidEmail', emailInput);
       return;
     }
     if (!consentInput.checked) {
-      showError('Marca la casilla para que podamos guardar tu email.', consentInput);
+      showError('newsletter.consentRequired', consentInput);
       return;
     }
 
-    // b) Mientras se espera a Mailchimp: botón desactivado (para no enviar dos veces)
-    //    y un aviso en gris
-    button.disabled = true;
-    message.textContent = 'Enviando…';
-    message.className = 'mt-3 min-h-5 text-sm text-slate-600';
-
-    try {
-      const response = mailchimpMessage(await subscribeWithRetry(email), email);
+    // b) Todo correcto: se guarda el email y se muestra la confirmación en verde.
+    // toLowerCase(): "Ana@Negocio.com" y "ana@negocio.com" cuentan como el mismo email
+    const isNew = addSubscriber(email.toLowerCase());
+    message.dataset.i18n = isNew ? 'newsletter.success' : 'newsletter.alreadySubscribed';
+    message.textContent = t(message.dataset.i18n);
+    message.className = 'mt-3 min-h-5 text-sm text-emerald-700';
 
       if (response.ok) {
         // Confirmación en verde y formulario vacío.

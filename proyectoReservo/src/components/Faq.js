@@ -5,26 +5,24 @@
 // =============================================================
 
 // Datos de las 4 preguntas frecuentes con sus respuestas
+import { t } from '../i18n.js';
+
 const faqs = [
   {
-    question: '¿Necesito conocimientos técnicos?',
-    answer:
-      'No, en absoluto. Reservo está diseñado para que cualquier persona pueda configurarlo en menos de 10 minutos sin tocar una sola línea de código.',
+    question: 'faq.technicalQuestion',
+    answer: 'faq.technicalAnswer',
   },
   {
-    question: '¿Puedo cancelar en cualquier momento?',
-    answer:
-      'Sí, no tenemos permanencia. Puedes cancelar o cambiar de plan cuando quieras desde tu panel de control con un solo clic.',
+    question: 'faq.cancelQuestion',
+    answer: 'faq.cancelAnswer',
   },
   {
-    question: '¿Mis clientes tienen que descargarse una app?',
-    answer:
-      'No. Tus clientes acceden directamente desde cualquier navegador móvil o de escritorio a través de tu enlace personalizado o integrado en tu web e Instagram.',
+    question: 'faq.appQuestion',
+    answer: 'faq.appAnswer',
   },
   {
-    question: '¿Cómo cobro a mis clientes?',
-    answer:
-      'Puedes conectar tu cuenta de Stripe para cobrar por adelantado con tarjeta de crédito, solicitar una señal o permitir el pago presencial en tu propio local.',
+    question: 'faq.paymentsQuestion',
+    answer: 'faq.paymentsAnswer',
   },
 ];
 
@@ -44,7 +42,7 @@ function faqItem({ question, answer }) {
       <summary 
         class="flex cursor-pointer items-center justify-between gap-4 font-semibold text-slate-900 list-none [&::-webkit-details-marker]:hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded-lg select-none"
       >
-        <span class="text-base sm:text-lg">${question}</span>
+        <span data-i18n="${question}" class="text-base sm:text-lg">${t(question)}</span>
         
         <!-- Icono + que cambia a − cuando está abierto (open) -->
         <span 
@@ -60,7 +58,7 @@ function faqItem({ question, answer }) {
 
       <!-- Respuesta desplegable -->
       <p class="mt-4 text-sm leading-relaxed text-slate-600 sm:text-base">
-        ${answer}
+        <span data-i18n="${answer}">${t(answer)}</span>
       </p>
     </details>
   `;
@@ -77,10 +75,10 @@ export function renderFaq(container) {
       <!-- Cabecera de la sección -->
       <div class="mx-auto max-w-2xl text-center">
         <h2 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-          Preguntas frecuentes
+          <span data-i18n="faq.heading">${t('faq.heading')}</span>
         </h2>
         <p class="mt-4 text-lg text-slate-600">
-          Todo lo que necesitas saber antes de empezar con Reservo.
+          <span data-i18n="faq.description">${t('faq.description')}</span>
         </p>
       </div>
 
@@ -92,4 +90,3 @@ export function renderFaq(container) {
     </div>
   `;
 }
-

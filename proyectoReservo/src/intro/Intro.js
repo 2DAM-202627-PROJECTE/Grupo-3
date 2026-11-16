@@ -34,6 +34,7 @@
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
+import { applyTranslations, t } from '../i18n.js';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -78,34 +79,40 @@ function shouldShowIntro() {
 // 2. Datos
 // -------------------------------------------------------------
 
-const DAYS = ['Lun 22', 'Mar 23', 'Mié 24', 'Jue 25', 'Vie 26'];
+const DAYS = [
+  'intro.dayMonday',
+  'intro.dayTuesday',
+  'intro.dayWednesday',
+  'intro.dayThursday',
+  'intro.dayFriday',
+];
 const HOURS = ['9:00', '10:00', '11:00', '12:00', '13:00', '14:00'];
 
 // Cada sector: nombre en plural (para el texto), nombre del negocio,
 // los 5 servicios que se reservan y un color para cada uno
 const SECTORS = [
   {
-    plural: 'gimnasios',
+    plural: 'intro.gyms',
     business: 'FitZone Gym',
-    items: ['Spinning', 'Yoga', 'CrossFit', 'Pilates', 'Boxeo'],
+    items: ['intro.spinning', 'intro.yoga', 'intro.crossfit', 'intro.pilates', 'intro.boxing'],
     colors: ['#4f46e5', '#0891b2', '#059669', '#d97706', '#db2777'],
   },
   {
-    plural: 'peluquerías',
+    plural: 'intro.salons',
     business: 'Estudio Lúa',
-    items: ['Corte', 'Color', 'Peinado', 'Barba', 'Mechas'],
+    items: ['intro.haircut', 'intro.hairColor', 'intro.hairstyle', 'intro.beard', 'intro.highlights'],
     colors: ['#c026d3', '#db2777', '#9333ea', '#e11d48', '#7c3aed'],
   },
   {
-    plural: 'restaurantes',
+    plural: 'intro.restaurants',
     business: 'La Terraza',
-    items: ['Mesa 2', 'Mesa 4', 'Terraza', 'Mesa 6', 'Barra'],
+    items: ['intro.table2', 'intro.table4', 'intro.terrace', 'intro.table6', 'intro.bar'],
     colors: ['#ea580c', '#d97706', '#ca8a04', '#dc2626', '#b45309'],
   },
   {
-    plural: 'clínicas',
+    plural: 'intro.clinics',
     business: 'Clínica Sonrisa',
-    items: ['Revisión', 'Limpieza', 'Ortodoncia', 'Empaste', 'Consulta'],
+    items: ['intro.checkup', 'intro.cleaning', 'intro.orthodontics', 'intro.filling', 'intro.consultation'],
     colors: ['#0d9488', '#0891b2', '#0284c7', '#059669', '#2563eb'],
   },
 ];
@@ -131,7 +138,7 @@ const BOOKINGS = [
 const REMINDERS = [0, 3, 6, 9];
 
 // Palabras del título de entrada (la última parte, "tu negocio?", va aparte con degradado)
-const TITLE_WORDS = ['¿Cómo', 'es', 'un', 'día', 'en'];
+const TITLE_WORDS = ['intro.titleWord1', 'intro.titleWord2', 'intro.titleWord3', 'intro.titleWord4', 'intro.titleWord5'];
 
 // -------------------------------------------------------------
 // 3. HTML
@@ -154,11 +161,11 @@ const introHTML = /*html*/ `
          Cada palabra va en su propio <span class="word"> para que aparezcan una a una al cargar -->
     <div class="intro">
       <p class="intro-title text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
-        ${TITLE_WORDS.map((word) => `<span class="word">${word}</span>`).join(' ')}
-        <span class="word gradient-word bg-linear-to-r from-indigo-600 via-purple-600 to-cyan-600 bg-clip-text text-transparent">tu negocio?</span>
+        ${TITLE_WORDS.map((key) => `<span data-i18n="${key}" class="word">${t(key)}</span>`).join(' ')}
+        <span data-i18n="intro.titleHighlight" class="word gradient-word bg-linear-to-r from-indigo-600 via-purple-600 to-cyan-600 bg-clip-text text-transparent">${t('intro.titleHighlight')}</span>
       </p>
       <p class="intro-subtitle mt-6 text-lg leading-relaxed text-slate-600">
-        Baja despacio y mira cómo cambia con Reservo.
+        <span data-i18n="intro.description">${t('intro.description')}</span>
       </p>
     </div>
 
@@ -166,17 +173,17 @@ const introHTML = /*html*/ `
     <div class="scroll-hint" aria-hidden="true">
       <div class="scroll-hint-inner">
         <span class="mouse"><span class="wheel"></span></span>
-        <span class="hint-text">Desliza</span>
+        <span data-i18n="intro.scroll" class="hint-text">${t('intro.scroll')}</span>
       </div>
     </div>
 
     <!-- Frases de cada escena (encima de la agenda) -->
     <div class="captions">
-      <p class="caption">Así es hoy la agenda de muchos negocios…</p>
-      <p class="caption">Con Reservo, todo en <span class="gradient-text">orden</span></p>
-      <p class="caption">Tus clientes reservan solos, <span class="gradient-text">24/7</span></p>
-      <p class="caption">Y les recordamos la cita <span class="gradient-text">por ti</span></p>
-      <p class="caption">Perfecto para <span class="gradient-text" data-sector-name>gimnasios</span></p>
+      <p data-i18n="intro.before" class="caption">${t('intro.before')}</p>
+      <p class="caption"><span data-i18n="intro.everything">${t('intro.everything')}</span> <span data-i18n="intro.order" class="gradient-text">${t('intro.order')}</span></p>
+      <p data-i18n="intro.bookings" class="caption">${t('intro.bookings')}</p>
+      <p class="caption"><span data-i18n="intro.reminders">${t('intro.reminders')}</span> <span data-i18n="intro.forYou" class="gradient-text">${t('intro.forYou')}</span></p>
+      <p class="caption"><span data-i18n="intro.perfectFor">${t('intro.perfectFor')}</span> <span data-i18n="intro.gyms" data-sector-name class="gradient-text">${t('intro.gyms')}</span></p>
     </div>
 
     <!-- Móviles de los clientes (escenas 4 y 5) -->
@@ -195,7 +202,7 @@ const introHTML = /*html*/ `
     <div class="outro">
       <img src="${import.meta.env.BASE_URL}favicon.svg" alt="" class="h-20 w-20" />
       <p class="mt-6 text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl">Reservo</p>
-      <p class="mt-3 text-lg text-slate-600">Las reservas de tu negocio, en piloto automático</p>
+      <p data-i18n="intro.automated" class="mt-3 text-lg text-slate-600">${t('intro.automated')}</p>
     </div>
 
     <!-- Escena 3D: perspective da profundidad a los giros -->
@@ -208,26 +215,26 @@ const introHTML = /*html*/ `
            Separadas para que las animaciones no se pisen entre ellas -->
       <div class="hero-card" aria-hidden="true">
         <div class="card-inner">
-          <p class="text-xs font-semibold tracking-widest text-indigo-600">RESERVA ONLINE</p>
+          <p data-i18n="hero.onlineBooking" class="text-xs font-semibold tracking-widest text-indigo-600">${t('hero.onlineBooking').toUpperCase()}</p>
           <p class="mt-1 text-lg font-bold text-slate-900">FitZone Gym</p>
           <div class="mt-5 grid grid-cols-5 gap-2 text-center text-xs">
-            <span class="day">Lun<b>22</b></span>
-            <span class="day">Mar<b>23</b></span>
-            <span class="day is-active">Mié<b>24</b></span>
-            <span class="day">Jue<b>25</b></span>
-            <span class="day">Vie<b>26</b></span>
+            <span class="day"><span data-i18n="intro.shortMonday">${t('intro.shortMonday')}</span><b>22</b></span>
+            <span class="day"><span data-i18n="intro.shortTuesday">${t('intro.shortTuesday')}</span><b>23</b></span>
+            <span class="day is-active"><span data-i18n="intro.shortWednesday">${t('intro.shortWednesday')}</span><b>24</b></span>
+            <span class="day"><span data-i18n="intro.shortThursday">${t('intro.shortThursday')}</span><b>25</b></span>
+            <span class="day"><span data-i18n="intro.shortFriday">${t('intro.shortFriday')}</span><b>26</b></span>
           </div>
           <div class="mt-5 space-y-2 text-sm">
-            <div class="slot">Spinning <small>09:00</small></div>
-            <div class="slot">Yoga <small>12:30</small></div>
-            <div class="slot">CrossFit <small>18:00</small></div>
+            <div class="slot"><span data-i18n="intro.spinning">${t('intro.spinning')}</span> <small>09:00</small></div>
+            <div class="slot"><span data-i18n="intro.yoga">${t('intro.yoga')}</span> <small>12:30</small></div>
+            <div class="slot"><span data-i18n="intro.crossfit">${t('intro.crossfit')}</span> <small>18:00</small></div>
           </div>
-          <div class="card-button mt-5">Confirmar reserva</div>
+          <div data-i18n="intro.confirmButton" class="card-button mt-5">${t('intro.confirmButton')}</div>
 
           <!-- Aviso que sale al confirmar, como una notificación del móvil del cliente.
                El texto de abajo lo rellena el apartado 7 (cliente, día y clase) -->
           <div class="card-toast">
-            <b>📱 Confirmación enviada</b>
+            <b data-i18n="intro.bookingNotice">${t('intro.bookingNotice')}</b>
             <span data-toast-text></span>
           </div>
 
@@ -244,8 +251,8 @@ const introHTML = /*html*/ `
         <!-- Página derecha de abajo del todo: la agenda digital (escena 3) -->
         <div class="page page-right digital">
           <div class="digital-head">
-            <span class="d-week">Semana 24 · Junio</span>
-            <span class="live"><i></i> En directo</span>
+            <span data-i18n="intro.week" class="d-week">${t('intro.week')}</span>
+            <span class="live"><i></i> <span data-i18n="intro.live">${t('intro.live')}</span></span>
           </div>
           <div class="week"></div>
         </div>
@@ -253,20 +260,20 @@ const introHTML = /*html*/ `
         <!-- Hoja que se pasa (escena 3). Delante: papel caótico. Detrás: resumen digital -->
         <div class="leaf leaf-page">
           <div class="face front paper">
-            <p class="paper-date">Miércoles 24</p>
+            <p data-i18n="intro.paperDate" class="paper-date">${t('intro.paperDate')}</p>
             <ul class="paper-list">
-              <li><s>9:00 Laura — corte</s> → ¿10:00?</li>
-              <li>10:30 ¿Marc o Marta? 📞</li>
-              <li><s>11:00 Sara</s> <em>no vino</em></li>
-              <li>12:00 ??? llamar</li>
-              <li>12:00 Pablo (¡doble!)</li>
+              <li><s data-i18n="intro.paperHaircut">${t('intro.paperHaircut')}</s> → ¿10:00?</li>
+              <li data-i18n="intro.paperMarc">${t('intro.paperMarc')}</li>
+              <li><s>11:00 Sara</s> <em data-i18n="intro.paperNoShow">${t('intro.paperNoShow')}</em></li>
+              <li data-i18n="intro.paperCall">${t('intro.paperCall')}</li>
+              <li data-i18n="intro.paperDouble">${t('intro.paperDouble')}</li>
               <li class="faint">17:00 …</li>
             </ul>
             <div class="missed">
               <svg class="phone-ring" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                 <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z" />
               </svg>
-              3 llamadas perdidas
+              <span data-i18n="intro.missedCalls">${t('intro.missedCalls')}</span>
             </div>
             <div class="stain" aria-hidden="true"></div>
           </div>
@@ -274,15 +281,15 @@ const introHTML = /*html*/ `
             <p class="d-kicker">RESERVO</p>
             <p class="d-title" data-business>FitZone Gym</p>
             <div class="stat">
-              <span>Reservas esta semana</span>
+              <span data-i18n="intro.appointmentsThisWeek">${t('intro.appointmentsThisWeek')}</span>
               <b data-counter="bookings">0</b>
             </div>
             <div class="stat">
-              <span>Citas sin aparecer</span>
+              <span data-i18n="intro.noShows">${t('intro.noShows')}</span>
               <b><span data-counter="noshows">12</span><small class="badge">−70 %</small></b>
             </div>
             <div class="stat">
-              <span>Recordatorios enviados</span>
+              <span data-i18n="intro.remindersSent">${t('intro.remindersSent')}</span>
               <b data-counter="reminders">0</b>
             </div>
           </div>
@@ -292,16 +299,16 @@ const introHTML = /*html*/ `
         <div class="leaf leaf-cover">
           <div class="face front cover">
             <img src="${import.meta.env.BASE_URL}favicon.svg" alt="" class="h-16 w-16" />
-            <p class="mt-4 text-2xl font-bold text-white">Agenda</p>
+            <p data-i18n="intro.calendar" class="mt-4 text-2xl font-bold text-white">${t('intro.calendar')}</p>
             <p class="text-sm text-indigo-200/70">2026</p>
           </div>
           <div class="face back paper">
-            <p class="paper-date">Notas</p>
-            <div class="postit">¡¡Llamar a TODOS para confirmar mañana!!</div>
+            <p data-i18n="intro.notes" class="paper-date">${t('intro.notes')}</p>
+            <div data-i18n="intro.callEveryone" class="postit">${t('intro.callEveryone')}</div>
             <ul class="paper-list">
-              <li>Lunes: 4 citas sin aparecer</li>
-              <li><s>Contestar WhatsApps</s></li>
-              <li>Hoja de turnos → ¿dónde está?</li>
+              <li data-i18n="intro.paperMonday">${t('intro.paperMonday')}</li>
+              <li><s data-i18n="intro.replyWhatsApp">${t('intro.replyWhatsApp')}</s></li>
+              <li data-i18n="intro.shiftSheet">${t('intro.shiftSheet')}</li>
             </ul>
           </div>
         </div>
@@ -320,7 +327,7 @@ function buildWeek(week) {
   // Esquina vacía (encima de la columna de las horas) y cabeceras de los días
   week.insertAdjacentHTML(
     'beforeend',
-    `<span></span>` + DAYS.map((day) => `<span class="day-head">${day}</span>`).join(''),
+    `<span></span>` + DAYS.map((key) => `<span data-i18n="${key}" class="day-head">${t(key)}</span>`).join(''),
   );
 
   // cells[día][hora] guarda cada hueco para luego meter las reservas
@@ -355,12 +362,14 @@ function buildWeek(week) {
 function applySector(index, { chips, business, sectorName }) {
   const sector = SECTORS[index];
   business.textContent = sector.business;
-  sectorName.textContent = sector.plural;
+  sectorName.dataset.i18n = sector.plural;
+  sectorName.textContent = t(sector.plural);
 
   chips.forEach((chip, i) => {
     const { name, item } = BOOKINGS[i];
     chip.style.background = sector.colors[item];
-    chip.innerHTML = `${name}<small>${sector.items[item]}</small>`;
+    const itemKey = sector.items[item];
+    chip.innerHTML = `${name}<small data-i18n="${itemKey}">${t(itemKey)}</small>`;
   });
 }
 
@@ -398,7 +407,9 @@ function buildTimeline(section) {
   const bubbles = REMINDERS.map((i) => {
     const bubble = document.createElement('div');
     bubble.className = 'bubble';
-    bubble.innerHTML = `<div class="bubble-body">🔔 Recordatorio · ${DAYS[BOOKINGS[i].day]} ${HOURS[BOOKINGS[i].hour]}</div>`;
+    const dayKey = DAYS[BOOKINGS[i].day];
+    const time = HOURS[BOOKINGS[i].hour];
+    bubble.innerHTML = `<div data-i18n="intro.reminder" data-i18n-day-key="${dayKey}" data-i18n-time="${time}" class="bubble-body">${t('intro.reminder', { day: t(dayKey), time })}</div>`;
     $('.bubbles').appendChild(bubble);
     return bubble;
   });
@@ -635,18 +646,20 @@ function buildStartScene(section) {
   const cursor = $('.fake-cursor');
   const toast = $('.card-toast');
   const toastText = $('[data-toast-text]');
-  const buttonText = button.textContent;
 
   // Texto de un día ("Jue 25") y de una clase ("Yoga"), sacados de la propia tarjeta
-  const dayLabel = (day) => `${day.firstChild.textContent} ${day.querySelector('b').textContent}`;
-  const slotLabel = (slot) => slot.firstChild.textContent.trim();
+  const dayLabel = (day) => `${day.querySelector('[data-i18n]').textContent} ${day.querySelector('b').textContent}`;
+  const dayKey = (day) => day.querySelector('[data-i18n]').dataset.i18n;
+  const slotKey = (slot) => slot.querySelector('[data-i18n]').dataset.i18n;
 
   // --- Tarjeta viva: estados de la tarjeta ---
   const setDay = (index) => days.forEach((day, i) => day.classList.toggle('is-active', i === index));
   const setSlot = (index) => slots.forEach((slot, i) => slot.classList.toggle('is-selected', i === index));
   const setDone = (done) => {
     button.classList.toggle('is-done', done);
-    button.textContent = done ? '¡Reservado! ✓' : buttonText;
+    const key = done ? 'intro.booked' : 'intro.confirmButton';
+    button.dataset.i18n = key;
+    button.textContent = t(key);
   };
   // Como al principio: miércoles marcado, ninguna clase elegida, el botón normal y sin aviso
   const resetCard = () => {
@@ -687,7 +700,17 @@ function buildStartScene(section) {
     // Aviso: se rellena el texto y, en el mismo momento ('<' = donde empieza lo anterior),
     // aparece con un pequeño rebote (back.out) desde abajo
     loop
-      .call(() => (toastText.textContent = `${name} · ${dayLabel(days[dayIndex])} · ${slotLabel(slots[slotIndex])}`), [], '-=0.3')
+      .call(() => {
+        toastText.dataset.i18n = 'intro.toast';
+        toastText.dataset.i18nName = name;
+        toastText.dataset.i18nDayKey = dayKey(days[dayIndex]);
+        toastText.dataset.i18nServiceKey = slotKey(slots[slotIndex]);
+        toastText.textContent = t('intro.toast', {
+          name,
+          day: dayLabel(days[dayIndex]),
+          service: slots[slotIndex].querySelector('[data-i18n]').textContent,
+        });
+      }, [], '-=0.3')
       .fromTo(toast, { autoAlpha: 0, y: 12, scale: 0.9 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.4, ease: 'back.out(2)' }, '<')
       .to(cursor, { autoAlpha: 0, duration: 0.3 }, '+=0.3')
       .to(toast, { autoAlpha: 0, y: -12, duration: 0.3 }, '+=0.9')
@@ -800,9 +823,11 @@ export function initIntro() {
   // La sección va al principio del <body>, antes de la landing (#app)
   const section = document.createElement('section');
   section.className = 'story';
-  section.setAttribute('aria-label', 'Intro: un día con Reservo');
+  section.setAttribute('aria-label', t('intro.accessibleLabel'));
+  section.dataset.i18nAriaLabel = 'intro.accessibleLabel';
   section.innerHTML = introHTML;
   document.body.prepend(section);
+  applyTranslations(section);
 
   // Mientras se ve la intro, el <html> lleva la clase intro-playing (esconde el aviso de cookies)
   document.documentElement.classList.add('intro-playing');

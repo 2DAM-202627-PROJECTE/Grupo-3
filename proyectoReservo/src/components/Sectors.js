@@ -16,6 +16,7 @@
 
 // Función del Hero que cambia su tarjeta de reserva al sector elegido
 import { selectHeroSector } from './Hero.js';
+import { t } from '../i18n.js';
 
 // createIcons convierte cada <i data-lucide="..."> en su dibujo SVG.
 // Solo se importan los iconos que se usan: así el JavaScript final pesa menos
@@ -33,10 +34,10 @@ import {
 //   - name:   título del botón
 //   - detail: frase corta debajo del título
 const sectors = [
-  { id: 'gimnasio', icon: 'dumbbell', name: 'Gimnasios', detail: 'Clases, entrenamientos y aforo.' },
-  { id: 'restaurante', icon: 'utensils', name: 'Restaurantes', detail: 'Mesas, turnos y reservas.' },
-  { id: 'peluqueria', icon: 'scissors', name: 'Peluquerías', detail: 'Servicios, profesionales y horarios.' },
-  { id: 'clinica', icon: 'stethoscope', name: 'Clínicas', detail: 'Consultas y citas por especialista.' },
+  { id: 'gimnasio', icon: 'dumbbell', name: 'sectors.gym', detail: 'sectors.gymDescription' },
+  { id: 'restaurante', icon: 'utensils', name: 'sectors.restaurant', detail: 'sectors.restaurantDescription' },
+  { id: 'peluqueria', icon: 'scissors', name: 'sectors.salon', detail: 'sectors.salonDescription' },
+  { id: 'clinica', icon: 'stethoscope', name: 'sectors.clinic', detail: 'sectors.clinicDescription' },
 ];
 
 // -------------------------------------------------------------
@@ -53,14 +54,14 @@ export function renderSectors(container) {
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <!-- Título y subtítulo centrados -->
       <div class="mx-auto max-w-3xl text-center">
-        <h2 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">Pensado para cualquier negocio con citas</h2>
-        <p class="mt-4 text-lg text-slate-600">Elige tu sector y descubre cómo se vería tu página de reservas.</p>
+        <h2 data-i18n="sectors.heading" class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">${t('sectors.heading')}</h2>
+        <p data-i18n="sectors.description" class="mt-4 text-lg text-slate-600">${t('sectors.description')}</p>
       </div>
 
       <!-- Botones de los sectores: 2 columnas en móvil y 4 en escritorio (lg).
            role="group" + aria-label: el lector de pantalla anuncia los cuatro botones juntos
            y explica para qué sirven -->
-      <div class="mt-10 grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4" role="group" aria-label="Selecciona un sector para actualizar la demo">
+      <div class="mt-10 grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4" role="group" aria-label="${t('sectors.ariaLabel')}" data-i18n-aria-label="sectors.ariaLabel">
         ${sectors
           .map(
             ({ id, icon, name, detail }, index) => /*html*/ `
@@ -76,8 +77,8 @@ export function renderSectors(container) {
             <span class="block text-indigo-600" aria-hidden="true">
               <i data-lucide="${icon}" class="h-6 w-6"></i>
             </span>
-            <span class="mt-3 block font-semibold text-slate-900">${name}</span>
-            <span class="mt-1 block text-sm leading-relaxed text-slate-600">${detail}</span>
+            <span data-i18n="${name}" class="mt-3 block font-semibold text-slate-900">${t(name)}</span>
+            <span data-i18n="${detail}" class="mt-1 block text-sm leading-relaxed text-slate-600">${t(detail)}</span>
           </button>
         `,
           )

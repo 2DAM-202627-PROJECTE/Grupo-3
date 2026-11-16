@@ -16,12 +16,14 @@
 // 1. Datos y estilos
 // -------------------------------------------------------------
 
+import { t } from '../i18n.js';
+
 // Enlaces a las secciones de la página (RF1). Si se añade o quita alguno, solo hay que tocar este array.
 const links = [
-  { label: 'Funciones', href: '#funciones' },
-  { label: 'Cómo funciona', href: '#como-funciona' },
-  { label: 'Precios', href: '#precios' },
-  { label: 'FAQ', href: '#faq' },
+  { label: 'nav.features', href: '#funciones' },
+  { label: 'nav.howItWorks', href: '#como-funciona' },
+  { label: 'nav.pricing', href: '#precios' },
+  { label: 'nav.faq', href: '#faq' },
 ];
 
 // Clases comunes para el foco visible al navegar con el teclado (accesibilidad)
@@ -46,8 +48,23 @@ const activeLink =
 function navLink({ label, href }) {
   return /*html*/ `
     <li>
-      <a href="${href}" class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900 md:px-0 md:py-1 md:hover:bg-transparent ${activeLink} ${focusRing}">${label}</a>
+      <a href="${href}" data-i18n="${label}" class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900 md:px-0 md:py-1 md:hover:bg-transparent ${activeLink} ${focusRing}">${t(label)}</a>
     </li>
+  `;
+}
+
+function languageToggle(className) {
+  return /*html*/ `
+    <button
+      type="button"
+      class="${className} items-center gap-1 rounded-lg text-sm text-slate-600 transition hover:bg-slate-100 ${focusRing}"
+      data-language-toggle
+      aria-label="${t('language.changeTo', { language: 'EN' })}"
+    >
+      <span data-language-code="es" class="font-bold text-indigo-700">ES</span>
+      <span aria-hidden="true">/</span>
+      <span data-language-code="en" class="text-slate-400">EN</span>
+    </button>
   `;
 }
 
@@ -72,7 +89,7 @@ export function renderNavbar(container) {
              El icono es decorativo (alt=""): el texto "Reservo" ya dice qué es.
              La ruta empieza por import.meta.env.BASE_URL ("/" en local y "/Grupo-3/" en
              GitHub Pages): Vite no corrige las rutas que van dentro de textos de JavaScript -->
-        <a href="#hero" class="flex shrink-0 items-center gap-2 rounded-lg text-lg font-bold text-slate-900 ${focusRing}" aria-label="Reservo, ir al inicio">
+        <a href="#hero" class="flex shrink-0 items-center gap-2 rounded-lg text-lg font-bold text-slate-900 ${focusRing}" aria-label="${t('nav.homeLabel')}" data-i18n-aria-label="nav.homeLabel">
           <img src="${import.meta.env.BASE_URL}favicon.svg" alt="" class="h-8 w-8" />
           Reservo
         </a>
@@ -82,11 +99,14 @@ export function renderNavbar(container) {
         <div id="primary-navigation" class="absolute inset-x-0 top-full hidden border-b border-slate-200 bg-white px-4 py-4 shadow-xl md:static md:flex md:flex-1 md:justify-center md:border-0 md:bg-transparent md:p-0 md:shadow-none">
           <ul class="flex flex-col gap-1 md:flex-row md:items-center md:gap-5 lg:gap-8">
             ${links.map(navLink).join('')}
+            <li class="md:hidden">
+              ${languageToggle('inline-flex px-3 py-2')}
+            </li>
             <!-- "Iniciar sesión" dentro del desplegable, solo en móvil (en escritorio va a la derecha).
                  Es texto y no un enlace porque la web todavía no tiene página de login
                  (issue #28: sin enlaces rotos). text-slate-600: el mismo gris que los enlaces -->
             <li class="md:hidden">
-              <span class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-600">Iniciar sesión</span>
+              <span data-i18n="nav.login" class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-600">${t('nav.login')}</span>
             </li>
           </ul>
         </div>
@@ -94,10 +114,11 @@ export function renderNavbar(container) {
         <!-- Acciones de la derecha: "Iniciar sesión" (solo escritorio), "Prueba gratis" y el botón del menú (solo móvil).
              "Prueba gratis" se ve también en móvil, junto al botón del menú, como en el mockup -->
         <div class="flex shrink-0 items-center gap-3">
+          ${languageToggle('hidden md:inline-flex px-2 py-2')}
           <!-- "Iniciar sesión" en escritorio: también es texto, como en el desplegable de móvil -->
-          <span class="hidden rounded-lg text-sm font-medium text-slate-600 md:inline">Iniciar sesión</span>
+          <span data-i18n="nav.login" class="hidden rounded-lg text-sm font-medium text-slate-600 md:inline">${t('nav.login')}</span>
           <!-- Botón pequeño (px-4 py-2 text-sm), como en el mockup -->
-          <a href="#cta" class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-500 ${focusRing}">Prueba gratis</a>
+          <a href="#cta" data-i18n="nav.tryForFree" class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-500 ${focusRing}">${t('nav.tryForFree')}</a>
 
           <!-- Botón del menú (☰), solo en móvil (md:hidden).
                aria-expanded dice si el menú está abierto y aria-controls qué menú abre.
@@ -110,7 +131,8 @@ export function renderNavbar(container) {
             class="inline-flex items-center justify-center rounded-lg p-2.5 text-slate-700 transition hover:bg-slate-100 md:hidden ${focusRing}"
             aria-expanded="false"
             aria-controls="primary-navigation"
-            aria-label="Menú de navegación"
+            aria-label="${t('nav.menuLabel')}"
+            data-i18n-aria-label="nav.menuLabel"
           >
             <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
               <path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round" />

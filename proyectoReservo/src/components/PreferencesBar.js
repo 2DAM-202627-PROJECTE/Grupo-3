@@ -19,6 +19,8 @@
 // 1. Configuración
 // -------------------------------------------------------------
 
+import { t } from '../i18n.js';
+
 // Clases comunes para el foco visible al navegar con el teclado (accesibilidad).
 // El documento pide que el aviso de cookies también se pueda usar con el teclado (apartado 3.2)
 const focusRing = 'focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500';
@@ -80,7 +82,8 @@ export function renderPreferencesBar(container) {
   // y el usuario puede saltar directamente a él
   container.className = 'fixed inset-x-0 bottom-0 z-50 p-4';
   container.setAttribute('role', 'region');
-  container.setAttribute('aria-label', 'Aviso de cookies');
+  container.setAttribute('aria-label', t('cookies.ariaLabel'));
+  container.dataset.i18nAriaLabel = 'cookies.ariaLabel';
 
   container.innerHTML = /*html*/ `
     <!-- Tarjeta del aviso: centrada y con ancho máximo.
@@ -91,9 +94,8 @@ export function renderPreferencesBar(container) {
            import.meta.env.BASE_URL es la ruta base de la web ("/" en local y "/Grupo-3/" en GitHub Pages).
            Va subrayado para que se vea que es un enlace sin depender solo del color -->
       <p class="flex-1 text-sm text-slate-700">
-        Usamos cookies propias para que la web funcione y, si las aceptas,
-        cookies de análisis para mejorarla. Más información en nuestra
-        <a href="${import.meta.env.BASE_URL}politica-cookies.html" class="rounded text-indigo-700 underline hover:text-indigo-900 ${focusRing}">política de cookies</a>.
+        <span data-i18n="cookies.description">${t('cookies.description')}</span>
+        <a href="${import.meta.env.BASE_URL}politica-cookies.html" data-i18n="cookies.policy" class="rounded text-indigo-700 underline hover:text-indigo-900 ${focusRing}">${t('cookies.policy')}</a>.
       </p>
 
       <!-- Botones. data-cookie-choice guarda la opción de cada uno ("accepted" o "rejected"),
@@ -101,10 +103,10 @@ export function renderPreferencesBar(container) {
            shrink-0: los botones no se aplastan aunque el texto sea largo -->
       <div class="flex shrink-0 gap-3">
         <button type="button" data-cookie-choice="rejected" class="flex-1 sm:flex-none ${buttonBase} ${buttonSecondary}">
-          Rechazar
+          <span data-i18n="cookies.reject">${t('cookies.reject')}</span>
         </button>
         <button type="button" data-cookie-choice="accepted" class="flex-1 sm:flex-none ${buttonBase} ${buttonPrimary}">
-          Aceptar
+          <span data-i18n="cookies.accept">${t('cookies.accept')}</span>
         </button>
       </div>
     </div>

@@ -16,6 +16,7 @@
 // createIcons convierte cada <i data-lucide="..."> en su dibujo SVG.
 // Solo se importa la estrella, que es el único icono de la sección
 import { createIcons, Star } from 'lucide';
+import { t } from '../i18n.js';
 
 // Datos de los 3 testimonios. Si se añade o quita alguno, solo hay que tocar este array.
 //   - quote:  lo que dice el cliente
@@ -24,24 +25,21 @@ import { createIcons, Star } from 'lucide';
 //   - rating: estrellas de la valoración (de 1 a 5)
 const testimonials = [
   {
-    quote:
-      'Hemos dejado de atender llamadas que interrumpían entrenamientos. Los clientes reservan solos en diez segundos.',
+    quote: 'testimonials.quoteGym',
     author: 'Marcos R.',
-    sector: 'Gimnasio',
+    sector: 'testimonials.gym',
     rating: 5,
   },
   {
-    quote:
-      'Teníamos dos personas solo al teléfono: se perdía el tiempo. El 90% de las reservas llegan solas.',
+    quote: 'testimonials.quoteRestaurant',
     author: 'Javier M.',
-    sector: 'Restaurante',
+    sector: 'testimonials.restaurant',
     rating: 5,
   },
   {
-    quote:
-      'Muy fácil de configurar. Ahora los clientes ven la disponibilidad y piden cita sin esperar.',
+    quote: 'testimonials.quoteSalon',
     author: 'Lucía B.',
-    sector: 'Peluquería',
+    sector: 'testimonials.salon',
     rating: 5,
   },
 ];
@@ -79,13 +77,13 @@ function testimonialCard({ quote, author, sector, rating }) {
         <!-- Estrellas de valoración.
              role="img" + aria-label: el lector de pantalla lee "Valoración: 5 de 5 estrellas"
              en vez de nada. Sin role, un <div> no tiene rol y su aria-label no se lee -->
-        <div class="flex items-center gap-1" role="img" aria-label="Valoración: ${rating} de 5 estrellas">
+        <div class="flex items-center gap-1" role="img" aria-label="${t('testimonials.rating', { rating })}" data-i18n-aria-label="testimonials.rating" data-i18n-rating="${rating}">
           ${renderStars(rating)}
         </div>
 
         <!-- Cita del cliente, con comillas tipográficas (“ ”) en vez de las rectas (" ") -->
         <blockquote class="mt-4 text-sm leading-relaxed text-slate-700 sm:text-base">
-          “${quote}”
+          “<span data-i18n="${quote}">${t(quote)}</span>”
         </blockquote>
       </div>
 
@@ -93,7 +91,7 @@ function testimonialCard({ quote, author, sector, rating }) {
            Una línea fina lo separa de la cita -->
       <figcaption class="mt-6 border-t border-slate-200/60 pt-4">
         <p class="text-sm font-semibold text-slate-900">${author}</p>
-        <p class="text-xs text-slate-500">${sector}</p>
+        <p data-i18n="${sector}" class="text-xs text-slate-500">${t(sector)}</p>
       </figcaption>
     </figure>
   `;
@@ -114,10 +112,10 @@ export function renderTestimonials(container) {
       <!-- Cabecera de la sección: título y subtítulo centrados -->
       <div class="mx-auto max-w-2xl text-center">
         <h2 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-          Lo que dicen nuestros clientes
+          <span data-i18n="testimonials.heading">${t('testimonials.heading')}</span>
         </h2>
         <p class="mt-4 text-lg text-slate-600">
-          Negocios reales que ya ahorran horas cada semana con Reservo.
+          <span data-i18n="testimonials.description">${t('testimonials.description')}</span>
         </p>
       </div>
 
