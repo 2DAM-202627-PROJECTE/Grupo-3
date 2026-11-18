@@ -84,20 +84,26 @@ export function t(key, values = {}) {
 // Cada página puede poner las suyas con initializeLanguage (la de cookies lo hace)
 let pageKeys = { title: 'document.title', description: 'document.description' };
 
+// Formato de idioma que usa Open Graph (idioma_PAÍS) para cada idioma de la web
+const OPEN_GRAPH_LOCALES = { es: 'es_ES', en: 'en_US', ca: 'ca_ES' };
+
 // Idioma del <html> (lo usan los lectores de pantalla para pronunciar bien),
-// título de la pestaña y descripción para buscadores
+// título de la pestaña, descripción para buscadores y etiquetas Open Graph
+// (la tarjeta que sale al compartir el enlace en WhatsApp, LinkedIn…).
+// Se usan las claves de pageKeys, no las de la landing: así la página de cookies
+// mantiene su propio título y su propia descripción
 function updateDocumentLanguage() {
   document.documentElement.lang = currentLanguage;
   document.title = t(pageKeys.title);
   const description = document.querySelector('meta[name="description"]');
-  if (description) description.content = t('document.description');
+  if (description) description.content = t(pageKeys.description);
   const openGraphTitle = document.querySelector('meta[property="og:title"]');
-  if (openGraphTitle) openGraphTitle.content = t('document.title');
+  if (openGraphTitle) openGraphTitle.content = t(pageKeys.title);
   const openGraphDescription = document.querySelector('meta[property="og:description"]');
-  if (openGraphDescription) openGraphDescription.content = t('document.description');
+  if (openGraphDescription) openGraphDescription.content = t(pageKeys.description);
   const openGraphLocale = document.querySelector('meta[property="og:locale"]');
   if (openGraphLocale) {
-    openGraphLocale.content = { es: 'es_ES', en: 'en_US', ca: 'ca_ES' }[currentLanguage];
+    openGraphLocale.content = OPEN_GRAPH_LOCALES[currentLanguage];
   }
 }
 
