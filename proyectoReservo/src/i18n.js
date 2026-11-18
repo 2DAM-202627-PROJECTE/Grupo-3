@@ -90,7 +90,15 @@ function updateDocumentLanguage() {
   document.documentElement.lang = currentLanguage;
   document.title = t(pageKeys.title);
   const description = document.querySelector('meta[name="description"]');
-  if (description) description.content = t(pageKeys.description);
+  if (description) description.content = t('document.description');
+  const openGraphTitle = document.querySelector('meta[property="og:title"]');
+  if (openGraphTitle) openGraphTitle.content = t('document.title');
+  const openGraphDescription = document.querySelector('meta[property="og:description"]');
+  if (openGraphDescription) openGraphDescription.content = t('document.description');
+  const openGraphLocale = document.querySelector('meta[property="og:locale"]');
+  if (openGraphLocale) {
+    openGraphLocale.content = { es: 'es_ES', en: 'en_US', ca: 'ca_ES' }[currentLanguage];
+  }
 }
 
 // Valores de los huecos {…} guardados en un elemento con data-i18n-*:

@@ -348,13 +348,12 @@ function setupNewsletter(container) {
       return;
     }
 
-    // b) Mientras se espera a Mailchimp: botón desactivado (para no enviar dos veces)
-    //    y un aviso en gris
+    // b) Envío a Mailchimp. El botón se bloquea mientras esperamos la respuesta.
     button.disabled = true;
-    setMessage('newsletter.sending', 'text-slate-600');
-
+    message.textContent = '';
     try {
-      const response = mailchimpMessage(await subscribeWithRetry(email), email);
+      const mailchimpResponse = await subscribeWithRetry(email.toLowerCase());
+      const response = mailchimpMessage(mailchimpResponse, email);
 
       if (response.ok) {
         // Confirmación en verde y formulario vacío.
