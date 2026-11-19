@@ -361,14 +361,16 @@ function setupLanguageMenu(container) {
   button.addEventListener('click', () => setOpen(!isOpen()));
 
   // --- Clic en un idioma: se cambia toda la página (i18n.js) y se actualiza el selector.
-  //     Si era el desplegable, se cierra y el foco vuelve al botón del globo ---
+  //     Si era el desplegable, se cierra y el foco vuelve al botón del globo.
+  //     preventScroll: true → devolver el foco no mueve la página. Sin él, el navegador
+  //     subía la página unos 450 px al cambiar de idioma con la página bajada ---
   options.forEach((option) => {
     option.addEventListener('click', () => {
       setLanguage(option.dataset.languageOption);
       update();
       if (panel.contains(option)) {
         setOpen(false);
-        button.focus();
+        button.focus({ preventScroll: true });
       }
     });
   });
@@ -377,7 +379,7 @@ function setupLanguageMenu(container) {
   menu.addEventListener('keydown', (event) => {
     if (event.key === 'Escape' && isOpen()) {
       setOpen(false);
-      button.focus();
+      button.focus({ preventScroll: true });
     }
   });
 
