@@ -1,0 +1,183 @@
+<!doctype html>
+<!-- =============================================================
+     politica-privacidad.html — Política de privacidad (issue #71)
+     Página legal separada de la landing, como politica-cookies.html y aviso-legal.html
+     (configuración multipágina de Vite, ver vite.config.js). Se enlaza desde el footer.
+     Recoge la información que pide el artículo 13 del RGPD: quién trata los datos,
+     cuáles, para qué, con qué base legal, cuánto tiempo, quién más los ve y qué derechos hay.
+
+     Solo explica lo que la web hace de verdad: la newsletter envía el email a Mailchimp
+     (src/components/Newsletter.js) y el formulario de prueba gratuita (src/components/Cta.js)
+     solo comprueba el email en el navegador, sin enviarlo a ningún sitio.
+
+     Traducción: los textos están escritos en castellano y cada uno lleva su clave
+     (data-i18n o data-i18n-html). src/privacyPage.js los cambia al idioma de la persona;
+     las traducciones están en src/locales, con las claves "legal.…" (comunes a las
+     páginas legales) y "privacyPage.…" (solo de esta página).
+
+     Partes de la página:
+       1. Cabecera  → logo y enlace para volver a la landing
+       2. Contenido → responsable, datos, finalidad, base legal, conservación,
+                      destinatarios, derechos, menores y cambios
+       3. Pie       → copyright
+     ============================================================= -->
+<html lang="es" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Mismos estilos que la landing (Vite procesa este CSS con Tailwind) -->
+    <link rel="stylesheet" href="/src/style.css" />
+    <meta name="description" content="Política de privacidad de Reservo: qué datos personales recoge la web, para qué los usa, cuánto tiempo los guarda y cómo ejercer tus derechos." />
+    <title>Política de privacidad · Reservo</title>
+    <!-- Traducción de la página. type="module": se ejecuta cuando el HTML ya está leído -->
+    <script type="module" src="/src/privacyPage.js"></script>
+  </head>
+  <body class="bg-(--bg) text-slate-900 antialiased">
+    <!-- Fondo aurora (manchas de color pastel), igual que en la landing. Es decorativo -->
+    <div class="page-aurora" aria-hidden="true"></div>
+
+    <!-- ===== 1. Cabecera ===== -->
+    <header class="border-b border-slate-200/70">
+      <nav aria-label="Navegación principal" data-i18n-aria-label="nav.primaryLabel" class="mx-auto flex max-w-3xl items-center justify-between px-4 py-5 sm:px-6">
+        <!-- Logo: enlace a la landing. href="./": ruta relativa, funciona en local y en GitHub Pages -->
+        <a href="./" class="flex items-center gap-2 rounded-lg font-bold text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500">
+          <img src="/favicon.svg" alt="" class="h-8 w-8" />
+          Reservo
+        </a>
+        <a href="./" data-i18n="cookiePage.back" class="rounded-lg text-sm font-medium text-slate-700 hover:text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500">← Volver al inicio</a>
+      </nav>
+    </header>
+
+    <!-- ===== 2. Contenido ===== -->
+    <!-- max-w-3xl: líneas no demasiado largas para leer cómodo. Cada apartado es un <section>
+         con su <h2>. [&_strong]:text-slate-900: las negritas de los textos traducidos salen más oscuras -->
+    <main class="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:py-16 [&_strong]:text-slate-900">
+      <h1 data-i18n="privacyPage.heading" class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">Política de privacidad</h1>
+      <p data-i18n="legal.updated" class="mt-2 text-sm text-slate-600">Última actualización: 19 de noviembre de 2026</p>
+
+      <!-- Aviso de que es un proyecto educativo: así nadie confunde los datos inventados con una empresa real -->
+      <p data-i18n-html="legal.fictionNote" class="glass mt-8 rounded-xl border border-indigo-200 px-5 py-4 text-sm leading-relaxed text-slate-700">
+        Reservo es un <strong>proyecto educativo</strong> del ciclo de Desarrollo de Aplicaciones
+        Multiplataforma. La empresa y sus datos son ficticios.
+      </p>
+
+      <!-- 1. Responsable: los mismos datos que en el aviso legal -->
+      <section class="mt-10 space-y-4 leading-relaxed text-slate-700">
+        <h2 data-i18n="privacyPage.ownerHeading" class="text-xl font-semibold text-slate-900">1. Responsable del tratamiento</h2>
+        <!-- <dl>: lista de pares "dato → valor". En móvil, uno debajo del otro; desde sm, en dos columnas -->
+        <dl class="glass grid grid-cols-1 gap-x-6 gap-y-2 rounded-xl p-5 text-sm sm:grid-cols-[10rem_1fr]">
+          <dt data-i18n="legal.ownerLabel" class="font-semibold text-slate-900">Titular</dt>
+          <dd>Reservo Software, S.L.</dd>
+          <dt data-i18n="legal.taxIdLabel" class="mt-2 font-semibold text-slate-900 sm:mt-0">NIF</dt>
+          <dd>B12345678</dd>
+          <dt data-i18n="legal.addressLabel" class="mt-2 font-semibold text-slate-900 sm:mt-0">Domicilio</dt>
+          <dd>Carrer de Sant Blai, 4, 43500 Tortosa (Tarragona)</dd>
+          <dt data-i18n="legal.emailLabel" class="mt-2 font-semibold text-slate-900 sm:mt-0">Email</dt>
+          <!-- mailto: al pulsarlo se abre el programa de correo con la dirección puesta -->
+          <dd><a href="mailto:hola@reservo.es" class="rounded text-indigo-700 underline hover:text-indigo-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500">hola@reservo.es</a></dd>
+        </dl>
+      </section>
+
+      <!-- 2. Qué datos se recogen: solo los que la web recoge de verdad -->
+      <section class="mt-10 space-y-4 leading-relaxed text-slate-700">
+        <h2 data-i18n="privacyPage.dataHeading" class="text-xl font-semibold text-slate-900">2. ¿Qué datos tratamos?</h2>
+        <ul class="list-disc space-y-2 pl-6">
+          <li data-i18n-html="privacyPage.dataNewsletter"><strong>Newsletter:</strong> tu email, si te suscribes y marcas la casilla de consentimiento.</li>
+          <li data-i18n-html="privacyPage.dataTrial"><strong>Prueba gratuita:</strong> el email del formulario solo se comprueba en tu navegador. En esta versión de la web no se envía ni se guarda en ningún sitio.</li>
+          <li data-i18n-html="privacyPage.dataContact"><strong>Contacto:</strong> tu email y lo que nos cuentes, si nos escribes a hola@reservo.es.</li>
+          <li>
+            <span data-i18n-html="privacyPage.dataBrowser"><strong>Preferencias:</strong> tu elección de cookies, el idioma y si ya has visto la intro se guardan solo en tu navegador. Se explica en la</span>
+            <a href="politica-cookies.html" data-i18n="legal.cookiesLink" class="rounded text-indigo-700 underline hover:text-indigo-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500">Política de cookies</a>.
+          </li>
+        </ul>
+      </section>
+
+      <!-- 3. Para qué -->
+      <section class="mt-10 space-y-4 leading-relaxed text-slate-700">
+        <h2 data-i18n="privacyPage.purposeHeading" class="text-xl font-semibold text-slate-900">3. ¿Para qué los usamos?</h2>
+        <p data-i18n="privacyPage.purposeText">
+          Usamos tu email para enviarte la newsletter de Reservo (novedades y consejos para
+          gestionar tus reservas) y para responderte si nos escribes. No lo usamos para nada más
+          ni tomamos decisiones automáticas con él.
+        </p>
+      </section>
+
+      <!-- 4. Base legal (artículo 6 del RGPD) -->
+      <section class="mt-10 space-y-4 leading-relaxed text-slate-700">
+        <h2 data-i18n="privacyPage.basisHeading" class="text-xl font-semibold text-slate-900">4. ¿Con qué base legal?</h2>
+        <p data-i18n-html="privacyPage.basisText">
+          Tu <strong>consentimiento</strong> (artículo 6.1.a del RGPD), que das al marcar la casilla
+          de la newsletter o al escribirnos. Puedes retirarlo cuando quieras, sin que eso afecte a
+          lo que se hizo antes.
+        </p>
+      </section>
+
+      <!-- 5. Cuánto tiempo -->
+      <section class="mt-10 space-y-4 leading-relaxed text-slate-700">
+        <h2 data-i18n="privacyPage.keepHeading" class="text-xl font-semibold text-slate-900">5. ¿Cuánto tiempo los guardamos?</h2>
+        <p data-i18n="privacyPage.keepText">
+          El email de la newsletter, hasta que te des de baja. Los mensajes que nos envíes, el
+          tiempo necesario para responderte y, como máximo, un año.
+        </p>
+      </section>
+
+      <!-- 6. Destinatarios: Mailchimp es el único servicio externo que recibe datos -->
+      <section class="mt-10 space-y-4 leading-relaxed text-slate-700">
+        <h2 data-i18n="privacyPage.recipientsHeading" class="text-xl font-semibold text-slate-900">6. ¿Quién más ve tus datos?</h2>
+        <p data-i18n-html="privacyPage.recipientsText1">
+          Solo <strong>Mailchimp</strong> (Intuit Inc.), el servicio que guarda la lista de
+          suscriptores y envía la newsletter. Trata los datos por encargo nuestro y no puede
+          usarlos para nada más.
+        </p>
+        <p data-i18n="privacyPage.recipientsText2">
+          Mailchimp está en Estados Unidos. La transferencia está protegida por el Marco de
+          Privacidad de Datos UE-EE. UU. y por las cláusulas contractuales tipo de la Comisión
+          Europea. No vendemos ni cedemos tus datos a nadie más.
+        </p>
+      </section>
+
+      <!-- 7. Derechos (artículos 15 a 22 del RGPD) y reclamación ante la AEPD -->
+      <section class="mt-10 space-y-4 leading-relaxed text-slate-700">
+        <h2 data-i18n="privacyPage.rightsHeading" class="text-xl font-semibold text-slate-900">7. Tus derechos</h2>
+        <p data-i18n-html="privacyPage.rightsText1">
+          Puedes pedirnos <strong>acceder</strong> a tus datos, <strong>rectificarlos</strong>,
+          <strong>suprimirlos</strong>, <strong>oponerte</strong> a su uso, <strong>limitarlo</strong>
+          o recibirlos en un formato que puedas llevarte a otro servicio (<strong>portabilidad</strong>).
+        </p>
+        <p>
+          <span data-i18n="privacyPage.rightsText2">Para hacerlo, escríbenos a</span>
+          <a href="mailto:hola@reservo.es" class="rounded text-indigo-700 underline hover:text-indigo-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500">hola@reservo.es</a><span data-i18n="privacyPage.rightsText3">. Para darte de baja de la newsletter basta con el enlace que hay al final de cada email.</span>
+        </p>
+        <p>
+          <span data-i18n="privacyPage.rightsText4">Si crees que no hemos tratado bien tus datos, puedes reclamar ante la</span>
+          <!-- Enlace externo: se abre en una pestaña nueva, como las redes sociales del footer -->
+          <a href="https://www.aepd.es/" target="_blank" rel="noopener noreferrer" data-i18n="privacyPage.aepd" class="rounded text-indigo-700 underline hover:text-indigo-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500">Agencia Española de Protección de Datos</a>.
+        </p>
+      </section>
+
+      <!-- 8. Menores: en España se puede dar el consentimiento a partir de los 14 años (LOPDGDD, artículo 7) -->
+      <section class="mt-10 space-y-4 leading-relaxed text-slate-700">
+        <h2 data-i18n="privacyPage.minorsHeading" class="text-xl font-semibold text-slate-900">8. Menores de edad</h2>
+        <p data-i18n="privacyPage.minorsText">
+          Si tienes menos de 14 años, no puedes suscribirte a la newsletter sin el permiso de tu
+          madre, padre o tutor.
+        </p>
+      </section>
+
+      <!-- 9. Cambios -->
+      <section class="mt-10 space-y-4 leading-relaxed text-slate-700">
+        <h2 data-i18n="privacyPage.changesHeading" class="text-xl font-semibold text-slate-900">9. Cambios en esta política</h2>
+        <p data-i18n="privacyPage.changesText">
+          Si cambiamos esta política, publicaremos la nueva versión en esta página con su fecha
+          de actualización. Si el cambio es importante, avisaremos a los suscriptores por email.
+        </p>
+      </section>
+    </main>
+
+    <!-- ===== 3. Pie ===== -->
+    <footer class="border-t border-slate-200/70">
+      <p class="mx-auto max-w-3xl px-4 py-6 text-sm text-slate-600 sm:px-6">© 2026 Reservo</p>
+    </footer>
+  </body>
+</html>

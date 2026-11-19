@@ -31,6 +31,7 @@ export default defineConfig(({ command, isPreview }) => ({
         main: page('index.html'),
         cookies: page('politica-cookies.html'),
         legalNotice: page('aviso-legal.html'), // issue #71
+        privacy: page('politica-privacidad.html'), // issue #71
       },
     },
   },
