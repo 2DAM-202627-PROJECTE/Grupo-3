@@ -384,7 +384,7 @@ export default {
   // Vista previa del panel de Reservo (src/components/AppPreview.js)
   'preview.heading': 'Así se ve Reservo por dentro',
   'preview.description': 'Un panel claro para ver de un vistazo las reservas del día, la ocupación de cada clase y cómo va la semana.',
-  'preview.imageLabel': 'Vista previa del panel de Reservo para FitZone Gym: 38 reservas hoy, 86 % de ocupación, 642 € de ingresos, la agenda de clases del día y las reservas de la semana.',
+  'preview.imageLabel': 'Vista previa del panel de Reservo para FitZone Gym: 52 reservas hoy, 83 % de ocupación, 642 € de ingresos, la agenda de clases del día y las reservas de la semana.',
   'preview.navDashboard': 'Inicio',
   'preview.navCalendar': 'Agenda',
   'preview.navClients': 'Clientes',
@@ -399,7 +399,6 @@ export default {
   'preview.statRevenueNote': '14 pagos online',
   'preview.agenda': 'Clases de hoy',
   'preview.coach': 'con {name}',
-  'preview.full': 'Completa',
   'preview.classSpinning': 'Spinning',
   'preview.classPilates': 'Pilates',
   'preview.classCrossfit': 'CrossFit',

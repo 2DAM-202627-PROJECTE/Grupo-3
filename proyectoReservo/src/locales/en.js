@@ -384,7 +384,7 @@ export default {
   // Vista previa del panel de Reservo (src/components/AppPreview.js)
   'preview.heading': 'What Reservo looks like inside',
   'preview.description': 'A clear dashboard to see today’s bookings, how full each class is and how the week is going at a glance.',
-  'preview.imageLabel': 'Preview of the Reservo dashboard for FitZone Gym: 38 bookings today, 86% occupancy, €642 in revenue, today’s class schedule and this week’s bookings.',
+  'preview.imageLabel': 'Preview of the Reservo dashboard for FitZone Gym: 52 bookings today, 83% occupancy, €642 in revenue, today’s class schedule and this week’s bookings.',
   'preview.navDashboard': 'Home',
   'preview.navCalendar': 'Schedule',
   'preview.navClients': 'Clients',
@@ -399,7 +399,6 @@ export default {
   'preview.statRevenueNote': '14 online payments',
   'preview.agenda': 'Today’s classes',
   'preview.coach': 'with {name}',
-  'preview.full': 'Full',
   'preview.classSpinning': 'Spinning',
   'preview.classPilates': 'Pilates',
   'preview.classCrossfit': 'CrossFit',

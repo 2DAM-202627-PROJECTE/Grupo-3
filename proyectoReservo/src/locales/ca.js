@@ -384,7 +384,7 @@ export default {
   // Vista previa del panel de Reservo (src/components/AppPreview.js)
   'preview.heading': 'Així es veu Reservo per dins',
   'preview.description': 'Un tauler clar per veure d’un cop d’ull les reserves del dia, l’ocupació de cada classe i com va la setmana.',
-  'preview.imageLabel': 'Vista prèvia del tauler de Reservo per a FitZone Gym: 38 reserves avui, 86 % d’ocupació, 642 € d’ingressos, l’agenda de classes del dia i les reserves de la setmana.',
+  'preview.imageLabel': 'Vista prèvia del tauler de Reservo per a FitZone Gym: 52 reserves avui, 83 % d’ocupació, 642 € d’ingressos, l’agenda de classes del dia i les reserves de la setmana.',
   'preview.navDashboard': 'Inici',
   'preview.navCalendar': 'Agenda',
   'preview.navClients': 'Clients',
@@ -399,7 +399,6 @@ export default {
   'preview.statRevenueNote': '14 pagaments en línia',
   'preview.agenda': 'Classes d’avui',
   'preview.coach': 'amb {name}',
-  'preview.full': 'Completa',
   'preview.classSpinning': 'Spinning',
   'preview.classPilates': 'Pilates',
   'preview.classCrossfit': 'CrossFit',

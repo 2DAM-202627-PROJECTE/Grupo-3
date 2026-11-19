@@ -45,19 +45,30 @@ const navItems = [
 //   - value: el número (no se traduce)
 //   - note:  texto pequeño debajo (opcional)
 //   - bar:   porcentaje para dibujar una barra (opcional, solo en ocupación)
+// Cuadran con las clases de abajo: 14 + 13 + 16 + 9 = 52 reservas de 63 plazas (83 %)
 const stats = [
-  { icon: 'calendar-check', label: 'preview.statBookings', value: '38', note: 'preview.statBookingsNote' },
-  { icon: 'percent', label: 'preview.statOccupancy', value: '86 %', bar: 86 },
+  { icon: 'calendar-check', label: 'preview.statBookings', value: '52', note: 'preview.statBookingsNote' },
+  { icon: 'percent', label: 'preview.statOccupancy', value: '83 %', bar: 83 },
   { icon: 'euro', label: 'preview.statRevenue', value: '642 €', note: 'preview.statRevenueNote' },
 ];
 
-// Clases de hoy. booked / capacity: plazas reservadas / plazas totales
+// Clases de hoy. Son las mismas que la tarjeta del Hero para el miércoles 24, con las mismas
+// horas y plazas libres (Spinning 6, Yoga 2, CrossFit completo), así las dos vistas cuadran.
+//   - booked / capacity: plazas reservadas / plazas totales
+//   - color: el mismo color que tiene esa clase en la agenda de la intro (SECTORS en Intro.js)
 const classes = [
-  { time: '07:30', name: 'preview.classSpinning', coach: 'Marta', booked: 18, capacity: 20 },
-  { time: '09:00', name: 'preview.classPilates', coach: 'Àlex', booked: 12, capacity: 12 },
-  { time: '18:00', name: 'preview.classCrossfit', coach: 'Joan', booked: 9, capacity: 16 },
-  { time: '19:30', name: 'preview.classYoga', coach: 'Laura', booked: 14, capacity: 15 },
+  { time: '09:00', name: 'preview.classSpinning', coach: 'Marta', booked: 14, capacity: 20, color: 'bg-indigo-600' },
+  { time: '12:30', name: 'preview.classYoga', coach: 'Laura', booked: 13, capacity: 15, color: 'bg-cyan-600' },
+  { time: '18:00', name: 'preview.classCrossfit', coach: 'Joan', booked: 16, capacity: 16, color: 'bg-emerald-600' },
+  { time: '19:30', name: 'preview.classPilates', coach: 'Àlex', booked: 9, capacity: 12, color: 'bg-amber-600' },
 ];
+
+// Colores del estado de una clase, los mismos que las etiquetas del Hero:
+// verde si hay plazas, ámbar si quedan pocas (2 o menos) y rojo si está completa
+const statusColors = {
+  emerald: { bar: 'bg-emerald-500', text: 'text-emerald-700' },
+  amber: { bar: 'bg-amber-500', text: 'text-amber-700' },
+};
 
 // Reservas de cada día de la semana, en % del día con más reservas.
 // Los nombres cortos de lunes a viernes son los mismos que usa el Hero.
@@ -114,14 +125,18 @@ function statCard({ icon, label, value, note, bar }) {
   `;
 }
 
-// Una fila de la agenda: hora, clase, monitor y plazas.
-// Si está llena (booked === capacity), sale la etiqueta "Completa" en ámbar
-function classRow({ time, name, coach, booked, capacity }) {
+// Una fila de la agenda: punto de color, hora, clase, monitor y plazas.
+// Si está llena (booked === capacity), sale la etiqueta "Completo" en rojo, como en el Hero
+function classRow({ time, name, coach, booked, capacity, color }) {
   const full = booked === capacity;
   const percent = Math.round((booked / capacity) * 100);
+  const status = statusColors[capacity - booked <= 2 ? 'amber' : 'emerald'];
 
   return /*html*/ `
     <li class="flex items-center gap-3 py-3">
+      <!-- Punto con el color de la clase (el mismo que en la agenda de la intro) -->
+      <span class="h-2.5 w-2.5 shrink-0 rounded-full ${color}"></span>
+
       <!-- Hora, con ancho fijo para que las filas queden alineadas -->
       <span class="w-12 shrink-0 text-sm font-semibold text-slate-900">${time}</span>
 
@@ -131,15 +146,16 @@ function classRow({ time, name, coach, booked, capacity }) {
         <p data-i18n="preview.coach" data-i18n-name="${coach}" class="truncate text-xs text-slate-600">${t('preview.coach', { name: coach })}</p>
       </div>
 
-      <!-- Plazas: número y barra pequeña, o la etiqueta "Completa" si está llena -->
+      <!-- Plazas: número y barra pequeña con el color del estado, o la etiqueta "Completo" si está llena.
+           "Completo" usa la misma traducción (hero.full) y los mismos colores que la tarjeta del Hero -->
       <div class="w-20 shrink-0 text-right">
         ${
           full
-            ? `<span data-i18n="preview.full" class="rounded-full bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-800">${t('preview.full')}</span>`
+            ? `<span data-i18n="hero.full" class="rounded-full bg-rose-50 px-2 py-0.5 text-xs font-medium text-rose-700">${t('hero.full')}</span>`
             : /*html*/ `
-          <p class="text-xs font-medium text-slate-700">${booked}/${capacity}</p>
+          <p class="text-xs font-medium ${status.text}">${booked}/${capacity}</p>
           <div class="mt-1 h-1 rounded-full bg-slate-100">
-            <div class="h-1 rounded-full bg-indigo-500" style="width: ${percent}%"></div>
+            <div class="h-1 rounded-full ${status.bar}" style="width: ${percent}%"></div>
           </div>`
         }
       </div>
