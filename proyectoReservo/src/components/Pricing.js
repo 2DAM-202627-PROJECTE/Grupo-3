@@ -222,7 +222,7 @@ function planTab({ id, name, featured = false }) {
       aria-selected="${featured}"
       aria-controls="plan-${id}"
       tabindex="${featured ? 0 : -1}"
-      class="flex-1 rounded-lg px-3 py-2.5 text-sm font-semibold text-slate-600 transition hover:text-slate-900 aria-selected:bg-indigo-600 aria-selected:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+      class="flex-1 rounded-lg px-3 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-white/70 hover:text-slate-900 aria-selected:bg-indigo-600 aria-selected:text-white aria-selected:shadow-md aria-selected:shadow-indigo-500/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
     >
       ${name.includes('.') ? `<span data-i18n="${name}">${t(name)}</span>` : name}
     </button>
@@ -303,7 +303,9 @@ export function renderPricing(container) {
       <!-- Pestañas de los planes: solo en móvil y tablet (lg:hidden las oculta en escritorio,
            donde se ven las tres tarjetas a la vez). Fondo gris con las pestañas dentro,
            como un control segmentado. role="tablist" agrupa las pestañas para el lector de pantalla -->
-      <div role="tablist" aria-label="${t('pricing.plans')}" data-i18n-aria-label="pricing.plans" class="mx-auto mt-8 flex max-w-md gap-1 rounded-xl border border-white/90 bg-white/55 p-1 backdrop-blur lg:hidden">
+      <!-- Barra gris (bg-slate-200/80) con borde: se distingue del fondo claro de la página.
+           Con fondo blanco, las pestañas sin elegir parecían texto suelto -->
+      <div role="tablist" aria-label="${t('pricing.plans')}" data-i18n-aria-label="pricing.plans" class="mx-auto mt-8 flex max-w-md gap-1 rounded-xl border border-slate-300/80 bg-slate-200/80 p-1 shadow-inner lg:hidden">
         ${plans.map(planTab).join('')}
       </div>
 
