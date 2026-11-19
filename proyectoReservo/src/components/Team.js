@@ -23,8 +23,8 @@ import { t } from '../i18n.js';
 //   - bio:      clave de la frase que lo presenta (se traduce)
 const team = [
   { name: 'Vlad Bobu', initials: 'VB', role: 'team.roleVlad', bio: 'team.bioVlad' },
-  { name: 'Arnau Serra', initials: 'AS', role: 'team.roleArnau', bio: 'team.bioArnau' },
-  { name: 'Jean Orozco', initials: 'JO', role: 'team.roleJean', bio: 'team.bioJean' },
+  { name: 'Arnau Serra Soriano', initials: 'AS', role: 'team.roleArnau', bio: 'team.bioArnau' },
+  { name: 'Jean Pierre Orozco Zubieta', initials: 'JO', role: 'team.roleJean', bio: 'team.bioJean' },
 ];
 
 // -------------------------------------------------------------
