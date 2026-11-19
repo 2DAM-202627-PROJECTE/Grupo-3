@@ -66,8 +66,8 @@ function faqItem({ question, answer }) {
 
 // Pinta la sección dentro del contenedor que le pasa main.js (el <section id="faq">)
 export function renderFaq(container) {
-  // Espaciado vertical similar al resto de secciones
-  container.className = 'py-20 lg:py-28';
+  // Espaciado vertical responsive: py-16 en móvil, py-20 en tablet y py-28 en escritorio
+  container.className = 'py-16 sm:py-20 lg:py-28';
 
   container.innerHTML = /*html*/ `
     <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">

@@ -98,8 +98,8 @@ function featureCard({ icon, title, text }) {
 // Pinta la sección dentro del contenedor que le pasa main.js
 // (el <section id="funciones">).
 export function renderFeatures(container) {
-  // Espaciado vertical de la sección: más grande en escritorio (lg:)
-  container.className = 'py-20 lg:py-28';
+  // Espaciado vertical de la sección: py-16 en móvil, py-20 en tablet y py-28 en escritorio
+  container.className = 'py-16 sm:py-20 lg:py-28';
 
   container.innerHTML = /*html*/ `
     <!-- Contenedor centrado con ancho máximo y márgenes laterales -->

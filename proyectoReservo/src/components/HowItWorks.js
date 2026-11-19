@@ -76,8 +76,8 @@ function stepItem({ number, title, text }) {
 
 // Pinta la sección dentro del contenedor que le pasa main.js (el <section id="como-funciona">)
 export function renderHowItWorks(container) {
-  // Franja de cristal (bg-white/40, deja ver la aurora) y bordes sutiles para alternar y destacar la sección
-  container.className = 'border-y border-white/60 bg-white/40 py-20 lg:py-28';
+  // Franja de cristal y bordes sutiles: py-16 en móvil, py-20 en tablet y py-28 en escritorio
+  container.className = 'border-y border-white/60 bg-white/40 py-16 sm:py-20 lg:py-28';
 
   container.innerHTML = /*html*/ `
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
