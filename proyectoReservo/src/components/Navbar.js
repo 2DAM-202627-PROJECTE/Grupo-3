@@ -133,8 +133,9 @@ export function renderNavbar(container) {
          transition-[...]: el cambio entre los dos estados es suave (300ms) -->
     <div id="navbar-bar" class="relative z-20 border-b border-transparent backdrop-blur transition-[background-color,border-color,box-shadow] duration-300">
       <!-- Tres zonas en fila: logo (izquierda), enlaces (centro) y acciones (derecha).
-           relative: el desplegable de móvil (absolute top-full) se coloca justo debajo de esta fila -->
-      <div class="relative mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
+           relative: el desplegable de móvil (absolute top-full) se coloca justo debajo de esta fila.
+           gap-2 en móvil (gap-4 desde sm): a 320 px, en catalán ("Prova-ho gratis") no cabría -->
+      <div class="relative mx-auto flex max-w-7xl items-center justify-between gap-2 px-4 py-3 sm:gap-4 sm:px-6 lg:px-8">
 
         <!-- Logo: el icono "R" (el mismo que el favicon) y el nombre, como en el mockup.
              El icono es decorativo (alt=""): el texto "Reservo" ya dice qué es.
@@ -148,7 +149,9 @@ export function renderNavbar(container) {
         <!-- Enlaces. En móvil es un desplegable oculto (hidden) debajo de la barra;
              en escritorio (md:) se ve siempre, en fila y centrado (md:flex-1 + md:justify-center) -->
         <div id="primary-navigation" class="absolute inset-x-0 top-full hidden border-b border-slate-200 bg-white px-4 py-4 shadow-xl md:static md:flex md:flex-1 md:justify-center md:border-0 md:bg-transparent md:p-0 md:shadow-none">
-          <ul class="flex flex-col gap-1 md:flex-row md:items-center md:gap-5 lg:gap-8">
+          <!-- md:gap-3 en tableta: los enlaces no se parten en dos líneas (whitespace-nowrap) y,
+               con más separación, a 768 px la barra se saldría de la pantalla. En escritorio, lg:gap-8 -->
+          <ul class="flex flex-col gap-1 md:flex-row md:items-center md:gap-3 lg:gap-8">
             ${links.map(navLink).join('')}
             <!-- "Iniciar sesión" dentro del desplegable, solo en móvil (en escritorio va a la derecha).
                  Es texto y no un enlace porque la web todavía no tiene página de login
@@ -163,14 +166,17 @@ export function renderNavbar(container) {
 
         <!-- Acciones de la derecha: idioma e "Iniciar sesión" (solo escritorio), "Prueba gratis" y el botón del menú (solo móvil).
              "Prueba gratis" se ve también en móvil, junto al botón del menú, como en el mockup -->
-        <div class="flex shrink-0 items-center gap-3">
+        <!-- gap-2 en móvil (gap-3 desde sm): a 320 px el logo, "Prueba gratis" y el botón del menú no cabrían -->
+        <div class="flex shrink-0 items-center gap-2 sm:gap-3">
           ${languageMenu()}
           <!-- "Iniciar sesión" en escritorio: también es texto, como en el desplegable de móvil.
                Sale a partir de lg (1024 px): en tableta no cabe junto a los 5 enlaces del menú
                y la barra se saldría de la pantalla. Como no es un enlace, no se pierde ninguna acción -->
           <span data-i18n="nav.login" class="hidden w-28 whitespace-nowrap rounded-lg text-center text-sm font-medium text-slate-600 lg:inline">${t('nav.login')}</span>
-          <!-- Botón pequeño (px-4 py-2 text-sm), como en el mockup -->
-          <a href="#cta" data-i18n="nav.tryForFree" class="w-36 whitespace-nowrap rounded-lg bg-indigo-600 px-4 py-2 text-center text-sm font-semibold text-white transition hover:bg-indigo-500 ${focusRing}">${t('nav.tryForFree')}</a>
+          <!-- Botón pequeño (px-4 py-2 text-sm), como en el mockup.
+               sm:w-36: ancho fijo desde 640 px, para que la barra no se mueva al cambiar de idioma.
+               En móvil va con su ancho natural y px-3, porque a 320 px un ancho fijo no cabe -->
+          <a href="#cta" data-i18n="nav.tryForFree" class="whitespace-nowrap rounded-lg bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white transition hover:bg-indigo-500 sm:w-36 sm:px-4 ${focusRing}">${t('nav.tryForFree')}</a>
 
           <!-- Botón del menú (☰), solo en móvil (md:hidden).
                aria-expanded dice si el menú está abierto y aria-controls qué menú abre.
