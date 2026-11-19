@@ -174,6 +174,7 @@ export default {
   'newsletter.emailPlaceholder': 'tu@correu.com',
   'newsletter.submit': 'Subscriu-m’hi',
   'newsletter.consent': 'Accepto que Reservo desi el meu correu a Mailchimp per enviar-me el butlletí.',
+  'newsletter.privacyMore': 'Més informació a la',
   'newsletter.emptyEmail': 'Escriu el teu correu.',
   'newsletter.invalidEmail': 'El correu no és vàlid. Exemple: nom@negoci.com',
   'newsletter.consentRequired': 'Marca la casella perquè puguem desar el teu correu.',

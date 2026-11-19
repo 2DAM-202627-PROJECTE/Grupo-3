@@ -174,6 +174,7 @@ export default {
   'newsletter.emailPlaceholder': 'tu@email.com',
   'newsletter.submit': 'Suscribirme',
   'newsletter.consent': 'Acepto que Reservo guarde mi email en Mailchimp para enviarme la newsletter.',
+  'newsletter.privacyMore': 'Más información en la',
   'newsletter.emptyEmail': 'Escribe tu email.',
   'newsletter.invalidEmail': 'El email no es válido. Ejemplo: nombre@negocio.com',
   'newsletter.consentRequired': 'Marca la casilla para que podamos guardar tu email.',

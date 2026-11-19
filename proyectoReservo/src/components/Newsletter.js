@@ -136,7 +136,10 @@ export function renderNewsletter(container) {
                El <input> va dentro del <label>, así al pulsar el texto también se marca la casilla.
                accent-indigo-500 pinta la casilla con el color de la marca.
                mt-0.5: la línea de texto mide 20 px y la casilla 16 px; bajándola 2 px queda
-               centrada con la primera línea (si el texto ocupa dos, sigue alineada con la de arriba) -->
+               centrada con la primera línea (si el texto ocupa dos, sigue alineada con la de arriba).
+               Al final, enlace a la política de privacidad (issue #71): el RGPD pide informar de
+               cómo se tratan los datos en el mismo sitio donde se piden. Al pulsar el enlace se abre
+               la página; al pulsar el resto del texto se marca la casilla -->
           <label class="mt-3 flex items-start gap-2 text-sm text-slate-600">
             <input
               type="checkbox"
@@ -144,7 +147,11 @@ export function renderNewsletter(container) {
               required
               class="mt-0.5 h-4 w-4 shrink-0 accent-indigo-500 ${focusRing}"
             />
-            <span data-i18n="newsletter.consent">${t('newsletter.consent')}</span>
+            <span>
+              <span data-i18n="newsletter.consent">${t('newsletter.consent')}</span>
+              <span data-i18n="newsletter.privacyMore">${t('newsletter.privacyMore')}</span>
+              <a href="${import.meta.env.BASE_URL}politica-privacidad.html" data-i18n="legal.privacyLink" class="rounded text-indigo-700 underline hover:text-indigo-900 ${focusRing}">${t('legal.privacyLink')}</a>.
+            </span>
           </label>
 
           <!-- Mensaje del formulario: los errores o la confirmación.

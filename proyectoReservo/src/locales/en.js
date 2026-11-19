@@ -174,6 +174,7 @@ export default {
   'newsletter.emailPlaceholder': 'you@email.com',
   'newsletter.submit': 'Subscribe',
   'newsletter.consent': 'I agree to let Reservo store my email in Mailchimp to send me the newsletter.',
+  'newsletter.privacyMore': 'More information in our',
   'newsletter.emptyEmail': 'Enter your email.',
   'newsletter.invalidEmail': 'This email is invalid. Example: name@company.com',
   'newsletter.consentRequired': 'Tick the box so we can store your email.',
