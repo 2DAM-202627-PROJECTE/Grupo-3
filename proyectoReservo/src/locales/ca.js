@@ -180,6 +180,7 @@ export default {
   'newsletter.errorConnection': 'No s’ha pogut connectar amb el servei del butlletí. Revisa la connexió i torna-ho a provar.',
   'footer.copyright': '© {year} Reservo. Tots els drets reservats.',
   'footer.social': 'Xarxes socials',
+  'footer.socialLink': '{network} (s’obre en una pestanya nova)',
   'footer.privacy': 'Privacitat',
   'footer.legal': 'Avís legal',
   'footer.cookies': 'Galetes',

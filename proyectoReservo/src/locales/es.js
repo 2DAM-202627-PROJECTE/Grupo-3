@@ -180,6 +180,7 @@ export default {
   'newsletter.errorConnection': 'No se ha podido conectar con el servicio de la newsletter. Revisa tu conexión e inténtalo de nuevo.',
   'footer.copyright': '© {year} Reservo. Todos los derechos reservados.',
   'footer.social': 'Redes sociales',
+  'footer.socialLink': '{network} (se abre en una pestaña nueva)',
   'footer.privacy': 'Privacidad',
   'footer.legal': 'Aviso legal',
   'footer.cookies': 'Cookies',

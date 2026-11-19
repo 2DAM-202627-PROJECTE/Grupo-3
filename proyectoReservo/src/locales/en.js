@@ -180,6 +180,7 @@ export default {
   'newsletter.errorConnection': 'Could not connect to the newsletter service. Check your connection and try again.',
   'footer.copyright': '© {year} Reservo. All rights reserved.',
   'footer.social': 'Social media',
+  'footer.socialLink': '{network} (opens in a new tab)',
   'footer.privacy': 'Privacy',
   'footer.legal': 'Legal notice',
   'footer.cookies': 'Cookies',
