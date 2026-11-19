@@ -34,6 +34,7 @@ import { renderSectors } from './components/Sectors.js';
 import { initActiveNavLink, renderNavbar } from './components/Navbar.js';
 import { renderFeatures } from './components/Features.js';
 import { renderHowItWorks } from './components/HowItWorks.js';
+import { renderAppPreview } from './components/AppPreview.js';
 import { renderPricing } from './components/Pricing.js';
 import { renderTestimonials } from './components/Testimonials.js';
 import { renderFaq } from './components/Faq.js';
@@ -68,6 +69,8 @@ const sections = [
   { id: 'sectores', render: renderSectors },
   { id: 'funciones', render: renderFeatures },
   { id: 'como-funciona', render: renderHowItWorks }, // HowItWorks.js
+  // Vista previa del panel después de los pasos: primero cómo se empieza y luego cómo se ve la app (issue #73)
+  { id: 'panel', render: renderAppPreview }, // AppPreview.js
   // Testimonios antes de Precios: las opiniones de otros clientes dan confianza
   // antes de ver cuánto cuesta (cambio respecto al orden del documento y del mockup)
   { id: 'testimonios', render: renderTestimonials }, // Testimonials.js
