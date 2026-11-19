@@ -47,7 +47,7 @@ const sectors = [
 // Pinta la sección dentro del <section id="sectores"> que le pasa main.js
 export function renderSectors(container) {
   // Franja blanca medio transparente con una línea arriba y abajo: la separa del Hero y de Funciones
-  container.className = 'border-y border-white/60 bg-white/30 py-20 lg:py-24';
+  container.className = 'border-y border-white/60 bg-white/30 py-16 sm:py-20 lg:py-28';
 
   container.innerHTML = /*html*/ `
     <!-- Contenedor con márgenes laterales, como el resto de secciones -->
