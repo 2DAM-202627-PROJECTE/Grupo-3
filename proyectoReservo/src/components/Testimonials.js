@@ -1,12 +1,15 @@
 // =============================================================
-// Testimonials.js — Sección de testimonios (issue #15, Jean)
+// Testimonials.js — Sección de testimonios (issue #15 y #21)
 // Muestra 3 tarjetas de testimonios con estrellas, cita,
 // nombre del cliente y sector de su negocio.
+// En móvil se muestran de uno en uno mediante un carrusel/controles
+// para reducir el desplazamiento vertical (apartado 7.2 del documento de diseño).
 //
 // Partes del archivo:
-//   1. Iconos y datos       → la estrella de Lucide y el array testimonials
+//   1. Iconos y datos       → la estrella y flechas de Lucide y el array testimonials
 //   2. Una tarjeta          → renderStars y testimonialCard
 //   3. HTML de la sección   → renderTestimonials (lo llama main.js)
+//   4. Lógica de carrusel   → setupTestimonialsCarousel (solo móvil)
 // =============================================================
 
 // -------------------------------------------------------------
@@ -14,8 +17,7 @@
 // -------------------------------------------------------------
 
 // createIcons convierte cada <i data-lucide="..."> en su dibujo SVG.
-// Solo se importa la estrella, que es el único icono de la sección
-import { createIcons, Star } from 'lucide';
+import { createIcons, Star, ChevronLeft, ChevronRight } from 'lucide';
 import { t } from '../i18n.js';
 
 // Datos de los 3 testimonios. Si se añade o quita alguno, solo hay que tocar este array.
@@ -49,8 +51,6 @@ const testimonials = [
 // -------------------------------------------------------------
 
 // Genera tantas estrellas como diga rating (5 si no se indica).
-// Array.from({ length: 5 }) crea un array de 5 huecos; map pone una estrella en cada uno.
-// fill-amber-400: la estrella va rellena de amarillo (los iconos de Lucide solo traen el contorno)
 function renderStars(rating = 5) {
   return Array.from({ length: rating })
     .map(
@@ -62,33 +62,29 @@ function renderStars(rating = 5) {
 }
 
 // Genera el HTML de una tarjeta de testimonio.
-// Recibe un objeto del array y con desestructuración ({ quote, author, ... })
-// saca sus propiedades directamente
-function testimonialCard({ quote, author, sector, rating }) {
+function testimonialCard({ quote, author, sector, rating }, index) {
+  // En móvil (menor que lg:), solo se muestra la primera tarjeta por defecto.
+  // Las demás llevan max-lg:hidden y el carrusel las alterna.
+  const hiddenOnMobile = index === 0 ? '' : 'max-lg:hidden';
+
   return /*html*/ `
-    <!-- Cada testimonio es un <figure>: la etiqueta de HTML para una cita (<blockquote>)
-         con su autor (<figcaption>). Antes era un <article>, pero el validador de W3C
-         avisa de que un <article> debería tener título, y una cita no lo tiene (issue #28).
-         Tarjeta de cristal (glass de style.css). flex-col + justify-between: el autor
-         queda siempre abajo, aunque las citas tengan largos distintos.
-         Al pasar el ratón, el borde se vuelve índigo claro -->
-    <figure class="glass flex flex-col justify-between rounded-xl border border-slate-200/80 p-6 shadow-sm transition hover:border-indigo-300 sm:p-8">
+    <figure 
+      data-testimonial-slide="${index}"
+      class="glass flex flex-col justify-between rounded-xl border border-slate-200/80 p-6 shadow-sm transition hover:border-indigo-300 sm:p-8 ${hiddenOnMobile}"
+    >
       <div>
-        <!-- Estrellas de valoración.
-             role="img" + aria-label: el lector de pantalla lee "Valoración: 5 de 5 estrellas"
-             en vez de nada. Sin role, un <div> no tiene rol y su aria-label no se lee -->
+        <!-- Estrellas de valoración -->
         <div class="flex items-center gap-1" role="img" aria-label="${t('testimonials.rating', { rating })}" data-i18n-aria-label="testimonials.rating" data-i18n-rating="${rating}">
           ${renderStars(rating)}
         </div>
 
-        <!-- Cita del cliente, con comillas tipográficas (“ ”) en vez de las rectas (" ") -->
+        <!-- Cita del cliente, con comillas tipográficas (“ ”) -->
         <blockquote class="mt-4 text-sm leading-relaxed text-slate-700 sm:text-base">
           “<span data-i18n="${quote}">${t(quote)}</span>”
         </blockquote>
       </div>
 
-      <!-- Autor y sector. <figcaption> dice de quién es la cita del <figure>.
-           Una línea fina lo separa de la cita -->
+      <!-- Autor y sector -->
       <figcaption class="mt-6 border-t border-slate-200/60 pt-4">
         <p class="text-sm font-semibold text-slate-900">${author}</p>
         <p data-i18n="${sector}" class="text-xs text-slate-500">${t(sector)}</p>
@@ -103,11 +99,11 @@ function testimonialCard({ quote, author, sector, rating }) {
 
 // Pinta la sección dentro del contenedor que le pasa main.js (el <section id="testimonios">)
 export function renderTestimonials(container) {
-  // Mismo espacio arriba y abajo que el resto de secciones
-  container.className = 'py-20 lg:py-28';
+  // Espaciado vertical responsive: py-16 en móvil, py-20 en tablet y py-28 en escritorio
+  container.className = 'py-16 sm:py-20 lg:py-28';
 
   container.innerHTML = /*html*/ `
-    <!-- Contenedor con márgenes laterales, como el resto de secciones -->
+    <!-- Contenedor con márgenes laterales y sin desborde -->
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <!-- Cabecera de la sección: título y subtítulo centrados -->
       <div class="mx-auto max-w-2xl text-center">
@@ -119,22 +115,106 @@ export function renderTestimonials(container) {
         </p>
       </div>
 
-      <!-- Grid de 3 tarjetas: 1 columna en móvil y tablet, 3 en escritorio (lg).
-           Sin paso de 2 columnas: con 3 tarjetas, la tercera quedaría sola en su fila.
-           max-w-2xl: en tablet las tarjetas no ocupan todo el ancho, para que las líneas
-           de la cita no queden muy largas. lg:max-w-none lo quita en escritorio -->
-      <div class="mx-auto mt-14 grid max-w-2xl grid-cols-1 gap-6 lg:max-w-none lg:grid-cols-3">
-        ${testimonials.map(testimonialCard).join('')}
+      <!-- Contenedor de las tarjetas:
+           En móvil y tablet (hasta lg) se muestra de 1 en 1 como carrusel para no hacer scroll largo.
+           En escritorio (lg) se muestran las 3 tarjetas en fila -->
+      <div class="mx-auto mt-12 max-w-xl lg:mt-14 lg:max-w-none">
+        <div id="testimonials-track" class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+          ${testimonials.map(testimonialCard).join('')}
+        </div>
+
+        <!-- Controles de carrusel (solo en móvil y tablet, ocultos en lg) -->
+        <div class="mt-8 flex items-center justify-between lg:hidden">
+          <!-- Puntos indicadores (dots) -->
+          <div class="flex items-center gap-2" role="tablist" aria-label="Navegar testimonios">
+            ${testimonials
+              .map(
+                (_, index) => /*html*/ `
+              <button
+                type="button"
+                data-testimonial-dot="${index}"
+                aria-label="Ir al testimonio ${index + 1}"
+                class="h-2.5 rounded-full transition-all ${index === 0 ? 'w-8 bg-indigo-600' : 'w-2.5 bg-slate-300'}"
+              ></button>
+            `
+              )
+              .join('')}
+          </div>
+
+          <!-- Botones anterior / siguiente -->
+          <div class="flex items-center gap-2">
+            <button
+              type="button"
+              id="testimonial-prev"
+              aria-label="Testimonio anterior"
+              class="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white/80 text-slate-700 shadow-sm transition hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+            >
+              <i data-lucide="chevron-left" class="h-5 w-5"></i>
+            </button>
+            <button
+              type="button"
+              id="testimonial-next"
+              aria-label="Testimonio siguiente"
+              class="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white/80 text-slate-700 shadow-sm transition hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+            >
+              <i data-lucide="chevron-right" class="h-5 w-5"></i>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   `;
 
-  // Cambia los <i data-lucide="star"> de esta sección por sus SVG.
-  // root: container → solo busca dentro de Testimonios, no en toda la página
+  // Cambia los <i data-lucide="..."> de esta sección por sus SVG
   createIcons({
     root: container,
     icons: {
       Star,
+      ChevronLeft,
+      ChevronRight,
     },
+  });
+
+  // Activa la navegación del carrusel en móvil
+  setupTestimonialsCarousel(container);
+}
+
+// -------------------------------------------------------------
+// 4. Lógica de carrusel en móvil
+// -------------------------------------------------------------
+
+function setupTestimonialsCarousel(container) {
+  const slides = container.querySelectorAll('[data-testimonial-slide]');
+  const dots = container.querySelectorAll('[data-testimonial-dot]');
+  const prevBtn = container.querySelector('#testimonial-prev');
+  const nextBtn = container.querySelector('#testimonial-next');
+
+  if (!slides.length) return;
+
+  let currentIndex = 0;
+
+  function goToSlide(index) {
+    currentIndex = (index + slides.length) % slides.length;
+
+    // Mostrar solo la tarjeta activa en móvil (las demás llevan max-lg:hidden)
+    slides.forEach((slide, i) => {
+      slide.classList.toggle('max-lg:hidden', i !== currentIndex);
+    });
+
+    // Actualizar los puntos (dots)
+    dots.forEach((dot, i) => {
+      const isActive = i === currentIndex;
+      dot.classList.toggle('w-8', isActive);
+      dot.classList.toggle('bg-indigo-600', isActive);
+      dot.classList.toggle('w-2.5', !isActive);
+      dot.classList.toggle('bg-slate-300', !isActive);
+    });
+  }
+
+  prevBtn?.addEventListener('click', () => goToSlide(currentIndex - 1));
+  nextBtn?.addEventListener('click', () => goToSlide(currentIndex + 1));
+
+  dots.forEach((dot, i) => {
+    dot.addEventListener('click', () => goToSlide(i));
   });
 }
