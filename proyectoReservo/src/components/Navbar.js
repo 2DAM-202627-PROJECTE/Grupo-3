@@ -50,7 +50,7 @@ const activeLink =
 function navLink({ label, href }) {
   return /*html*/ `
     <li>
-      <a href="${href}" data-i18n="${label}" class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900 md:px-0 md:py-1 md:hover:bg-transparent ${activeLink} ${focusRing}">${t(label)}</a>
+      <a href="${href}" data-i18n="${label}" class="block whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900 md:px-0 md:py-1 md:hover:bg-transparent ${activeLink} ${focusRing}">${t(label)}</a>
     </li>
   `;
 }
@@ -168,9 +168,9 @@ export function renderNavbar(container) {
           <!-- "Iniciar sesión" en escritorio: también es texto, como en el desplegable de móvil.
                Sale a partir de lg (1024 px): en tableta no cabe junto a los 5 enlaces del menú
                y la barra se saldría de la pantalla. Como no es un enlace, no se pierde ninguna acción -->
-          <span data-i18n="nav.login" class="hidden rounded-lg text-sm font-medium text-slate-600 lg:inline">${t('nav.login')}</span>
+          <span data-i18n="nav.login" class="hidden w-28 whitespace-nowrap rounded-lg text-center text-sm font-medium text-slate-600 lg:inline">${t('nav.login')}</span>
           <!-- Botón pequeño (px-4 py-2 text-sm), como en el mockup -->
-          <a href="#cta" data-i18n="nav.tryForFree" class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-500 ${focusRing}">${t('nav.tryForFree')}</a>
+          <a href="#cta" data-i18n="nav.tryForFree" class="w-36 whitespace-nowrap rounded-lg bg-indigo-600 px-4 py-2 text-center text-sm font-semibold text-white transition hover:bg-indigo-500 ${focusRing}">${t('nav.tryForFree')}</a>
 
           <!-- Botón del menú (☰), solo en móvil (md:hidden).
                aria-expanded dice si el menú está abierto y aria-controls qué menú abre.
