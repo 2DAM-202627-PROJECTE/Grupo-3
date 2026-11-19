@@ -237,7 +237,7 @@ function planTab({ id, name, featured = false }) {
 // (el <section id="precios">).
 export function renderPricing(container) {
   // Espaciado vertical de la sección: más grande en escritorio (lg:)
-  container.className = 'py-20 lg:py-28';
+  container.className = 'py-16 sm:py-20 lg:py-28';
 
   container.innerHTML = /*html*/ `
     <!-- Contenedor centrado con ancho máximo y márgenes laterales -->

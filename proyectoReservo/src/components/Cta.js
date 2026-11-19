@@ -36,7 +36,7 @@ const messageBase = 'mt-3 min-h-5 text-sm';
 // Pinta la sección dentro del <section id="cta"> que le pasa main.js
 export function renderCta(container) {
   // Mismo espacio arriba y abajo que el resto de secciones
-  container.className = 'py-20 lg:py-28';
+  container.className = 'py-16 sm:py-20 lg:py-28';
 
   container.innerHTML = /*html*/ `
     <!-- Contenedor con márgenes laterales. max-w-4xl: más estrecho que las otras
