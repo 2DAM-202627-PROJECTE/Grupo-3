@@ -157,9 +157,13 @@ export function setLanguage(language) {
     throw new Error(`Unsupported language "${language}".`);
   }
 
+  const scrollPosition = window.scrollY;
   currentLanguage = language;
   updateDocumentLanguage();
   applyTranslations(document);
+  // Reescribir los textos puede activar el ajuste automático del scroll del
+  // navegador. Conservamos la coordenada exacta para que la página no salte.
+  window.scrollTo({ top: scrollPosition, behavior: 'instant' });
 
   // Solo se guarda cuando la persona lo elige: si no ha elegido nada,
   // en la próxima visita se vuelve a mirar el idioma del navegador
