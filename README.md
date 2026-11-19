@@ -73,6 +73,7 @@ Grupo-3/
 │   │   │   ├── Pricing.js        # Planes y precios (mensual / anual)
 │   │   │   ├── Testimonials.js   # Opiniones de clientes
 │   │   │   ├── Faq.js            # Preguntas frecuentes (desplegables)
+│   │   │   ├── Team.js           # Equipo de Reservo (los tres integrantes)
 │   │   │   ├── Cta.js            # Formulario de prueba gratuita
 │   │   │   ├── Footer.js         # Pie de página
 │   │   │   ├── Newsletter.js     # Suscripción a la newsletter con Mailchimp (dentro del footer)
@@ -86,12 +87,16 @@ Grupo-3/
 │   │   │   └── ca.js             # Textos en catalán
 │   │   ├── main.js               # Punto de entrada: crea las secciones y pinta los componentes
 │   │   ├── cookiesPage.js        # Punto de entrada de la política de cookies (la traduce)
+│   │   ├── legalNoticePage.js    # Punto de entrada del aviso legal (lo traduce)
+│   │   ├── privacyPage.js        # Punto de entrada de la política de privacidad (la traduce)
 │   │   ├── i18n.js               # Traducción: idioma del navegador o el elegido, t(clave)
 │   │   ├── scrollReveal.js       # Animación de las secciones al hacer scroll
 │   │   └── style.css             # Tailwind v4, variables del tema claro y estilos comunes
 │   ├── index.html                # Landing: HTML base con <div id="app">
+│   ├── aviso-legal.html          # Página legal: aviso legal (LSSI-CE)
 │   ├── LICENSE                   # Licencia del proyecto
 │   ├── politica-cookies.html     # Página legal: política de cookies
+│   ├── politica-privacidad.html  # Página legal: política de privacidad (RGPD)
 │   ├── package.json              # Dependencias y scripts
 │   └── vite.config.js            # Vite + Tailwind, base /Grupo-3/ y build multipágina
 └── README.md
@@ -135,9 +140,10 @@ Antes de abrir un *pull request* se trae `main` a la propia rama (`git merge mai
 6. **Testimonials**: tres opiniones de clientes de sectores distintos. Van antes de los precios para dar confianza antes de ver cuánto cuesta.
 7. **Pricing**: tres planes (Básico 19 €, Pro 49 € destacado, Empresa a medida) con interruptor mensual / anual (20 % de descuento). En móvil, los planes se ven de uno en uno con pestañas.
 8. **FAQ**: preguntas frecuentes, que se abren y cierran sin JavaScript.
-9. **CTA**: formulario para dejar el email y empezar la prueba gratuita de 14 días, con validación y mensaje de confirmación.
-10. **Footer**: logo, suscripción a la newsletter (Mailchimp, con email de confirmación), enlaces legales, redes sociales y copyright con el año actual.
+9. **Team**: el equipo que hay detrás de Reservo (Vlad, Arnau y Jean), con avatar de iniciales, rol y una frase. Va antes del CTA para dar confianza antes de registrarse.
+10. **CTA**: formulario para dejar el email y empezar la prueba gratuita de 14 días, con validación y mensaje de confirmación.
+11. **Footer**: logo, suscripción a la newsletter (Mailchimp, con email de confirmación), enlaces legales, redes sociales y copyright con el año actual.
 
-Además, en la primera visita sale un **aviso de cookies** abajo de la pantalla. La elección se guarda y el aviso ya no vuelve a salir. La política de cookies tiene su propia página (`politica-cookies.html`).
+Además, en la primera visita sale un **aviso de cookies** abajo de la pantalla. La elección se guarda y el aviso ya no vuelve a salir. Los textos legales tienen su propia página, enlazada desde el footer: aviso legal (`aviso-legal.html`), política de privacidad (`politica-privacidad.html`) y política de cookies (`politica-cookies.html`). Reservo es ficticio, así que los datos de la empresa son inventados y las páginas lo indican.
 
-Toda la web, incluida la política de cookies, está en **castellano, inglés y catalán**. La primera vez se muestra en el idioma del navegador; el idioma elegido en el menú se guarda para las siguientes visitas. Los textos están en `src/locales/`.
+Toda la web, incluidas las páginas legales, está en **castellano, inglés y catalán**. La primera vez se muestra en el idioma del navegador; el idioma elegido en el menú se guarda para las siguientes visitas. Los textos están en `src/locales/`.
