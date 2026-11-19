@@ -30,6 +30,7 @@ export default defineConfig(({ command, isPreview }) => ({
       input: {
         main: page('index.html'),
         cookies: page('politica-cookies.html'),
+        legalNotice: page('aviso-legal.html'), // issue #71
       },
     },
   },

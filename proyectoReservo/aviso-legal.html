@@ -1,0 +1,167 @@
+<!doctype html>
+<!-- =============================================================
+     aviso-legal.html — Aviso legal (issue #71)
+     Página legal separada de la landing, como politica-cookies.html (configuración
+     multipágina de Vite, ver vite.config.js). Se enlaza desde el footer.
+     Recoge los datos que pide el artículo 10 de la LSSI-CE (apartado 1.5 del documento:
+     "la web cumplirá el RGPD y la LSSI-CE").
+
+     Reservo es ficticio: los datos de la empresa son inventados, y la página lo dice.
+
+     Traducción: los textos están escritos en castellano y cada uno lleva su clave
+     (data-i18n o data-i18n-html). src/legalNoticePage.js los cambia al idioma de la persona;
+     las traducciones están en src/locales, con las claves "legal.…" (comunes a las
+     páginas legales) y "legalPage.…" (solo de esta página).
+
+     Partes de la página:
+       1. Cabecera  → logo y enlace para volver a la landing
+       2. Contenido → titular, objeto, uso, propiedad intelectual, responsabilidad,
+                      datos y cookies, legislación
+       3. Pie       → copyright
+     ============================================================= -->
+<html lang="es" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Mismos estilos que la landing (Vite procesa este CSS con Tailwind) -->
+    <link rel="stylesheet" href="/src/style.css" />
+    <meta name="description" content="Aviso legal de Reservo: datos del titular de la web, condiciones de uso, propiedad intelectual y legislación aplicable." />
+    <title>Aviso legal · Reservo</title>
+    <!-- Traducción de la página. type="module": se ejecuta cuando el HTML ya está leído -->
+    <script type="module" src="/src/legalNoticePage.js"></script>
+  </head>
+  <body class="bg-(--bg) text-slate-900 antialiased">
+    <!-- Fondo aurora (manchas de color pastel), igual que en la landing. Es decorativo -->
+    <div class="page-aurora" aria-hidden="true"></div>
+
+    <!-- ===== 1. Cabecera ===== -->
+    <header class="border-b border-slate-200/70">
+      <nav aria-label="Navegación principal" data-i18n-aria-label="nav.primaryLabel" class="mx-auto flex max-w-3xl items-center justify-between px-4 py-5 sm:px-6">
+        <!-- Logo: enlace a la landing. href="./": ruta relativa, funciona en local y en GitHub Pages -->
+        <a href="./" class="flex items-center gap-2 rounded-lg font-bold text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500">
+          <img src="/favicon.svg" alt="" class="h-8 w-8" />
+          Reservo
+        </a>
+        <a href="./" data-i18n="cookiePage.back" class="rounded-lg text-sm font-medium text-slate-700 hover:text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500">← Volver al inicio</a>
+      </nav>
+    </header>
+
+    <!-- ===== 2. Contenido ===== -->
+    <!-- max-w-3xl: líneas no demasiado largas para leer cómodo. Cada apartado es un <section>
+         con su <h2>. [&_strong]:text-slate-900: las negritas de los textos traducidos salen más oscuras -->
+    <main class="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:py-16 [&_strong]:text-slate-900">
+      <h1 data-i18n="legalPage.heading" class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">Aviso legal</h1>
+      <p data-i18n="legal.updated" class="mt-2 text-sm text-slate-600">Última actualización: 19 de noviembre de 2026</p>
+
+      <!-- Aviso de que es un proyecto educativo: así nadie confunde los datos inventados con una empresa real -->
+      <p data-i18n-html="legal.fictionNote" class="glass mt-8 rounded-xl border border-indigo-200 px-5 py-4 text-sm leading-relaxed text-slate-700">
+        Reservo es un <strong>proyecto educativo</strong> del ciclo de Desarrollo de Aplicaciones
+        Multiplataforma. La empresa y sus datos son ficticios.
+      </p>
+
+      <!-- 1. Titular: los datos del artículo 10 de la LSSI-CE -->
+      <section class="mt-10 space-y-4 leading-relaxed text-slate-700">
+        <h2 data-i18n="legalPage.ownerHeading" class="text-xl font-semibold text-slate-900">1. Datos del titular</h2>
+        <p data-i18n="legalPage.ownerIntro">
+          En cumplimiento del artículo 10 de la Ley 34/2002, de Servicios de la Sociedad de la
+          Información y de Comercio Electrónico (LSSI-CE), estos son los datos del titular de esta web:
+        </p>
+        <!-- <dl>: lista de pares "dato → valor". En móvil, uno debajo del otro;
+             desde sm, en dos columnas (etiqueta a la izquierda, valor a la derecha) -->
+        <dl class="glass grid grid-cols-1 gap-x-6 gap-y-2 rounded-xl p-5 text-sm sm:grid-cols-[10rem_1fr]">
+          <dt data-i18n="legal.ownerLabel" class="font-semibold text-slate-900">Titular</dt>
+          <dd>Reservo Software, S.L.</dd>
+          <dt data-i18n="legal.taxIdLabel" class="mt-2 font-semibold text-slate-900 sm:mt-0">NIF</dt>
+          <dd>B12345678</dd>
+          <dt data-i18n="legal.addressLabel" class="mt-2 font-semibold text-slate-900 sm:mt-0">Domicilio</dt>
+          <dd>Carrer de Sant Blai, 4, 43500 Tortosa (Tarragona)</dd>
+          <dt data-i18n="legalPage.registryLabel" class="mt-2 font-semibold text-slate-900 sm:mt-0">Registro</dt>
+          <dd data-i18n="legalPage.registryValue">Registro Mercantil de Tarragona, tomo 3120, folio 45, hoja T-58210</dd>
+          <dt data-i18n="legal.emailLabel" class="mt-2 font-semibold text-slate-900 sm:mt-0">Email</dt>
+          <!-- mailto: al pulsarlo se abre el programa de correo con la dirección puesta -->
+          <dd><a href="mailto:hola@reservo.es" class="rounded text-indigo-700 underline hover:text-indigo-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500">hola@reservo.es</a></dd>
+          <dt data-i18n="legal.phoneLabel" class="mt-2 font-semibold text-slate-900 sm:mt-0">Teléfono</dt>
+          <dd>+34 977 000 000</dd>
+        </dl>
+      </section>
+
+      <!-- 2. Objeto: para qué sirve la web -->
+      <section class="mt-10 space-y-4 leading-relaxed text-slate-700">
+        <h2 data-i18n="legalPage.purposeHeading" class="text-xl font-semibold text-slate-900">2. Objeto</h2>
+        <p data-i18n="legalPage.purposeText">
+          Esta web presenta Reservo, una aplicación de reservas online para negocios con citas
+          (gimnasios, restaurantes, peluquerías y clínicas), y permite pedir una prueba gratuita
+          y suscribirse a la newsletter.
+        </p>
+      </section>
+
+      <!-- 3. Condiciones de uso -->
+      <section class="mt-10 space-y-4 leading-relaxed text-slate-700">
+        <h2 data-i18n="legalPage.useHeading" class="text-xl font-semibold text-slate-900">3. Condiciones de uso</h2>
+        <p data-i18n="legalPage.useText1">
+          Al navegar por esta web aceptas este aviso legal. Te comprometes a usarla de forma
+          lícita, sin dañar la web ni a otras personas, y a no introducir virus ni programas
+          que puedan alterarla.
+        </p>
+        <p data-i18n="legalPage.useText2">
+          Reservo puede cambiar el contenido de la web y este aviso legal cuando lo necesite.
+          La versión vigente es la que está publicada en cada momento.
+        </p>
+      </section>
+
+      <!-- 4. Propiedad intelectual. Se nombran las fuentes e iconos de terceros con su licencia -->
+      <section class="mt-10 space-y-4 leading-relaxed text-slate-700">
+        <h2 data-i18n="legalPage.ipHeading" class="text-xl font-semibold text-slate-900">4. Propiedad intelectual e industrial</h2>
+        <p data-i18n="legalPage.ipText1">
+          Los textos, el diseño, el logotipo y el código de esta web pertenecen a Reservo.
+          No se pueden copiar ni usar con fines comerciales sin permiso.
+        </p>
+        <p data-i18n-html="legalPage.ipText2">
+          La web usa recursos de terceros con licencia libre: las fuentes <strong>Inter</strong>
+          y <strong>Caveat</strong> (SIL Open Font License) y los iconos de <strong>Lucide</strong>
+          (licencia ISC). Los logotipos de las redes sociales pertenecen a sus propietarios.
+        </p>
+      </section>
+
+      <!-- 5. Responsabilidad y enlaces externos (las redes sociales del footer) -->
+      <section class="mt-10 space-y-4 leading-relaxed text-slate-700">
+        <h2 data-i18n="legalPage.liabilityHeading" class="text-xl font-semibold text-slate-900">5. Responsabilidad y enlaces</h2>
+        <p data-i18n="legalPage.liabilityText1">
+          Reservo intenta que la información de la web sea correcta y esté actualizada, pero no
+          se hace responsable de los errores o de las interrupciones del servicio que no dependan de él.
+        </p>
+        <p data-i18n="legalPage.liabilityText2">
+          Los enlaces a redes sociales y a otras webs se abren en una pestaña nueva. Reservo no
+          controla esas webs ni responde de su contenido.
+        </p>
+      </section>
+
+      <!-- 6. Datos personales y cookies: remite a las otras dos páginas legales.
+           Los enlaces van fuera de los textos traducidos para no meter clases dentro de las traducciones -->
+      <section class="mt-10 space-y-4 leading-relaxed text-slate-700">
+        <h2 data-i18n="legalPage.dataHeading" class="text-xl font-semibold text-slate-900">6. Protección de datos y cookies</h2>
+        <p>
+          <span data-i18n="legalPage.dataText1">Cómo tratamos tus datos personales se explica en la</span>
+          <a href="politica-privacidad.html" data-i18n="legal.privacyLink" class="rounded text-indigo-700 underline hover:text-indigo-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500">Política de privacidad</a><span data-i18n="legalPage.dataText2">, y el uso de cookies, en la</span>
+          <a href="politica-cookies.html" data-i18n="legal.cookiesLink" class="rounded text-indigo-700 underline hover:text-indigo-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500">Política de cookies</a>.
+        </p>
+      </section>
+
+      <!-- 7. Legislación y juzgados -->
+      <section class="mt-10 space-y-4 leading-relaxed text-slate-700">
+        <h2 data-i18n="legalPage.lawHeading" class="text-xl font-semibold text-slate-900">7. Legislación aplicable y jurisdicción</h2>
+        <p data-i18n="legalPage.lawText">
+          Este aviso legal se rige por la ley española. Para cualquier conflicto, las partes se
+          someten a los juzgados y tribunales de Tortosa, salvo que la ley diga otra cosa
+          (por ejemplo, si eres consumidor, los de tu domicilio).
+        </p>
+      </section>
+    </main>
+
+    <!-- ===== 3. Pie ===== -->
+    <footer class="border-t border-slate-200/70">
+      <p class="mx-auto max-w-3xl px-4 py-6 text-sm text-slate-600 sm:px-6">© 2026 Reservo</p>
+    </footer>
+  </body>
+</html>
