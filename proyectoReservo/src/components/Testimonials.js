@@ -125,17 +125,24 @@ export function renderTestimonials(container) {
 
         <!-- Controles de carrusel (solo en móvil y tablet, ocultos en lg) -->
         <div class="mt-8 flex items-center justify-between lg:hidden">
-          <!-- Puntos indicadores (dots) -->
-          <div class="flex items-center gap-2" role="tablist" aria-label="Navegar testimonios">
+          <!-- Puntos indicadores (dots). role="group" (y no "tablist"): son botones normales,
+               no pestañas; con "tablist" Lighthouse pide que dentro haya elementos role="tab".
+               Cada botón mide 24 px de alto (h-6), el mínimo que pide Lighthouse para pulsar
+               con el dedo; el punto que se ve es el <span> de dentro, más pequeño.
+               aria-pressed="true" en el punto activo: el lector de pantalla dice cuál se está viendo -->
+          <div class="flex items-center gap-1" role="group" aria-label="${t('testimonials.carouselLabel')}" data-i18n-aria-label="testimonials.carouselLabel">
             ${testimonials
               .map(
                 (_, index) => /*html*/ `
               <button
                 type="button"
                 data-testimonial-dot="${index}"
-                aria-label="Ir al testimonio ${index + 1}"
-                class="h-2.5 rounded-full transition-all ${index === 0 ? 'w-8 bg-indigo-600' : 'w-2.5 bg-slate-300'}"
-              ></button>
+                aria-pressed="${index === 0}"
+                aria-label="${t('testimonials.goTo', { number: index + 1 })}" data-i18n-aria-label="testimonials.goTo" data-i18n-number="${index + 1}"
+                class="flex h-6 min-w-6 items-center justify-center rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+              >
+                <span data-testimonial-dot-mark class="block h-2.5 rounded-full transition-all ${index === 0 ? 'w-8 bg-indigo-600' : 'w-2.5 bg-slate-300'}"></span>
+              </button>
             `
               )
               .join('')}
@@ -146,7 +153,7 @@ export function renderTestimonials(container) {
             <button
               type="button"
               id="testimonial-prev"
-              aria-label="Testimonio anterior"
+              aria-label="${t('testimonials.previous')}" data-i18n-aria-label="testimonials.previous"
               class="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white/80 text-slate-700 shadow-sm transition hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
             >
               <i data-lucide="chevron-left" class="h-5 w-5"></i>
@@ -154,7 +161,7 @@ export function renderTestimonials(container) {
             <button
               type="button"
               id="testimonial-next"
-              aria-label="Testimonio siguiente"
+              aria-label="${t('testimonials.next')}" data-i18n-aria-label="testimonials.next"
               class="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white/80 text-slate-700 shadow-sm transition hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
             >
               <i data-lucide="chevron-right" class="h-5 w-5"></i>
@@ -201,13 +208,16 @@ function setupTestimonialsCarousel(container) {
       slide.classList.toggle('max-lg:hidden', i !== currentIndex);
     });
 
-    // Actualizar los puntos (dots)
+    // Actualizar los puntos (dots): el activo, alargado e índigo; los demás, redondos y grises.
+    // Las clases van en el <span> de dentro (el punto que se ve); aria-pressed, en el botón
     dots.forEach((dot, i) => {
       const isActive = i === currentIndex;
-      dot.classList.toggle('w-8', isActive);
-      dot.classList.toggle('bg-indigo-600', isActive);
-      dot.classList.toggle('w-2.5', !isActive);
-      dot.classList.toggle('bg-slate-300', !isActive);
+      const mark = dot.querySelector('[data-testimonial-dot-mark]');
+      dot.setAttribute('aria-pressed', String(isActive));
+      mark.classList.toggle('w-8', isActive);
+      mark.classList.toggle('bg-indigo-600', isActive);
+      mark.classList.toggle('w-2.5', !isActive);
+      mark.classList.toggle('bg-slate-300', !isActive);
     });
   }
 
