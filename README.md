@@ -97,6 +97,33 @@ Grupo-3/
 └── README.md
 ```
 
+## Flujo de trabajo con Git
+
+**Ramas**
+
+- `main`: versión estable. Cada cambio que llega a `main` se publica en GitHub Pages.
+- Una rama por integrante: `Landing-Page-Vlad`, `landing-page-arnau` y `landing-page-Jean`. Cada uno trabaja en los componentes que tiene asignados en el tablero Kanban.
+
+**Integración en `main`**
+
+- Las ramas se integran en `main` con frecuencia, varias veces en cada sprint.
+- Las ramas `landing-page-arnau` y `landing-page-Jean` llegan como *pull request*. Se revisan y se fusionan con un *merge commit*, que conserva la autoría de los commits. Si hay que corregir algo, se hace en un commit aparte.
+- `Landing-Page-Vlad` se lleva a `main` directamente, sin *merge commit*, cuando sus cambios están comprobados.
+- Antes de subir a `main` se comprueba que `npm run build` funciona y que la consola no da errores.
+
+**Commits**
+
+- Pequeños y de un solo cambio.
+- El mensaje empieza por la sección o el archivo que cambia y termina con el número del issue, para que GitHub lo enlace con la tarea del tablero:
+
+```
+Precios: pestañas de los planes en móvil #20
+```
+
+**Conflictos**
+
+Antes de abrir un *pull request* se trae `main` a la propia rama (`git merge main`) y los conflictos se resuelven ahí, sin tocar `main`.
+
 ## Secciones de la página
 
 0. **Intro "Un día con Reservo"**: animación que avanza con el scroll y cuenta el antes y el después de usar Reservo. Solo sale en la primera visita; después se entra directamente en la landing.
