@@ -416,8 +416,13 @@ function buildTimeline(section) {
 
   // --- 5. Estado inicial ---
 
-  // En escritorio la tarjeta empieza a la derecha (como en el Hero); en móvil, debajo del texto
+  // En escritorio la tarjeta empieza a la derecha (como en el Hero); en móvil, debajo del texto.
+  // En un móvil en horizontal (ancho pero bajo) también va a la derecha: con el texto encima,
+  // el titular llenaba la pantalla y la tarjeta quedaba diminuta. Es la misma condición que
+  // usa intro.css para poner el texto a la izquierda
   const isDesktop = window.matchMedia('(min-width: 1024px)').matches;
+  const LANDSCAPE_PHONE = '(orientation: landscape) and (max-height: 500px) and (min-width: 640px) and (max-width: 1023px)';
+  const isLandscapePhone = window.matchMedia(LANDSCAPE_PHONE).matches;
 
   if (isDesktop) {
     // En escritorio la tarjeta es la protagonista: se ve un 22% más grande (letras incluidas).
@@ -426,6 +431,15 @@ function buildTimeline(section) {
     // y: -32px → la escena tiene 2rem (32px) más de margen arriba que el texto,
     // así que se sube eso para que la tarjeta quede a la misma altura que el texto
     gsap.set(card, { xPercent: -50, yPercent: -50, x: '24vw', y: -32, scale });
+  } else if (isLandscapePhone) {
+    // Móvil en horizontal: la tarjeta, a la derecha y a la misma altura que el texto.
+    // Tan grande como quepa dejando 40px arriba y abajo
+    const scale = Math.min(1, (window.innerHeight - 80) / card.offsetHeight);
+    const intro = $('.intro').getBoundingClientRect();
+    const scene = $('.scene').getBoundingClientRect();
+    // y: distancia del centro de la escena al centro del texto
+    const y = intro.top + intro.height / 2 - (scene.top + scene.height / 2);
+    gsap.set(card, { xPercent: -50, yPercent: -50, x: '25vw', y, scale });
   } else {
     // En móvil se calcula dónde cabe: justo debajo del texto (24px de separación)
     // y por encima del indicador de scroll (deja 90px abajo).

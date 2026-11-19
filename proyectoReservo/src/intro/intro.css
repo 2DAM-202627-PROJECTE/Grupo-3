@@ -431,6 +431,33 @@ html.lenis {
   }
 }
 
+/* Móvil en horizontal (pantalla ancha pero baja): el texto a la izquierda y la tarjeta a la
+   derecha, como en escritorio. Con el texto encima, el titular ocupaba casi toda la altura
+   y la tarjeta se quedaba diminuta. Intro.js usa la misma condición (LANDSCAPE_PHONE).
+   Estas reglas ganan a las clases de Tailwind del título porque este archivo no va en ninguna
+   capa (@layer) de Tailwind */
+@media (orientation: landscape) and (max-height: 500px) and (min-width: 640px) and (max-width: 1023px) {
+  .intro {
+    left: 1.5rem;
+    right: auto;
+    top: calc(50% - var(--lift));
+    max-width: 46vw;
+    text-align: left;
+    transform: translateY(-50%);
+  }
+
+  /* Titular más pequeño: cabe en dos o tres líneas sin llenar la pantalla */
+  .intro-title {
+    font-size: clamp(1.75rem, 4.2vw, 2.4rem);
+    line-height: 1.1;
+  }
+
+  .intro-subtitle {
+    margin-top: 0.75rem;
+    font-size: 1rem;
+  }
+}
+
 /* Cada palabra del título: inline-block para poder moverla y girarla al aparecer */
 .intro-title .word {
   display: inline-block;
