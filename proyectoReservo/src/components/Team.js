@@ -61,8 +61,8 @@ function memberCard({ name, initials, role, bio }) {
 
 // Pinta la sección dentro del contenedor que le pasa main.js (el <section id="equipo">)
 export function renderTeam(container) {
-  // Mismo espacio arriba y abajo que el resto de secciones
-  container.className = 'py-20 lg:py-28';
+  // Mismo espacio arriba y abajo que el resto de secciones: py-16 en móvil, py-20 en tablet y py-28 en escritorio
+  container.className = 'py-16 sm:py-20 lg:py-28';
 
   container.innerHTML = /*html*/ `
     <!-- Contenedor con márgenes laterales, como el resto de secciones -->
