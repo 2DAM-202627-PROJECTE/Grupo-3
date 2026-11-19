@@ -9,15 +9,16 @@
 // ---------------------------------------------------------------
 
 // Enlaces legales. Si se añade o quita alguno, solo hay que tocar este array.
-// 'Cookies' apunta a su página estática; Privacidad, Aviso legal y Contacto siguen sin página
-// por ahora. Los que no tienen href se pintan como texto y no como enlace, para que no haya
-// enlaces que no llevan a ningún sitio (issue #28: sin enlaces rotos).
+// Cada página legal es un HTML aparte (configuración multipágina de vite.config.js, issue #71).
+// "Contacto" abre el programa de correo con la dirección puesta (mailto:).
+// Si algún día un enlace no tiene href, se pinta como texto y no como enlace,
+// para que no haya enlaces que no llevan a ningún sitio (issue #28: sin enlaces rotos).
 // import.meta.env.BASE_URL es la ruta base de la web ("/" en local y "/Grupo-3/" en GitHub Pages).
 const legalLinks = [
-  { label: 'footer.privacy' },
-  { label: 'footer.legal' },
+  { label: 'footer.privacy', href: `${import.meta.env.BASE_URL}politica-privacidad.html` },
+  { label: 'footer.legal', href: `${import.meta.env.BASE_URL}aviso-legal.html` },
   { label: 'footer.cookies', href: `${import.meta.env.BASE_URL}politica-cookies.html` },
-  { label: 'footer.contact' },
+  { label: 'footer.contact', href: 'mailto:hola@reservo.es' },
 ];
 
 // Redes sociales. Los iconos de marcas (Instagram, X, LinkedIn, YouTube) no están
