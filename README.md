@@ -70,6 +70,7 @@ Grupo-3/
 │   │   │   ├── Sectors.js        # Selector de sector que cambia el Hero
 │   │   │   ├── Features.js       # Cuadrícula de funcionalidades
 │   │   │   ├── HowItWorks.js     # Cómo funciona en 3 pasos
+│   │   │   ├── AppPreview.js     # Vista previa del panel de la app (HTML, sin imágenes)
 │   │   │   ├── Pricing.js        # Planes y precios (mensual / anual)
 │   │   │   ├── Testimonials.js   # Opiniones de clientes
 │   │   │   ├── Faq.js            # Preguntas frecuentes (desplegables)
@@ -137,12 +138,13 @@ Antes de abrir un *pull request* se trae `main` a la propia rama (`git merge mai
 3. **Sectors**: selector de los cuatro tipos de negocio (gimnasio, restaurante, peluquería y clínica). Al elegir uno, cambia la tarjeta del Hero.
 4. **Features**: seis funcionalidades (reservas 24/7, recordatorios, pagos, equipo, estadísticas, app móvil).
 5. **How it works**: los tres pasos para empezar.
-6. **Testimonials**: tres opiniones de clientes de sectores distintos. Van antes de los precios para dar confianza antes de ver cuánto cuesta.
-7. **Pricing**: tres planes (Básico 19 €, Pro 49 € destacado, Empresa a medida) con interruptor mensual / anual (20 % de descuento). En móvil, los planes se ven de uno en uno con pestañas.
-8. **FAQ**: preguntas frecuentes, que se abren y cierran sin JavaScript.
-9. **Team**: el equipo que hay detrás de Reservo (Vlad, Arnau y Jean), con avatar de iniciales, rol y una frase. Va antes del CTA para dar confianza antes de registrarse.
-10. **CTA**: formulario para dejar el email y empezar la prueba gratuita de 14 días, con validación y mensaje de confirmación.
-11. **Footer**: logo, suscripción a la newsletter (Mailchimp, con email de confirmación), enlaces legales, redes sociales y copyright con el año actual.
+6. **App preview**: así se ve Reservo por dentro. Un panel de ejemplo de FitZone Gym (cifras del día, agenda de clases con su ocupación, reservas de la semana y un recordatorio de WhatsApp), hecho con HTML y Tailwind en vez de con una imagen: se ve nítido en cualquier pantalla, se traduce y no pesa.
+7. **Testimonials**: tres opiniones de clientes de sectores distintos. Van antes de los precios para dar confianza antes de ver cuánto cuesta.
+8. **Pricing**: tres planes (Básico 19 €, Pro 49 € destacado, Empresa a medida) con interruptor mensual / anual (20 % de descuento). En móvil, los planes se ven de uno en uno con pestañas.
+9. **FAQ**: preguntas frecuentes, que se abren y cierran sin JavaScript.
+10. **Team**: el equipo que hay detrás de Reservo (Vlad, Arnau y Jean), con avatar de iniciales, rol y una frase. Va antes del CTA para dar confianza antes de registrarse.
+11. **CTA**: formulario para dejar el email y empezar la prueba gratuita de 14 días, con validación y mensaje de confirmación.
+12. **Footer**: logo, suscripción a la newsletter (Mailchimp, con email de confirmación), enlaces legales, redes sociales y copyright con el año actual.
 
 Además, en la primera visita sale un **aviso de cookies** abajo de la pantalla. La elección se guarda y el aviso ya no vuelve a salir. Los textos legales tienen su propia página, enlazada desde el footer: aviso legal (`aviso-legal.html`), política de privacidad (`politica-privacidad.html`) y política de cookies (`politica-cookies.html`). Reservo es ficticio, así que los datos de la empresa son inventados y las páginas lo indican.
 
