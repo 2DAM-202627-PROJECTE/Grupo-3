@@ -37,6 +37,7 @@ import { renderHowItWorks } from './components/HowItWorks.js';
 import { renderPricing } from './components/Pricing.js';
 import { renderTestimonials } from './components/Testimonials.js';
 import { renderFaq } from './components/Faq.js';
+import { renderTeam } from './components/Team.js';
 import { renderCta } from './components/Cta.js';
 import { renderNewsletter } from './components/Newsletter.js';
 import { renderFooter } from './components/Footer.js';
@@ -72,6 +73,8 @@ const sections = [
   { id: 'testimonios', render: renderTestimonials }, // Testimonials.js
   { id: 'precios', render: renderPricing },
   { id: 'faq', render: renderFaq }, // Faq.js
+  // Equipo justo antes del CTA: saber quién hay detrás da confianza antes de registrarse (issue #70)
+  { id: 'equipo', render: renderTeam }, // Team.js
   { id: 'cta', render: renderCta }, // Cta.js
 ];
 

@@ -25,6 +25,7 @@ const links = [
   { label: 'nav.howItWorks', href: '#como-funciona' },
   { label: 'nav.pricing', href: '#precios' },
   { label: 'nav.faq', href: '#faq' },
+  { label: 'nav.team', href: '#equipo' },
 ];
 
 // Clases comunes para el foco visible al navegar con el teclado (accesibilidad)
@@ -164,8 +165,10 @@ export function renderNavbar(container) {
              "Prueba gratis" se ve también en móvil, junto al botón del menú, como en el mockup -->
         <div class="flex shrink-0 items-center gap-3">
           ${languageMenu()}
-          <!-- "Iniciar sesión" en escritorio: también es texto, como en el desplegable de móvil -->
-          <span data-i18n="nav.login" class="hidden rounded-lg text-sm font-medium text-slate-600 md:inline">${t('nav.login')}</span>
+          <!-- "Iniciar sesión" en escritorio: también es texto, como en el desplegable de móvil.
+               Sale a partir de lg (1024 px): en tableta no cabe junto a los 5 enlaces del menú
+               y la barra se saldría de la pantalla. Como no es un enlace, no se pierde ninguna acción -->
+          <span data-i18n="nav.login" class="hidden rounded-lg text-sm font-medium text-slate-600 lg:inline">${t('nav.login')}</span>
           <!-- Botón pequeño (px-4 py-2 text-sm), como en el mockup -->
           <a href="#cta" data-i18n="nav.tryForFree" class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-500 ${focusRing}">${t('nav.tryForFree')}</a>
 
