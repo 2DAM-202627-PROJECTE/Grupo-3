@@ -416,45 +416,62 @@ function buildTimeline(section) {
 
   // --- 5. Estado inicial ---
 
-  // En escritorio la tarjeta empieza a la derecha (como en el Hero); en móvil, debajo del texto.
-  // En un móvil en horizontal (ancho pero bajo) también va a la derecha: con el texto encima,
-  // el titular llenaba la pantalla y la tarjeta quedaba diminuta. Es la misma condición que
-  // usa intro.css para poner el texto a la izquierda
-  const isDesktop = window.matchMedia('(min-width: 1024px)').matches;
-  const LANDSCAPE_PHONE = '(orientation: landscape) and (max-height: 500px) and (min-width: 640px) and (max-width: 1023px)';
-  const isLandscapePhone = window.matchMedia(LANDSCAPE_PHONE).matches;
+  // Dónde empieza la tarjeta: devuelve { x, y, scale } según la pantalla.
+  // No se aplica aquí: son los valores "desde" del primer movimiento de la película (escena 1).
+  // Así, si cambia el tamaño de la pantalla (por ejemplo, al girar el móvil), ScrollTrigger
+  // vuelve a llamar a esta función (invalidateOnRefresh en initIntro) y la tarjeta se recoloca.
+  // Antes se ponía con gsap.set al cargar y, al girar el móvil, se quedaba con las medidas
+  // de antes: enorme y encima del titular
+  // Las medidas van con offsetTop / offsetHeight, relativas al escenario (.stage): no cambian
+  // con el scroll ni con las transformaciones de GSAP. getBoundingClientRect daba otra altura
+  // si se medía mientras ScrollTrigger recalculaba (al girar el móvil)
+  const sceneCenter = () => {
+    const scene = $('.scene');
+    return scene.offsetTop + scene.offsetHeight / 2;
+  };
 
-  if (isDesktop) {
-    // En escritorio la tarjeta es la protagonista: se ve un 22% más grande (letras incluidas).
-    // Si la pantalla es baja, se limita para que quepa con 160px de margen entre arriba y abajo
-    const scale = Math.min(1.22, (window.innerHeight - 160) / card.offsetHeight);
-    // y: -32px → la escena tiene 2rem (32px) más de margen arriba que el texto,
-    // así que se sube eso para que la tarjeta quede a la misma altura que el texto
-    gsap.set(card, { xPercent: -50, yPercent: -50, x: '24vw', y: -32, scale });
-  } else if (isLandscapePhone) {
-    // Móvil en horizontal: la tarjeta, a la derecha y a la misma altura que el texto.
-    // Tan grande como quepa dejando 40px arriba y abajo
-    const scale = Math.min(1, (window.innerHeight - 80) / card.offsetHeight);
-    const intro = $('.intro').getBoundingClientRect();
-    const scene = $('.scene').getBoundingClientRect();
-    // y: distancia del centro de la escena al centro del texto
-    const y = intro.top + intro.height / 2 - (scene.top + scene.height / 2);
-    gsap.set(card, { xPercent: -50, yPercent: -50, x: '25vw', y, scale });
-  } else {
-    // En móvil se calcula dónde cabe: justo debajo del texto (24px de separación)
-    // y por encima del indicador de scroll (deja 90px abajo).
-    // Si la pantalla es baja y no cabe entera, se encoge lo justo
-    const textBottom = $('.intro').getBoundingClientRect().bottom + 24;
-    const space = window.innerHeight - 90 - textBottom;
-    const scale = Math.min(1, space / card.offsetHeight);
-    const height = card.offsetHeight * scale;
+  const cardStart = () => {
+    // En escritorio la tarjeta empieza a la derecha (como en el Hero); en móvil, debajo del texto.
+    // En un móvil en horizontal (ancho pero bajo) también va a la derecha: con el texto encima,
+    // el titular llenaba la pantalla y la tarjeta quedaba diminuta. Es la misma condición que
+    // usa intro.css para poner el texto a la izquierda
+    const isDesktop = window.matchMedia('(min-width: 1024px)').matches;
+    const LANDSCAPE_PHONE = '(orientation: landscape) and (max-height: 500px) and (min-width: 640px) and (max-width: 1023px)';
+    const isLandscapePhone = window.matchMedia(LANDSCAPE_PHONE).matches;
 
-    // y es la distancia desde el centro de la escena hasta donde tiene que quedar el centro de la tarjeta
-    const scene = $('.scene').getBoundingClientRect();
-    const y = textBottom + height / 2 - (scene.top + scene.height / 2);
+    if (isDesktop) {
+      // En escritorio la tarjeta es la protagonista: se ve un 22% más grande (letras incluidas).
+      // Si la pantalla es baja, se limita para que quepa con 160px de margen entre arriba y abajo
+      const scale = Math.min(1.22, (window.innerHeight - 160) / card.offsetHeight);
+      // y: -32px → la escena tiene 2rem (32px) más de margen arriba que el texto,
+      // así que se sube eso para que la tarjeta quede a la misma altura que el texto
+      return { x: '24vw', y: -32, scale };
+    } else if (isLandscapePhone) {
+      // Móvil en horizontal: la tarjeta, a la derecha y a la misma altura que el texto.
+      // Tan grande como quepa dejando 40px arriba y abajo
+      const scale = Math.min(1, (stage.clientHeight - 80) / card.offsetHeight);
+      // y: distancia del centro de la escena al centro del texto. El texto está centrado en su
+      // top (intro.css le pone translateY(-50%)), así que su centro es su offsetTop
+      const y = $('.intro').offsetTop - sceneCenter();
+      return { x: '25vw', y, scale };
+    } else {
+      // En móvil se calcula dónde cabe: justo debajo del texto (24px de separación)
+      // y por encima del indicador de scroll (deja 90px abajo).
+      // Si la pantalla es baja y no cabe entera, se encoge lo justo
+      const intro = $('.intro');
+      const textBottom = intro.offsetTop + intro.offsetHeight + 24;
+      const space = stage.clientHeight - 90 - textBottom;
+      const scale = Math.min(1, space / card.offsetHeight);
+      const height = card.offsetHeight * scale;
 
-    gsap.set(card, { xPercent: -50, yPercent: -50, x: 0, y, scale });
-  }
+      // y es la distancia desde el centro de la escena hasta donde tiene que quedar el centro de la tarjeta
+      const y = textBottom + height / 2 - sceneCenter();
+
+      return { x: 0, y, scale };
+    }
+  };
+  // xPercent / yPercent: el centro de la tarjeta, en el punto que se calcula (no cambia nunca)
+  gsap.set(card, { xPercent: -50, yPercent: -50 });
 
   // El libro empieza invisible y desplazado media página a la izquierda (-25% de su ancho):
   // así la tapa, que está en la mitad derecha, queda justo en el centro
@@ -509,7 +526,13 @@ function buildTimeline(section) {
   // ESCENA 1: el texto se va y la tarjeta viaja al centro y se convierte en la tapa
   tl.to($('.scroll-hint'), { autoAlpha: 0, duration: 0.3 }, 0)
     .to($('.intro'), { autoAlpha: 0, x: -80, filter: 'blur(8px)', duration: 1, ease: 'power1.in' }, 0)
-    .to(card, { x: 0, y: 0, rotationY: -25, rotationX: 10, scale: coverScale, duration: 1.1, ease: 'power2.inOut' }, 0)
+    // fromTo: empieza en cardStart() (se recalcula si cambia el tamaño de la pantalla)
+    .fromTo(
+      card,
+      { x: () => cardStart().x, y: () => cardStart().y, scale: () => cardStart().scale },
+      { x: 0, y: 0, rotationY: -25, rotationX: 10, scale: coverScale, duration: 1.1, ease: 'power2.inOut' },
+      0,
+    )
     .to(card, { rotationY: 0, rotationX: 0, duration: 0.4, ease: 'power1.out' }, 1.1)
     // Fundido cruzado: la tarjeta desaparece mientras aparece el libro en el mismo sitio
     .to(card, { autoAlpha: 0, duration: 0.3 }, 1.35)
