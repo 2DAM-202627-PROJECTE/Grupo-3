@@ -9,6 +9,8 @@
 //   1. Datos                → menú, cifras del día, clases y semana
 //   2. Piezas del panel     → navItem, statCard, classRow, weekBar
 //   3. HTML de la sección   → renderAppPreview (lo llama main.js)
+//   4. Animación            → al entrar en pantalla, las piezas se montan una detrás de otra
+//                             (los estilos están en style.css, apartado 5)
 // =============================================================
 
 // -------------------------------------------------------------
@@ -42,15 +44,30 @@ const navItems = [
 ];
 
 // Las tres cifras del día.
-//   - value: el número (no se traduce)
-//   - note:  texto pequeño debajo (opcional)
-//   - bar:   porcentaje para dibujar una barra (opcional, solo en ocupación)
+//   - value:  el número (es un número y no un texto, para poder contar desde 0 en la animación)
+//   - suffix: lo que va detrás del número (opcional: " %", " €")
+//   - note:   texto pequeño debajo (opcional)
+//   - bar:    porcentaje para dibujar una barra (opcional, solo en ocupación)
 // Cuadran con las clases de abajo: 14 + 13 + 16 + 9 = 52 reservas de 63 plazas (83 %)
 const stats = [
-  { icon: 'calendar-check', label: 'preview.statBookings', value: '52', note: 'preview.statBookingsNote' },
-  { icon: 'percent', label: 'preview.statOccupancy', value: '83 %', bar: 83 },
-  { icon: 'euro', label: 'preview.statRevenue', value: '642 €', note: 'preview.statRevenueNote' },
+  { icon: 'calendar-check', label: 'preview.statBookings', value: 52, note: 'preview.statBookingsNote' },
+  { icon: 'percent', label: 'preview.statOccupancy', value: 83, suffix: ' %', bar: 83 },
+  { icon: 'euro', label: 'preview.statRevenue', value: 642, suffix: ' €', note: 'preview.statRevenueNote' },
 ];
+
+// Retrasos de la animación (en milisegundos, desde que el panel entra en pantalla).
+// Las piezas salen en este orden: cifras → filas de la agenda → barras de la semana → aviso
+const DELAY = {
+  fill: 200, // barra de ocupación del día
+  rowsStart: 300, // primera fila de la agenda
+  rowsStep: 150, // cada fila, 150 ms después de la anterior
+  barsStart: 500, // primera barra de la semana
+  barsStep: 80, // cada barra, 80 ms después de la anterior
+  toast: 1500, // aviso de WhatsApp, al final
+};
+
+// Cuánto dura la cuenta de las cifras, de 0 a su valor (en milisegundos)
+const COUNT_MS = 1200;
 
 // Clases de hoy. Son las mismas que la tarjeta del Hero para el miércoles 24, con las mismas
 // horas y plazas libres (Spinning 6, Yoga 2, CrossFit completo), así las dos vistas cuadran.
@@ -100,7 +117,7 @@ function navItem({ icon, label, active }) {
 // Una tarjeta con una cifra del día (icono, título, número y nota o barra).
 // En móvil las tres van en fila y son compactas: sin icono ni nota (hidden sm:…),
 // con el número más pequeño, para que la sección no se haga muy larga
-function statCard({ icon, label, value, note, bar }) {
+function statCard({ icon, label, value, suffix = '', note, bar }) {
   return /*html*/ `
     <div class="rounded-xl border border-slate-200/70 bg-white/80 p-3 sm:p-4">
       <div class="flex items-center justify-between gap-2">
@@ -110,14 +127,17 @@ function statCard({ icon, label, value, note, bar }) {
           <i data-lucide="${icon}" class="h-4 w-4"></i>
         </span>
       </div>
-      <p class="mt-1 text-lg font-bold text-slate-900 sm:mt-2 sm:text-2xl">${value}</p>
+      <!-- data-count y data-suffix: la animación cuenta desde 0 hasta este número.
+           tabular-nums: todas las cifras miden lo mismo, así el número no "baila" mientras cuenta -->
+      <p data-count="${value}" data-suffix="${suffix}" class="mt-1 text-lg font-bold tabular-nums text-slate-900 sm:mt-2 sm:text-2xl">${value}${suffix}</p>
       ${note ? `<p data-i18n="${note}" class="mt-1 hidden text-xs text-emerald-700 sm:block">${t(note)}</p>` : ''}
       ${
         bar
           ? /*html*/ `
-        <!-- Barra de ocupación: el ancho se pone con style porque es un número de los datos -->
+        <!-- Barra de ocupación: el ancho se pone con style porque es un número de los datos.
+             data-anim="fill": en la animación se llena de izquierda a derecha -->
         <div class="mt-3 h-1.5 rounded-full bg-slate-100">
-          <div class="h-1.5 rounded-full bg-linear-to-r from-indigo-600 to-violet-500" style="width: ${bar}%"></div>
+          <div data-anim="fill" class="h-1.5 rounded-full bg-linear-to-r from-indigo-600 to-violet-500" style="width: ${bar}%; --delay: ${DELAY.fill}ms"></div>
         </div>`
           : ''
       }
@@ -126,14 +146,17 @@ function statCard({ icon, label, value, note, bar }) {
 }
 
 // Una fila de la agenda: punto de color, hora, clase, monitor y plazas.
-// Si está llena (booked === capacity), sale la etiqueta "Completo" en rojo, como en el Hero
-function classRow({ time, name, coach, booked, capacity, color }) {
+// Si está llena (booked === capacity), sale la etiqueta "Completo" en rojo, como en el Hero.
+// index: la posición de la fila (map lo pasa solo), para que cada una aparezca un poco después
+function classRow({ time, name, coach, booked, capacity, color }, index) {
   const full = booked === capacity;
   const percent = Math.round((booked / capacity) * 100);
   const status = statusColors[capacity - booked <= 2 ? 'amber' : 'emerald'];
+  const delay = DELAY.rowsStart + index * DELAY.rowsStep;
 
   return /*html*/ `
-    <li class="flex items-center gap-3 py-3">
+    <!-- data-anim="fade": en la animación, la fila aparece subiendo un poco -->
+    <li data-anim="fade" class="flex items-center gap-3 py-3" style="--delay: ${delay}ms">
       <!-- Punto con el color de la clase (el mismo que en la agenda de la intro) -->
       <span class="h-2.5 w-2.5 shrink-0 rounded-full ${color}"></span>
 
@@ -155,7 +178,7 @@ function classRow({ time, name, coach, booked, capacity, color }) {
             : /*html*/ `
           <p class="text-xs font-medium ${status.text}">${booked}/${capacity}</p>
           <div class="mt-1 h-1 rounded-full bg-slate-100">
-            <div class="h-1 rounded-full ${status.bar}" style="width: ${percent}%"></div>
+            <div data-anim="fill" class="h-1 rounded-full ${status.bar}" style="width: ${percent}%; --delay: ${delay + 200}ms"></div>
           </div>`
         }
       </div>
@@ -164,14 +187,15 @@ function classRow({ time, name, coach, booked, capacity, color }) {
 }
 
 // Una barra del gráfico de la semana. La altura sale del dato (style),
-// y la de hoy va en índigo fuerte para que destaque
-function weekBar({ day, value, today }) {
+// y la de hoy va en índigo fuerte para que destaque.
+// data-anim="bar": en la animación crece desde abajo, cada barra un poco después que la anterior
+function weekBar({ day, value, today }, index) {
   return /*html*/ `
     <div class="flex flex-1 flex-col items-center gap-2">
       <!-- Hueco de la barra: ocupa todo el alto que queda (flex-1, mínimo 7 rem)
            y la barra crece desde abajo (items-end) -->
       <div class="flex min-h-28 w-full flex-1 items-end justify-center">
-        <div class="w-full max-w-7 rounded-t-md ${today ? 'bg-indigo-600' : 'bg-indigo-200'}" style="height: ${value}%"></div>
+        <div data-anim="bar" class="w-full max-w-7 rounded-t-md ${today ? 'bg-indigo-600' : 'bg-indigo-200'}" style="height: ${value}%; --delay: ${DELAY.barsStart + index * DELAY.barsStep}ms"></div>
       </div>
       <span data-i18n="${day}" class="text-xs ${today ? 'font-semibold text-indigo-700' : 'text-slate-600'}">${t(day)}</span>
     </div>
@@ -204,7 +228,7 @@ export function renderAppPreview(container) {
            role="img" + aria-label hace que el lector de pantalla la lea como una imagen
            con su descripción, en vez de leer uno a uno todos los textos de dentro.
            Ventana de cristal (glass de style.css) con las esquinas redondeadas -->
-      <div role="img" aria-label="${t('preview.imageLabel')}" data-i18n-aria-label="preview.imageLabel" class="glass mx-auto mt-14 max-w-6xl overflow-hidden rounded-2xl">
+      <div data-preview-window role="img" aria-label="${t('preview.imageLabel')}" data-i18n-aria-label="preview.imageLabel" class="glass mx-auto mt-14 max-w-6xl overflow-hidden rounded-2xl">
 
         <!-- Barra del navegador: los tres puntos de colores y la dirección de la app -->
         <div class="flex items-center gap-3 border-b border-slate-200/70 bg-white/60 px-4 py-3">
@@ -272,8 +296,9 @@ export function renderAppPreview(container) {
               </div>
             </div>
 
-            <!-- Aviso de recordatorio enviado: enseña la función de recordatorios por WhatsApp -->
-            <div class="flex items-center gap-3 rounded-xl border border-emerald-200 bg-emerald-50/80 px-4 py-3">
+            <!-- Aviso de recordatorio enviado: enseña la función de recordatorios por WhatsApp.
+                 En la animación llega el último, como si acabara de enviarse -->
+            <div data-anim="fade" class="flex items-center gap-3 rounded-xl border border-emerald-200 bg-emerald-50/80 px-4 py-3" style="--delay: ${DELAY.toast}ms">
               <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-white">
                 <i data-lucide="message-circle" class="h-4 w-4"></i>
               </span>
@@ -302,4 +327,62 @@ export function renderAppPreview(container) {
       Users,
     },
   });
+
+  // Prepara la animación del panel (apartado 4)
+  setupPreviewAnimation(container);
+}
+
+// -------------------------------------------------------------
+// 4. Animación
+// -------------------------------------------------------------
+
+// Cuenta desde 0 hasta el número de data-count, en COUNT_MS milisegundos.
+// requestAnimationFrame llama a frame() en cada fotograma de la pantalla (unas 60 veces por
+// segundo). Cada vez se calcula qué parte del tiempo ha pasado (progress, de 0 a 1) y se
+// escribe el número que toca. La curva (1 - (1 - progress)³) hace que cuente rápido al
+// principio y frene al final, como las barras
+function countUp(element) {
+  const target = Number(element.dataset.count);
+  const suffix = element.dataset.suffix;
+  const start = performance.now();
+
+  function frame(now) {
+    const progress = Math.min((now - start) / COUNT_MS, 1);
+    const eased = 1 - (1 - progress) ** 3;
+    element.textContent = `${Math.round(target * eased)}${suffix}`;
+    if (progress < 1) requestAnimationFrame(frame);
+  }
+
+  requestAnimationFrame(frame);
+}
+
+// Deja el panel en espera y lo anima la primera vez que entra en pantalla
+function setupPreviewAnimation(container) {
+  // Si la persona ha pedido reducir las animaciones, el panel se queda tal cual, ya completo
+  // (el CSS tampoco aplicaría nada; así además no se ejecuta este código)
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const panel = container.querySelector('[data-preview-window]');
+  const counters = panel.querySelectorAll('[data-count]');
+
+  // Estado de espera: las piezas con data-anim se esconden (CSS) y las cifras empiezan en 0
+  panel.classList.add('preview-anim');
+  counters.forEach((counter) => {
+    counter.textContent = `0${counter.dataset.suffix}`;
+  });
+
+  // IntersectionObserver avisa cuando el panel entra en pantalla.
+  // threshold: 0.25 → cuando se ve al menos una cuarta parte, así la animación no
+  // empieza cuando el panel apenas asoma por abajo
+  const observer = new IntersectionObserver(
+    (entries) => {
+      if (!entries[0].isIntersecting) return;
+      // Solo la primera vez: deja de vigilar el panel
+      observer.disconnect();
+      panel.classList.add('is-playing');
+      counters.forEach(countUp);
+    },
+    { threshold: 0.25 },
+  );
+  observer.observe(panel);
 }

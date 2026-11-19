@@ -193,6 +193,53 @@
   }
 }
 
+/* --- Vista previa del panel (AppPreview.js, issue #73) ---
+   Cuando el panel entra en pantalla, sus piezas se "montan" una detrás de otra:
+   las barras crecen, las filas aparecen y el aviso de WhatsApp llega el último.
+   - AppPreview.js pone .preview-anim al panel (estado de espera) y, al verse, .is-playing.
+   - Cada pieza lleva data-anim con el tipo de animación y, en style, --delay con su retraso.
+   - Solo se animan transform y opacity: no cambian el tamaño de nada, así la página no salta.
+   También va dentro de prefers-reduced-motion: no-preference: si la persona ha pedido
+   reducir las animaciones, el panel se ve directamente completo */
+@media (prefers-reduced-motion: no-preference) {
+  @layer components {
+    /* Curva que arranca rápido y frena suave al final */
+    .preview-anim {
+      --preview-ease: cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    /* Barras del gráfico: crecen desde abajo (escala vertical de 0 a 1) */
+    .preview-anim [data-anim='bar'] {
+      transform: scaleY(0);
+      transform-origin: bottom;
+      transition: transform 0.8s var(--preview-ease) var(--delay, 0ms);
+    }
+
+    /* Barras de ocupación: se llenan de izquierda a derecha */
+    .preview-anim [data-anim='fill'] {
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 1s var(--preview-ease) var(--delay, 0ms);
+    }
+
+    /* Filas de la agenda y aviso de WhatsApp: aparecen subiendo un poco */
+    .preview-anim [data-anim='fade'] {
+      opacity: 0;
+      transform: translateY(8px);
+      transition:
+        opacity 0.5s ease-out var(--delay, 0ms),
+        transform 0.5s var(--preview-ease) var(--delay, 0ms);
+    }
+
+    /* Ya en pantalla: todas las piezas vuelven a su estado normal (las transition de arriba
+       hacen el movimiento). Este selector tiene más peso que los de arriba, así que gana */
+    .preview-anim.is-playing [data-anim] {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
 /* ========================================
    6. Tema claro: fondo aurora y cristal (issue #57)
    ======================================== */
