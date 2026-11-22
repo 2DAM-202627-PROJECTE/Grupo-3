@@ -170,7 +170,7 @@ export default {
   'cta.submit': 'Get started',
   'cta.emptyEmail': 'Enter your email to start your trial.',
   'cta.invalidEmail': 'Enter a valid email address, for example: name@company.com',
-  'cta.confirmation': 'Done! We have sent an email to {email} to activate your 14-day free trial.',
+  'cta.confirmation': 'Thank you! We will write to {email} to activate your 14-day free trial.',
   'newsletter.heading': 'Still not sure?',
   'newsletter.description': 'Get tips for your business and Reservo news, once a month.',
   'newsletter.formLabel': 'Newsletter subscription',

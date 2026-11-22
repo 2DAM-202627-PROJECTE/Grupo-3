@@ -170,7 +170,7 @@ export default {
   'cta.submit': 'Comença',
   'cta.emptyEmail': 'Escriu el teu correu per començar la prova.',
   'cta.invalidEmail': 'Introdueix una adreça electrònica vàlida, per exemple: nom@empresa.com',
-  'cta.confirmation': 'Fet! T’hem enviat un correu a {email} per activar la prova gratuïta de 14 dies.',
+  'cta.confirmation': 'Gràcies! T’escriurem a {email} per activar la prova gratuïta de 14 dies.',
   'newsletter.heading': 'Encara no t’hi decideixes?',
   'newsletter.description': 'Rep consells per al teu negoci i novetats de Reservo, un cop al mes.',
   'newsletter.formLabel': 'Subscripció al butlletí',

@@ -170,7 +170,7 @@ export default {
   'cta.submit': 'Empezar',
   'cta.emptyEmail': 'Escribe tu email para empezar la prueba.',
   'cta.invalidEmail': 'Introduce un email válido, por ejemplo: nombre@empresa.com',
-  'cta.confirmation': '¡Listo! Te hemos enviado un email a {email} para activar tu prueba gratuita de 14 días.',
+  'cta.confirmation': '¡Gracias! Te escribiremos a {email} para activar tu prueba gratuita de 14 días.',
   'newsletter.heading': '¿Aún no te decides?',
   'newsletter.description': 'Recibe consejos para tu negocio y novedades de Reservo, una vez al mes.',
   'newsletter.formLabel': 'Suscripción a la newsletter',
