@@ -882,6 +882,18 @@ export function initIntro() {
   const tl = buildTimeline(section);
   const updateStart = buildStartScene(section);
 
+  // El texto de entrada (.intro) se centra con transform en intro.css: translateY(-50%) en
+  // escritorio y en el móvil en horizontal, y none en el móvil en vertical. Pero GSAP también
+  // usa el transform del texto (el x: -80 de la escena 1): la primera vez lee el que hay, se lo
+  // guarda y lo escribe en el elemento (style="transform: ..."), que gana al CSS.
+  // Así, si la página se abría en escritorio y se pasaba a móvil, el texto seguía subido la
+  // mitad de su altura y quedaba encima del logo; y al girar el móvil a horizontal, quedaba bajo.
+  // Por eso, cada vez que ScrollTrigger recalcula las medidas (refreshInit: al cambiar el tamaño
+  // o girar el móvil, antes de invalidateOnRefresh), se borra ese transform: vuelve a mandar
+  // el CSS y GSAP lo vuelve a leer de ahí
+  const introText = section.querySelector('.intro');
+  ScrollTrigger.addEventListener('refreshInit', () => gsap.set(introText, { clearProps: 'transform' }));
+
   const trigger = ScrollTrigger.create({
     trigger: section,
     start: 'top top',
